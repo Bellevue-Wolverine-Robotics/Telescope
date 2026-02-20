@@ -4,6 +4,7 @@ import Scouting from './pages/Scouting';
 import Settings from './pages/Settings';
 import ScoutingPit from './pages/ScoutingPit';
 import ScoutingMatch from './pages/ScoutingMatch';
+import Debug from './pages/Debug';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/scouting/match" element={<ScoutingMatch />} />
       <Route path="/scouting/pit" element={<ScoutingPit />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/debug" element={<Debug />} />
     </Routes>
   );
 }
