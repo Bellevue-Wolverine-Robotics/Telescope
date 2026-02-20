@@ -96,10 +96,9 @@ function tsvToMatches(text) {
 function Records() {
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
-  const [refresh, setRefresh] = useState(0);
+  const [matches, setMatches] = useState(() => parseMatches());
   const tsvInputRef = useRef(null);
 
-  const matches = parseMatches();
   const hasData = Array.isArray(matches) && matches.length > 0;
 
   function exportTSV() {
@@ -121,7 +120,7 @@ function Records() {
     reader.onload = (event) => {
       const parsed = tsvToMatches(event.target.result);
       localStorage.setItem('matches', JSON.stringify(parsed));
-      setRefresh(r => r + 1);
+      setMatches(parsed);
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -203,7 +202,7 @@ function Records() {
           )}
         </div>
       )}
-      {showQRImport && <Import close={() => setShowQRImport(false)} />}
+      {showQRImport && <Import close={() => { setShowQRImport(false); setMatches(parseMatches()); }} />}
       {showQRExport && <Export close={() => setShowQRExport(false)} value={localStorage.getItem('matches')} />}
     </Layout>
   );
