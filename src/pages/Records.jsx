@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
@@ -33,6 +33,11 @@ const BOOLEAN_KEYS = new Set([
   'autoClimb', 'superChargedRP', 'chargedRP', 'climbRP', 'yellowCard', 'brokeDown',
 ]);
 
+const NUMBER_KEYS = new Set([
+  'matchNumber', 'teamNumber', 'fuelMissedAuto', 'autoPoints', 'cycles',
+  'numberDepot', 'minorFouls', 'majorFouls', 'redScore', 'blueScore',
+]);
+
 function Cell({ column, value }) {
   if (column === 'win') {
     return (
@@ -42,7 +47,7 @@ function Cell({ column, value }) {
     );
   }
   if (BOOLEAN_KEYS.has(column)) {
-    return <span className={value ? 'text-green-600' : 'text-gray-300'}>{ value ? '✓' : '✕' }</span>;
+    return <span className={value ? 'text-green-600' : 'text-gray-300'}>{value ? '✓' : '✕'}</span>;
   }
   if (column === 'observations') {
     return <span className="block max-w-40 truncate" title={value}>{value ?? '–'}</span>;
@@ -50,38 +55,115 @@ function Cell({ column, value }) {
   return value ?? '–';
 }
 
-function Records() {
-  const [showImport, setShowImport] = useState(false);
-  const [showExport, setShowExport] = useState(false);
-
-  let matches = [];
+function parseMatches() {
   try {
     const raw = localStorage.getItem('matches');
-    if (raw) matches = JSON.parse(raw);
-  } catch {
-    // not valid JSON
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+}
+
+function matchesToTSV(matches) {
+  const headers = COLUMNS.map(c => c.key);
+  const rows = matches.map(match =>
+    headers.map(key => {
+      const val = match[key];
+      if (key === 'win') return val ? 'Y' : 'N';
+      if (BOOLEAN_KEYS.has(key)) return val ? 'Yes' : 'No';
+      return val ?? '';
+    }).join('\t')
+  );
+  return [headers.join('\t'), ...rows].join('\n');
+}
+
+function tsvToMatches(text) {
+  const lines = text.trim().split(/\r?\n/);
+  const headers = lines[0].split('\t');
+  return lines.slice(1).map(line => {
+    const values = line.split('\t');
+    const obj = {};
+    headers.forEach((header, i) => {
+      const val = values[i] ?? '';
+      if (header === 'win') obj[header] = val === 'Y';
+      else if (BOOLEAN_KEYS.has(header)) obj[header] = val === 'Yes';
+      else if (NUMBER_KEYS.has(header)) obj[header] = Number(val);
+      else obj[header] = val;
+    });
+    return obj;
+  });
+}
+
+function Records() {
+  const [showQRImport, setShowQRImport] = useState(false);
+  const [showQRExport, setShowQRExport] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const tsvInputRef = useRef(null);
+
+  const matches = parseMatches();
+  const hasData = Array.isArray(matches) && matches.length > 0;
+
+  function exportTSV() {
+    if (!hasData) return;
+    const tsv = matchesToTSV(matches);
+    const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'scouting_data.tsv';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
-  const hasData = Array.isArray(matches) && matches.length > 0;
+  function handleTSVFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const parsed = tsvToMatches(event.target.result);
+      localStorage.setItem('matches', JSON.stringify(parsed));
+      setRefresh(r => r + 1);
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
 
   return (
     <Layout header="Records" tab={0}>
-      {!(showImport || showExport) && (
+      {!(showQRImport || showQRExport) && (
         <div className="flex flex-col h-full">
-          <div className="flex gap-2 p-2">
+          <div className="grid grid-cols-2 gap-2 p-2">
             <button
-              onClick={() => setShowImport(true)}
-              className="p-3 flex-1 bg-[#212529] text-white border rounded-lg flex justify-center"
+              onClick={() => setShowQRImport(true)}
+              className="p-3 bg-[#212529] text-white border rounded-lg flex justify-center"
             >
-              Import
+              Import QR
             </button>
             <button
-              onClick={() => setShowExport(true)}
-              className="p-3 flex-1 border border-[#212529] rounded-lg flex justify-center"
+              onClick={() => setShowQRExport(true)}
+              className="p-3 bg-[#212529] text-white border rounded-lg flex justify-center"
             >
-              Export
+              Export QR
+            </button>
+            <button
+              onClick={() => tsvInputRef.current.click()}
+              className="p-3 border border-[#212529] rounded-lg flex justify-center"
+            >
+              Import TSV
+            </button>
+            <button
+              onClick={exportTSV}
+              className="p-3 border border-[#212529] rounded-lg flex justify-center"
+            >
+              Export TSV
             </button>
           </div>
+          <input
+            ref={tsvInputRef}
+            type="file"
+            accept=".tsv"
+            className="hidden"
+            onChange={handleTSVFile}
+          />
 
           {hasData ? (
             <div className="flex-1 overflow-auto">
@@ -121,8 +203,8 @@ function Records() {
           )}
         </div>
       )}
-      {showImport && <Import close={() => setShowImport(false)} />}
-      {showExport && <Export close={() => setShowExport(false)} value={localStorage.getItem('matches')} />}
+      {showQRImport && <Import close={() => setShowQRImport(false)} />}
+      {showQRExport && <Export close={() => setShowQRExport(false)} value={localStorage.getItem('matches')} />}
     </Layout>
   );
 }
