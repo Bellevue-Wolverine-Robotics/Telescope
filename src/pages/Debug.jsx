@@ -20,7 +20,7 @@ function Debug() {
   }
 
   return (
-    <Layout header="Debug">
+    <Layout header="Debug" tab={3}>
       <div className="flex flex-col gap-3 p-4">
         <button
           onClick={populateTestData}
