@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
+import PhaseToggle from '../components/ui/PhaseToggle';
 import {
   PHASE_CONFIG,
   convertRecordDataJSONToTSV,
@@ -23,7 +24,7 @@ function Cell({ column, value }) {
 }
 
 function Records() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const phaseKey = searchParams.get('phase') ?? 'Match';
   const phase = PHASE_CONFIG[phaseKey] ?? PHASE_CONFIG.Match;
 
@@ -33,6 +34,9 @@ function Records() {
   const tsvFileInputRef = useRef(null);
 
   useEffect(() => {
+    if (!searchParams.get('phase')) {
+      setSearchParams({ phase: 'Match' }, { replace: true });
+    }
     setRecordDataJSON(loadRecordDataAsJSON(phase));
   }, [phaseKey]);
 
@@ -65,6 +69,7 @@ function Records() {
     <Layout header="Records" tab={0}>
       {!(showQRImport || showQRExport) && (
         <div className="flex flex-col h-full">
+          <PhaseToggle />
           <div className="grid grid-cols-2 gap-2 p-2">
             <button
               onClick={exportTSV}

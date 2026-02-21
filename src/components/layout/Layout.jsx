@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function Layout(props) {
+  const { search } = useLocation();
   return (
     <div className="flex flex-col h-full">
       <header className="h-12 border-b border-[#E9ECEF] flex justify-center items-center text-lg font-semibold">
@@ -10,7 +11,7 @@ function Layout(props) {
         {props.children}
       </div>
       <div className="bg-[#f8f9fa] h-20 flex">
-        <Link to="/records" className="w-full h-full flex flex-col justify-center items-center text-xs">
+        <Link to={`/records${search}`} className="w-full h-full flex flex-col justify-center items-center text-xs">
           {props.tab === 0 ? (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
             <path d="M21 6.375c0 2.692-4.03 4.875-9 4.875S3 9.067 3 6.375 7.03 1.5 12 1.5s9 2.183 9 4.875Z" />
@@ -37,7 +38,7 @@ function Layout(props) {
           )}
           <p>Scouting</p>
         </Link>
-        <Link to="/debug" className="w-full h-full flex flex-col justify-center items-center text-xs">
+        <Link to={`/debug${search}`} className="w-full h-full flex flex-col justify-center items-center text-xs">
           {props.tab === 3 ? (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
               <path fillRule="evenodd" d="M17.307 4.565a1 1 0 1 0-1.614-1.13l-1.96 2.8a7.077 7.077 0 0 0-3.466 0l-1.96-2.8a1 1 0 1 0-1.614 1.13l1.671 2.387A7.036 7.036 0 0 0 5 12v1h14v-1a7.036 7.036 0 0 0-3.364-6.048l1.671-2.387ZM4 15a1 1 0 0 1 1-1h1.5v2a5.97 5.97 0 0 0 .301 1.872L5.29 18.955A1 1 0 1 0 6.71 20.28l1.197-1.197A6 6 0 0 0 12 21a6 6 0 0 0 4.093-1.917l1.197 1.197a1 1 0 1 0 1.414-1.414l-1.49-1.49A5.972 5.972 0 0 0 17.5 16v-2H19a1 1 0 1 0 0-2H5a1 1 0 0 1-1 1Z" clipRule="evenodd" />

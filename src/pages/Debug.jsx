@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import PhaseToggle from '../components/ui/PhaseToggle';
 import { PHASE_CONFIG } from '../lib/RecordData';
 import matchData1 from '../../data/match/data_1.json';
 import matchData2 from '../../data/match/data_2.json';
@@ -19,13 +20,21 @@ const DATASETS = {
 };
 
 function Debug() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const phaseKey = searchParams.get('phase') ?? 'Match';
   const phase = PHASE_CONFIG[phaseKey] ?? PHASE_CONFIG.Match;
   const datasets = DATASETS[phaseKey] ?? DATASETS.Match;
 
   const [selected, setSelected] = useState(0);
   const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    if (!searchParams.get('phase')) {
+      setSearchParams({ phase: 'Match' }, { replace: true });
+    }
+    setSelected(0);
+    setStatus(null);
+  }, [phaseKey]);
 
   function loadDataset() {
     try {
@@ -45,6 +54,7 @@ function Debug() {
   return (
     <Layout header="Debug" tab={3}>
       <div className="flex flex-col gap-3 p-4">
+        <PhaseToggle />
         <p className="text-xs font-semibold uppercase tracking-wide text-[#868e96]">Load dataset</p>
         <select
           value={selected}
