@@ -1,8 +1,16 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
-import { COLUMNS, loadRecordDataAsJSON, mergeAndStoreRecordData, convertRecordDataStringToJSON, convertRecordDataJSONToTSV, convertRecordDataTSVToJSON } from '../lib/RecordData';
+import {
+  PHASE_CONFIG,
+  convertRecordDataJSONToTSV,
+  convertRecordDataStringToJSON,
+  convertRecordDataTSVToJSON,
+  loadRecordDataAsJSON,
+  mergeAndStoreRecordData,
+} from '../lib/RecordData';
 
 function Cell({ column, value }) {
   if (column.type === 'boolean') {
@@ -15,15 +23,23 @@ function Cell({ column, value }) {
 }
 
 function Records() {
+  const [searchParams] = useSearchParams();
+  const phaseKey = searchParams.get('phase') ?? 'Match';
+  const phase = PHASE_CONFIG[phaseKey] ?? PHASE_CONFIG.Match;
+
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
-  const [recordDataJSON, setRecordDataJSON] = useState(loadRecordDataAsJSON);
+  const [recordDataJSON, setRecordDataJSON] = useState(() => loadRecordDataAsJSON(phase));
   const tsvFileInputRef = useRef(null);
+
+  useEffect(() => {
+    setRecordDataJSON(loadRecordDataAsJSON(phase));
+  }, [phaseKey]);
 
   const hasData = recordDataJSON.length > 0;
 
   function exportTSV() {
-    const tsv = convertRecordDataJSONToTSV(recordDataJSON);
+    const tsv = convertRecordDataJSONToTSV(phase, recordDataJSON);
     const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -38,9 +54,8 @@ function Records() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
-      const recordDataJSON = convertRecordDataTSVToJSON(event.target.result);
-      const mergedRecordDataJSON = mergeAndStoreRecordData(recordDataJSON);
-      setRecordDataJSON(mergedRecordDataJSON);
+      const imported = convertRecordDataTSVToJSON(phase, event.target.result);
+      setRecordDataJSON(mergeAndStoreRecordData(phase, imported));
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -91,7 +106,7 @@ function Records() {
               <table className="text-xs border-collapse w-max min-w-full">
                 <thead>
                   <tr>
-                    {COLUMNS.map(col => (
+                    {phase.columns.map(col => (
                       <th
                         key={col.key}
                         className="sticky top-0 px-3 py-2 text-left font-semibold whitespace-nowrap bg-[#212529] text-white border-b border-[#495057]"
@@ -102,14 +117,14 @@ function Records() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recordDataJSON.map((match, i) => (
+                  {recordDataJSON.map((record, i) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-[#f8f9fa]'}>
-                      {COLUMNS.map(col => (
+                      {phase.columns.map(col => (
                         <td
                           key={col.key}
                           className="px-3 py-2 whitespace-nowrap border-b border-[#E9ECEF]"
                         >
-                          <Cell column={col} value={match[col.key]} />
+                          <Cell column={col} value={record[col.key]} />
                         </td>
                       ))}
                     </tr>
@@ -128,14 +143,18 @@ function Records() {
         <Import
           close={() => setShowQRImport(false)}
           onImport={(recordDataString) => {
-            const recordDataJSON = convertRecordDataStringToJSON(recordDataString)
-            const mergedRecordDataJSON = mergeAndStoreRecordData(recordDataJSON)
-            setRecordDataJSON(mergedRecordDataJSON);
+            const imported = convertRecordDataStringToJSON(recordDataString);
+            setRecordDataJSON(mergeAndStoreRecordData(phase, imported));
             setShowQRImport(false);
           }}
         />
       )}
-      {showQRExport && <Export close={() => setShowQRExport(false)} value={JSON.stringify(dataRecordA)} />}
+      {showQRExport && (
+        <Export
+          close={() => setShowQRExport(false)}
+          value={JSON.stringify(recordDataJSON)}
+        />
+      )}
     </Layout>
   );
 }

@@ -1,4 +1,4 @@
-export const COLUMNS = [
+const MATCH_COLUMNS = [
   { key: 'scouterName',   label: 'Scouter',      type: 'string'  },
   { key: 'matchNumber',   label: 'Match',         type: 'number'  },
   { key: 'teamNumber',    label: 'Team',          type: 'number'  },
@@ -24,7 +24,39 @@ export const COLUMNS = [
   { key: 'observations',  label: 'Notes',         type: 'text'    },
 ];
 
-const columnByKey = new Map(COLUMNS.map(col => [col.key, col]));
+const PIT_COLUMNS = [
+  { key: 'scouterName',   label: 'Scouter',       type: 'string'  },
+  { key: 'teamNumber',    label: 'Team',           type: 'number'  },
+  { key: 'weight',        label: 'Weight (lbs)',   type: 'number'  },
+  { key: 'drivetrain',    label: 'Drivetrain',     type: 'string'  },
+  { key: 'hasAutoAlign',  label: 'Auto Align',     type: 'boolean' },
+  { key: 'autoDescription',label: 'Auto Notes',   type: 'text'    },
+  { key: 'hopperCapacity',label: 'Hopper',         type: 'number'  },
+  { key: 'shooterSpeed',  label: 'Shooter',        type: 'number'  },
+  { key: 'intakeSpeed',   label: 'Intake',         type: 'number'  },
+  { key: 'supportedPaths',label: 'Paths',          type: 'string'  },
+  { key: 'climbLevel',    label: 'Climb Lvl',      type: 'string'  },
+  { key: 'climbType',     label: 'Climb Type',     type: 'string'  },
+  { key: 'robotLength',   label: 'Length',         type: 'number'  },
+  { key: 'robotHeight',   label: 'Height',         type: 'number'  },
+  { key: 'robotWidth',    label: 'Width',          type: 'number'  },
+];
+
+export const PHASE_CONFIG = {
+  Match: {
+    columns:      MATCH_COLUMNS,
+    storageKey:   'matches',
+    getUniqueKey: m => `${m.matchNumber}-${m.teamNumber}`,
+    sort:         (a, b) => a.matchNumber - b.matchNumber ||
+                    (a.robotPosition < b.robotPosition ? -1 : a.robotPosition > b.robotPosition ? 1 : 0),
+  },
+  Pit: {
+    columns:      PIT_COLUMNS,
+    storageKey:   'pit',
+    getUniqueKey: m => `${m.teamNumber}`,
+    sort:         (a, b) => a.teamNumber - b.teamNumber,
+  },
+};
 
 export function convertRecordDataStringToJSON(recordDataString) {
   try {
@@ -33,19 +65,19 @@ export function convertRecordDataStringToJSON(recordDataString) {
   return [];
 }
 
-export function loadRecordDataAsJSON() {
+export function loadRecordDataAsJSON(phase) {
   try {
-    const raw = localStorage.getItem('matches');
-    return convertRecordDataStringToJSON(raw)
+    const raw = localStorage.getItem(phase.storageKey);
+    return convertRecordDataStringToJSON(raw);
   } catch {}
   return [];
 }
 
-export function convertRecordDataJSONToTSV(recordDataJSON) {
-  const header = COLUMNS.map(col => col.key).join('\t');
-  const rows = recordDataJSON.map(match =>
-    COLUMNS.map(({ key, type }) => {
-      const value = match[key];
+export function convertRecordDataJSONToTSV(phase, recordDataJSON) {
+  const header = phase.columns.map(col => col.key).join('\t');
+  const rows = recordDataJSON.map(record =>
+    phase.columns.map(({ key, type }) => {
+      const value = record[key];
       if (type === 'boolean') return value ? 'Yes' : 'No';
       return value ?? '';
     }).join('\t')
@@ -53,32 +85,26 @@ export function convertRecordDataJSONToTSV(recordDataJSON) {
   return [header, ...rows].join('\n') + '\n';
 }
 
-export function storeRecordData(recordDataJSON) {
-  localStorage.setItem('matches', JSON.stringify(recordDataJSON));
+export function storeRecordData(phase, recordDataJSON) {
+  localStorage.setItem(phase.storageKey, JSON.stringify(recordDataJSON));
 }
 
-export function mergeAndStoreRecordData(recordDataJSON) {
-  const mergedRecordDataJSON = mergeRecordData(loadRecordDataAsJSON(), recordDataJSON);
-  storeRecordData(mergedRecordDataJSON)
-  return mergedRecordDataJSON
+export function mergeAndStoreRecordData(phase, recordDataJSON) {
+  const merged = mergeRecordData(phase, loadRecordDataAsJSON(phase), recordDataJSON);
+  storeRecordData(phase, merged);
+  return merged;
 }
 
-function getRecordDataUniqueKey(match) {
-  return `${match.matchNumber}-${match.teamNumber}`;
-}
-
-export function mergeRecordData(existing, imported) {
-  const merged = new Map(existing.map(m => [getRecordDataUniqueKey(m), m]));
-  for (const match of imported) {
-    merged.set(getRecordDataUniqueKey(match), match);
+export function mergeRecordData(phase, existing, imported) {
+  const merged = new Map(existing.map(m => [phase.getUniqueKey(m), m]));
+  for (const record of imported) {
+    merged.set(phase.getUniqueKey(record), record);
   }
-  return [...merged.values()].sort((a, b) =>
-    a.matchNumber - b.matchNumber ||
-    (a.robotPosition < b.robotPosition ? -1 : a.robotPosition > b.robotPosition ? 1 : 0)
-  );
+  return [...merged.values()].sort(phase.sort);
 }
 
-export function convertRecordDataTSVToJSON(text) {
+export function convertRecordDataTSVToJSON(phase, text) {
+  const columnByKey = new Map(phase.columns.map(col => [col.key, col]));
   const [headerLine, ...dataLines] = text.trim().split(/\r?\n/);
   const keys = headerLine.split('\t');
   return dataLines.map(line => {
