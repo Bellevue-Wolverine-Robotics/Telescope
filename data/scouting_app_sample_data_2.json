@@ -21,7 +21,7 @@
     "playstyle": "Offensive",
     "redScore": 250,
     "blueScore": 200,
-    "win": true,
+    "result": "Win",
     "observations": "Fast, holds a ton, ...."
   },
   {
@@ -46,7 +46,7 @@
     "playstyle": "Defensive",
     "redScore": 180,
     "blueScore": 220,
-    "win": true,
+    "result": "Win",
     "observations": "Consistent but slow, good at defense"
   },
   {
@@ -71,7 +71,7 @@
     "playstyle": "Offensive",
     "redScore": 280,
     "blueScore": 190,
-    "win": true,
+    "result": "Win",
     "observations": "Very strong auto, excellent climber"
   },
   {
@@ -96,7 +96,7 @@
     "playstyle": "Offensive",
     "redScore": 310,
     "blueScore": 175,
-    "win": true,
+    "result": "Win",
     "observations": "Dominant scorer, top performer of the match"
   },
   {
@@ -121,14 +121,14 @@
     "playstyle": "Defensive",
     "redScore": 265,
     "blueScore": 195,
-    "win": false,
+    "result": "Loss",
     "observations": "Yellow card hurt the alliance, needs to reduce fouls"
   },
   {
     "scouterName": "Drew",
     "matchNumber": 29,
     "teamNumber": 3310,
-    "robotPosition": "Red Middle",
+    "robotPosition": "Red Center",
     "fuelMissedAuto": 2,
     "autoPoints": 5,
     "autoClimb": true,
@@ -146,7 +146,7 @@
     "playstyle": "Mixed",
     "redScore": 220,
     "blueScore": 210,
-    "win": true,
+    "result": "Win",
     "observations": "Consistent mid-range performer, flexible intake"
   }
 ]

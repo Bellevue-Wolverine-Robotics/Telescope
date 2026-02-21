@@ -20,7 +20,7 @@ export const COLUMNS = [
   { key: 'playstyle',     label: 'Playstyle',     type: 'string'  },
   { key: 'redScore',      label: 'Red',           type: 'number'  },
   { key: 'blueScore',     label: 'Blue',          type: 'number'  },
-  { key: 'win',           label: 'Result',        type: 'win'     },
+  { key: 'result',        label: 'Result',        type: 'string'  },
   { key: 'observations',  label: 'Notes',         type: 'text'    },
 ];
 
@@ -39,7 +39,6 @@ export function matchesToTSV(matches) {
   const rows = matches.map(match =>
     COLUMNS.map(({ key, type }) => {
       const value = match[key];
-      if (type === 'win')     return value ? 'Y' : 'N';
       if (type === 'boolean') return value ? 'Yes' : 'No';
       return value ?? '';
     }).join('\t')
@@ -64,7 +63,6 @@ export function tsvToMatches(text) {
       keys.map((key, i) => {
         const col = columnByKey.get(key);
         const raw = values[i] ?? '';
-        if (col?.type === 'win')     return [key, raw === 'Y'];
         if (col?.type === 'boolean') return [key, raw === 'Yes'];
         if (col?.type === 'number')  return [key, Number(raw)];
         return [key, raw];

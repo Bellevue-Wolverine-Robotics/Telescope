@@ -1,6 +1,6 @@
-scouterName	matchNumber	teamNumber	robotPosition	fuelMissedAuto	autoPoints	autoClimb	cycles	numberDepot	intakeType	endgameClimb	superChargedRP	chargedRP	climbRP	yellowCard	brokeDown	minorFouls	majorFouls	playstyle	redScore	blueScore	win	observations
-Alex	45	9036	Red Bottom	3	5	Yes	10	20	Ground	L2	No	Yes	Yes	No	No	2	0	Offensive	250	200	Y	Fast, holds a ton, ....
-Jordan	12	2412	Blue Top	1	3	No	7	14	Human Player	L1	No	No	Yes	No	No	1	0	Defensive	180	220	Y	Consistent but slow, good at defense
-Morgan	20	2910	Red Center	0	7	Yes	12	22	Ground	L3	Yes	Yes	Yes	No	No	0	0	Offensive	280	190	Y	Very strong auto, excellent climber
-Taylor	40	948	Blue Bottom	5	0	No	4	8	Ground	None	No	No	No	No	Yes	3	1	Offensive	230	150	N	Broke down mid-match, struggled with intake
-Riley	32	4131	Blue Middle	2	4	No	8	16	Both	L2	No	Yes	Yes	No	No	1	0	Mixed	195	240	Y	Versatile intake, reliable climber
+scouterName	matchNumber	teamNumber	robotPosition	fuelMissedAuto	autoPoints	autoClimb	cycles	numberDepot	intakeType	endgameClimb	superChargedRP	chargedRP	climbRP	yellowCard	brokeDown	minorFouls	majorFouls	playstyle	redScore	blueScore	result	observations
+Alex	45	9036	Red Bottom	3	5	Yes	10	20	Ground	L2	No	Yes	Yes	No	No	2	0	Offensive	250	200	Win	Fast, holds a ton, ....
+Jordan	12	2412	Blue Top	1	3	No	7	14	Human Player	L1	No	No	Yes	No	No	1	0	Defensive	180	220	Win	Consistent but slow, good at defense
+Morgan	20	2910	Red Center	0	7	Yes	12	22	Ground	L3	Yes	Yes	Yes	No	No	0	0	Offensive	280	190	Win	Very strong auto, excellent climber
+Taylor	40	948	Blue Bottom	5	0	No	4	8	Ground	None	No	No	No	No	Yes	3	1	Offensive	230	150	Loss	Broke down mid-match, struggled with intake
+Riley	32	4131	Blue Center	2	4	No	8	16	Both	L2	No	Yes	Yes	No	No	1	0	Mixed	195	240	Win	Versatile intake, reliable climber

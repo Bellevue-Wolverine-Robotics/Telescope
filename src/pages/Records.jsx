@@ -5,13 +5,6 @@ import Import from '../components/ui/Import';
 import { COLUMNS, loadMatches, matchesToTSV, mergeMatches, tsvToMatches } from '../lib/MatchData';
 
 function Cell({ column, value }) {
-  if (column.type === 'win') {
-    return (
-      <span className={`inline-block px-1.5 py-0.5 rounded font-semibold text-white ${value ? 'bg-green-500' : 'bg-red-400'}`}>
-        {value ? 'W' : 'L'}
-      </span>
-    );
-  }
   if (column.type === 'boolean') {
     return <span className={value ? 'text-green-600' : 'text-gray-300'}>{value ? '✓' : '✕'}</span>;
   }

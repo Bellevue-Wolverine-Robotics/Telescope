@@ -21,7 +21,7 @@
     "playstyle": "Offensive",
     "redScore": 250,
     "blueScore": 200,
-    "win": true,
+    "result": "Win",
     "observations": "Fast, holds a ton, ...."
   },
   {
@@ -46,7 +46,7 @@
     "playstyle": "Defensive",
     "redScore": 180,
     "blueScore": 220,
-    "win": true,
+    "result": "Win",
     "observations": "Consistent but slow, good at defense"
   },
   {
@@ -71,7 +71,7 @@
     "playstyle": "Offensive",
     "redScore": 280,
     "blueScore": 190,
-    "win": true,
+    "result": "Win",
     "observations": "Very strong auto, excellent climber"
   },
   {
@@ -96,14 +96,14 @@
     "playstyle": "Offensive",
     "redScore": 230,
     "blueScore": 150,
-    "win": false,
+    "result": "Loss",
     "observations": "Broke down mid-match, struggled with intake"
   },
   {
     "scouterName": "Riley",
     "matchNumber": 32,
     "teamNumber": 4131,
-    "robotPosition": "Blue Middle",
+    "robotPosition": "Blue Center",
     "fuelMissedAuto": 2,
     "autoPoints": 4,
     "autoClimb": false,
@@ -121,7 +121,7 @@
     "playstyle": "Mixed",
     "redScore": 195,
     "blueScore": 240,
-    "win": true,
+    "result": "Win",
     "observations": "Versatile intake, reliable climber"
   }
 ]
