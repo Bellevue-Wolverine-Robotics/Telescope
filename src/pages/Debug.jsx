@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Layout from '../components/layout/Layout';
-import data1 from '../../data/scouting_app_sample_data_1.json';
-import data2 from '../../data/scouting_app_sample_data_2.json';
+import data1 from '../../data/match/data_1.json';
+import data2 from '../../data/match/data_2.json';
 
 const DATASETS = [
   { label: 'Sample Data 1', data: data1 },
