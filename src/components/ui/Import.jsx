@@ -60,8 +60,7 @@ function Import(props) {
             cctx.stroke();
 
             if (result) {
-              localStorage.setItem('matches', result);
-              props.close();
+              props.onImport(result);
             }
           }
         }

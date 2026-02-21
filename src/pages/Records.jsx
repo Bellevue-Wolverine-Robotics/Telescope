@@ -63,6 +63,13 @@ function parseMatches() {
   return [];
 }
 
+function mergeMatches(incoming, existing) {
+  const seen = new Set(incoming.map(m => `${m.matchNumber}|${m.teamNumber}`));
+  const extras = existing.filter(m => !seen.has(`${m.matchNumber}|${m.teamNumber}`));
+  // Stable sort: imported items precede existing items within the same match number
+  return [...incoming, ...extras].sort((a, b) => a.matchNumber - b.matchNumber);
+}
+
 function matchesToTSV(matches) {
   const headers = COLUMNS.map(c => c.key);
   const rows = matches.map(match =>
@@ -119,8 +126,9 @@ function Records() {
     const reader = new FileReader();
     reader.onload = (event) => {
       const parsed = tsvToMatches(event.target.result);
-      localStorage.setItem('matches', JSON.stringify(parsed));
-      setMatches(parsed);
+      const merged = mergeMatches(parsed, matches);
+      localStorage.setItem('matches', JSON.stringify(merged));
+      setMatches(merged);
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -202,7 +210,18 @@ function Records() {
           )}
         </div>
       )}
-      {showQRImport && <Import close={() => { setShowQRImport(false); setMatches(parseMatches()); }} />}
+      {showQRImport && (
+        <Import
+          close={() => setShowQRImport(false)}
+          onImport={(jsonString) => {
+            const incoming = JSON.parse(jsonString);
+            const merged = mergeMatches(incoming, matches);
+            localStorage.setItem('matches', JSON.stringify(merged));
+            setMatches(merged);
+            setShowQRImport(false);
+          }}
+        />
+      )}
       {showQRExport && <Export close={() => setShowQRExport(false)} value={localStorage.getItem('matches')} />}
     </Layout>
   );
