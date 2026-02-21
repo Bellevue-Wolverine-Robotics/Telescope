@@ -63,12 +63,19 @@ export function mergeAndStoreRecordData(recordDataJSON) {
   return mergedRecordDataJSON
 }
 
+function getRecordDataUniqueKey(match) {
+  return `${match.matchNumber}-${match.teamNumber}`;
+}
+
 export function mergeRecordData(existing, imported) {
-  const merged = new Map(existing.map(m => [`${m.matchNumber}-${m.teamNumber}`, m]));
+  const merged = new Map(existing.map(m => [getRecordDataUniqueKey(m), m]));
   for (const match of imported) {
-    merged.set(`${match.matchNumber}-${match.teamNumber}`, match);
+    merged.set(getRecordDataUniqueKey(match), match);
   }
-  return [...merged.values()].sort((a, b) => a.matchNumber - b.matchNumber || a.teamNumber - b.teamNumber);
+  return [...merged.values()].sort((a, b) =>
+    a.matchNumber - b.matchNumber ||
+    (a.robotPosition < b.robotPosition ? -1 : a.robotPosition > b.robotPosition ? 1 : 0)
+  );
 }
 
 export function convertRecordDataTSVToJSON(text) {
