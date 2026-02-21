@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
-import { COLUMNS, loadRecordDataAsJSON, mergeAndStoreRecordData, convertRecordDataStringToJSON, convertRecordDataJSONToTSV, convertRecordDataTSVToJSON } from '../lib/MatchData';
+import { COLUMNS, loadRecordDataAsJSON, mergeAndStoreRecordData, convertRecordDataStringToJSON, convertRecordDataJSONToTSV, convertRecordDataTSVToJSON } from '../lib/RecordData';
 
 function Cell({ column, value }) {
   if (column.type === 'boolean') {
@@ -135,7 +135,7 @@ function Records() {
           }}
         />
       )}
-      {showQRExport && <Export close={() => setShowQRExport(false)} value={JSON.stringify(recordDataJSON)} />}
+      {showQRExport && <Export close={() => setShowQRExport(false)} value={JSON.stringify(dataRecordA)} />}
     </Layout>
   );
 }
