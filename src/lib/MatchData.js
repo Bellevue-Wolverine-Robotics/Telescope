@@ -26,17 +26,24 @@ export const COLUMNS = [
 
 const columnByKey = new Map(COLUMNS.map(col => [col.key, col]));
 
-export function loadMatches() {
+export function convertRecordDataStringToJSON(recordDataString) {
   try {
-    const raw = localStorage.getItem('matches');
-    if (raw) return JSON.parse(raw);
+    if (recordDataString) return JSON.parse(recordDataString);
   } catch {}
   return [];
 }
 
-export function matchesToTSV(matches) {
+export function loadRecordDataAsJSON() {
+  try {
+    const raw = localStorage.getItem('matches');
+    return convertRecordDataStringToJSON(raw)
+  } catch {}
+  return [];
+}
+
+export function convertRecordDataJSONToTSV(recordDataJSON) {
   const header = COLUMNS.map(col => col.key).join('\t');
-  const rows = matches.map(match =>
+  const rows = recordDataJSON.map(match =>
     COLUMNS.map(({ key, type }) => {
       const value = match[key];
       if (type === 'boolean') return value ? 'Yes' : 'No';
@@ -46,7 +53,17 @@ export function matchesToTSV(matches) {
   return [header, ...rows].join('\n') + '\n';
 }
 
-export function mergeMatches(existing, imported) {
+export function storeRecordData(recordDataJSON) {
+  localStorage.setItem('matches', JSON.stringify(recordDataJSON));
+}
+
+export function mergeAndStoreRecordData(recordDataJSON) {
+  const mergedRecordDataJSON = mergeRecordData(loadRecordDataAsJSON(), recordDataJSON);
+  storeRecordData(mergedRecordDataJSON)
+  return mergedRecordDataJSON
+}
+
+export function mergeRecordData(existing, imported) {
   const merged = new Map(existing.map(m => [`${m.matchNumber}-${m.teamNumber}`, m]));
   for (const match of imported) {
     merged.set(`${match.matchNumber}-${match.teamNumber}`, match);
@@ -54,7 +71,7 @@ export function mergeMatches(existing, imported) {
   return [...merged.values()].sort((a, b) => a.matchNumber - b.matchNumber || a.teamNumber - b.teamNumber);
 }
 
-export function tsvToMatches(text) {
+export function convertRecordDataTSVToJSON(text) {
   const [headerLine, ...dataLines] = text.trim().split(/\r?\n/);
   const keys = headerLine.split('\t');
   return dataLines.map(line => {

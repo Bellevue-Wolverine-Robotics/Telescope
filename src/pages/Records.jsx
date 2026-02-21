@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
-import { COLUMNS, loadMatches, matchesToTSV, mergeMatches, tsvToMatches } from '../lib/MatchData';
+import { COLUMNS, loadRecordDataAsJSON, mergeAndStoreRecordData, convertRecordDataStringToJSON, convertRecordDataJSONToTSV, convertRecordDataTSVToJSON } from '../lib/MatchData';
 
 function Cell({ column, value }) {
   if (column.type === 'boolean') {
@@ -17,13 +17,13 @@ function Cell({ column, value }) {
 function Records() {
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
-  const [matches, setMatches] = useState(loadMatches);
+  const [matches, setMatches] = useState(loadRecordDataAsJSON);
   const tsvFileInputRef = useRef(null);
 
   const hasData = matches.length > 0;
 
   function exportTSV() {
-    const tsv = matchesToTSV(matches);
+    const tsv = convertRecordDataJSONToTSV(matches);
     const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -38,9 +38,9 @@ function Records() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
-      const parsed = tsvToMatches(event.target.result);
-      localStorage.setItem('matches', JSON.stringify(parsed));
-      setMatches(parsed);
+      const recordDataJSON = convertRecordDataTSVToJSON(event.target.result);
+      const mergedRecordDataJSON = mergeAndStoreRecordData(recordDataJSON);
+      setMatches(mergedRecordDataJSON);
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -127,15 +127,15 @@ function Records() {
       {showQRImport && (
         <Import
           close={() => setShowQRImport(false)}
-          onImport={(result) => {
-            const merged = mergeMatches(loadMatches(), JSON.parse(result));
-            localStorage.setItem('matches', JSON.stringify(merged));
-            setMatches(merged);
+          onImport={(recordDataString) => {
+            const recordDataJSON = convertRecordDataStringToJSON(recordDataString)
+            const mergedRecordDataJSON = mergeAndStoreRecordData(recordDataJSON)
+            setMatches(mergedRecordDataJSON);
             setShowQRImport(false);
           }}
         />
       )}
-      {showQRExport && <Export close={() => setShowQRExport(false)} value={localStorage.getItem('matches')} />}
+      {showQRExport && <Export close={() => setShowQRExport(false)} value={JSON.stringify(loadRecordDataAsJSON)} />}
     </Layout>
   );
 }
