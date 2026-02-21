@@ -17,13 +17,13 @@ function Cell({ column, value }) {
 function Records() {
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
-  const [matches, setMatches] = useState(loadRecordDataAsJSON);
+  const [recordDataJSON, setRecordDataJSON] = useState(loadRecordDataAsJSON);
   const tsvFileInputRef = useRef(null);
 
-  const hasData = matches.length > 0;
+  const hasData = recordDataJSON.length > 0;
 
   function exportTSV() {
-    const tsv = convertRecordDataJSONToTSV(matches);
+    const tsv = convertRecordDataJSONToTSV(recordDataJSON);
     const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -40,7 +40,7 @@ function Records() {
     reader.onload = (event) => {
       const recordDataJSON = convertRecordDataTSVToJSON(event.target.result);
       const mergedRecordDataJSON = mergeAndStoreRecordData(recordDataJSON);
-      setMatches(mergedRecordDataJSON);
+      setRecordDataJSON(mergedRecordDataJSON);
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -102,7 +102,7 @@ function Records() {
                   </tr>
                 </thead>
                 <tbody>
-                  {matches.map((match, i) => (
+                  {recordDataJSON.map((match, i) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-[#f8f9fa]'}>
                       {COLUMNS.map(col => (
                         <td
@@ -130,12 +130,12 @@ function Records() {
           onImport={(recordDataString) => {
             const recordDataJSON = convertRecordDataStringToJSON(recordDataString)
             const mergedRecordDataJSON = mergeAndStoreRecordData(recordDataJSON)
-            setMatches(mergedRecordDataJSON);
+            setRecordDataJSON(mergedRecordDataJSON);
             setShowQRImport(false);
           }}
         />
       )}
-      {showQRExport && <Export close={() => setShowQRExport(false)} value={JSON.stringify(loadRecordDataAsJSON)} />}
+      {showQRExport && <Export close={() => setShowQRExport(false)} value={JSON.stringify(recordDataJSON)} />}
     </Layout>
   );
 }
