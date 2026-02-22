@@ -7,7 +7,7 @@ function Layout(props) {
       <header className="h-12 border-b border-[var(--color-border)] flex justify-center items-center text-lg font-semibold">
         {props.header}
       </header>
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-hidden">
         {props.children}
       </div>
       <div className="bg-[var(--color-surface-alt)] h-20 flex">
