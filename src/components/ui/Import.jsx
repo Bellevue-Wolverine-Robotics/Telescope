@@ -60,7 +60,7 @@ function Import(props) {
             cctx.stroke();
 
             if (result) {
-              props.close();
+              props.onImport(result);
             }
           }
         }
