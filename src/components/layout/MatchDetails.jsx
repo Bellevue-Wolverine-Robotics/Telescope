@@ -16,7 +16,7 @@ function MatchDetails(props) {
     <>
       <NumericInput inputMode="numeric" label="Match Number" value={match} onChange={setMatch} />
       <NumericInput inputMode="numeric" label="Team Number" value={team} onChange={setTeam} />
-      <button onClick={onSubmit} className={`p-3 w-30 ${match && team ? 'bg-[#212529]' : 'bg-[#ADB5BD]'} text-white border rounded-lg flex w-full justify-center`}>Start</button>
+      <button onClick={onSubmit} className={`p-3 w-30 ${match && team ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border-mid)]'} text-[var(--color-on-primary)] border rounded-lg flex w-full justify-center`}>Start</button>
     </>
   );
 }

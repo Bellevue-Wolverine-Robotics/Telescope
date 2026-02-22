@@ -55,11 +55,11 @@ function Debug() {
     <Layout header="Debug" tab={3}>
       <div className="flex flex-col gap-3 p-4">
         <PhaseToggle />
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#868e96]">Load dataset</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted-alt)]">Load dataset</p>
         <select
           value={selected}
           onChange={(e) => setSelected(Number(e.target.value))}
-          className="p-3 border border-[#212529] rounded-lg bg-white w-full"
+          className="p-3 border border-[var(--color-primary)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] w-full"
         >
           {datasets.map((dataset, i) => (
             <option key={dataset.label} value={i}>{dataset.label}</option>
@@ -67,14 +67,14 @@ function Debug() {
         </select>
         <button
           onClick={loadDataset}
-          className="p-3 bg-[#212529] text-white border rounded-lg flex justify-center"
+          className="p-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] border rounded-lg flex justify-center"
         >
           Load
         </button>
-        <div className="border-t border-[#E9ECEF] my-1" />
+        <div className="border-t border-[var(--color-border)] my-1" />
         <button
           onClick={clearData}
-          className="p-3 border border-[#212529] rounded-lg flex justify-center"
+          className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
         >
           Clear localStorage
         </button>

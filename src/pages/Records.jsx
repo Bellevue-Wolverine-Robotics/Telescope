@@ -74,26 +74,26 @@ function Records() {
             <button
               onClick={exportTSV}
               disabled={!hasData}
-              className="p-3 border rounded-lg flex justify-center text-white bg-[#212529] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-3 border rounded-lg flex justify-center text-[var(--color-on-primary)] bg-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Export TSV
             </button>
             <button
               onClick={() => setShowQRExport(true)}
               disabled={!hasData}
-              className="p-3 border rounded-lg flex justify-center text-white bg-[#212529] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-3 border rounded-lg flex justify-center text-[var(--color-on-primary)] bg-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Export QR
             </button>
             <button
               onClick={() => tsvFileInputRef.current.click()}
-              className="p-3 border border-[#212529] rounded-lg flex justify-center"
+              className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
             >
               Import TSV
             </button>
             <button
               onClick={() => setShowQRImport(true)}
-              className="p-3 border border-[#212529] rounded-lg flex justify-center"
+              className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
             >
               Import QR
             </button>
@@ -114,7 +114,7 @@ function Records() {
                     {phase.columns.map(col => (
                       <th
                         key={col.key}
-                        className="sticky top-0 px-3 py-2 text-left font-semibold whitespace-nowrap bg-[#212529] text-white border-b border-[#495057]"
+                        className="sticky top-0 px-3 py-2 text-left font-semibold whitespace-nowrap bg-[var(--color-primary)] text-[var(--color-on-primary)] border-b border-[var(--color-primary-sub)]"
                       >
                         {col.label}
                       </th>
@@ -123,11 +123,11 @@ function Records() {
                 </thead>
                 <tbody>
                   {recordDataJSON.map((record, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-[#f8f9fa]'}>
+                    <tr key={i} className={i % 2 === 0 ? 'bg-[var(--color-surface)]' : 'bg-[var(--color-surface-alt)]'}>
                       {phase.columns.map(col => (
                         <td
                           key={col.key}
-                          className="px-3 py-2 whitespace-nowrap border-b border-[#E9ECEF]"
+                          className="px-3 py-2 whitespace-nowrap border-b border-[var(--color-border)]"
                         >
                           <Cell column={col} value={record[col.key]} />
                         </td>

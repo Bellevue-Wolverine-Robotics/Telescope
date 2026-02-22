@@ -4,6 +4,10 @@
   import './index.css';
   import App from './App';
 
+  if (localStorage.getItem('displayMode') === 'Dark') {
+    document.documentElement.classList.add('dark');
+  }
+
   createRoot(document.getElementById('root')).render(
     <StrictMode>
       <BrowserRouter>
