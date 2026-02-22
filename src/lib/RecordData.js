@@ -58,6 +58,69 @@ export const PHASE_CONFIG = {
   },
 };
 
+export function classifyAndValidateImport(records) {
+  if (!Array.isArray(records))
+    return { valid: false, errors: ['Data must be a JSON array.'] };
+  if (records.length === 0)
+    return { valid: false, errors: ['Data array is empty.'] };
+
+  const schemas = [
+    { key: 'Match', columns: MATCH_COLUMNS },
+    { key: 'Pit',   columns: PIT_COLUMNS   },
+  ];
+
+  function checkRecord(columns, record) {
+    const expectedKeys = columns.map(c => c.key);
+    const expectedKeySet = new Set(expectedKeys);
+    const recordKeys = Object.keys(record);
+    const missing    = expectedKeys.filter(k => !(k in record));
+    const extra      = recordKeys.filter(k => !expectedKeySet.has(k));
+    const typeErrors = [];
+    for (const { key, type } of columns) {
+      if (!(key in record)) continue;
+      const v = record[key];
+      if (type === 'boolean' && typeof v !== 'boolean')
+        typeErrors.push(`"${key}" must be true or false`);
+      else if (type === 'number' && typeof v !== 'number')
+        typeErrors.push(`"${key}" must be a number`);
+      else if ((type === 'string' || type === 'text') && typeof v !== 'string')
+        typeErrors.push(`"${key}" must be a string`);
+    }
+    return { missing, extra, typeErrors, valid: missing.length === 0 && extra.length === 0 && typeErrors.length === 0 };
+  }
+
+  const byPhase = { Match: [], Pit: [] };
+  const errors  = [];
+
+  for (let i = 0; i < records.length; i++) {
+    const record = records[i];
+    if (typeof record !== 'object' || record === null || Array.isArray(record)) {
+      errors.push(`Row ${i + 1}: not an object.`);
+      continue;
+    }
+
+    const results = schemas.map(s => ({ key: s.key, ...checkRecord(s.columns, record) }));
+    const exact   = results.find(r => r.valid);
+    if (exact) {
+      byPhase[exact.key].push(record);
+      continue;
+    }
+
+    // Find closest schema by fewest key discrepancies
+    const closest = results.reduce((a, b) =>
+      (a.missing.length + a.extra.length) <= (b.missing.length + b.extra.length) ? a : b
+    );
+    const parts = [];
+    if (closest.missing.length)    parts.push(`missing ${closest.missing.map(k => `"${k}"`).join(', ')}`);
+    if (closest.extra.length)      parts.push(`unexpected ${closest.extra.map(k => `"${k}"`).join(', ')}`);
+    if (closest.typeErrors.length) parts.push(...closest.typeErrors);
+    errors.push(`Row ${i + 1} (closest to ${closest.key}): ${parts.join('; ')}.`);
+  }
+
+  if (errors.length > 0) return { valid: false, errors };
+  return { valid: true, byPhase };
+}
+
 export function convertRecordDataStringToJSON(recordDataString) {
   try {
     if (recordDataString) return JSON.parse(recordDataString);
@@ -103,8 +166,9 @@ export function mergeRecordData(phase, existing, imported) {
   return [...merged.values()].sort(phase.sort);
 }
 
-export function convertRecordDataTSVToJSON(phase, text) {
-  const columnByKey = new Map(phase.columns.map(col => [col.key, col]));
+export function convertRecordDataTSVToJSON(text) {
+  const allColumns = [...MATCH_COLUMNS, ...PIT_COLUMNS];
+  const columnByKey = new Map(allColumns.map(col => [col.key, col]));
   const [headerLine, ...dataLines] = text.trim().split(/\r?\n/);
   const keys = headerLine.split('\t');
   return dataLines.map(line => {
