@@ -1,41 +1,67 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import data1 from '../../data/scouting_app_sample_data_1.json';
-import data2 from '../../data/scouting_app_sample_data_2.json';
+import PhaseToggle from '../components/ui/PhaseToggle';
+import { PHASE_CONFIG } from '../lib/RecordData';
+import matchData1 from '../../data/match/data_1.json';
+import matchData2 from '../../data/match/data_2.json';
+import pitData1 from '../../data/pit/data_1.json';
+import pitData2 from '../../data/pit/data_2.json';
 
-const DATASETS = [
-  { label: 'Sample Data 1', data: data1 },
-  { label: 'Sample Data 2', data: data2 },
-];
+const DATASETS = {
+  Match: [
+    { label: 'Sample 1', data: matchData1 },
+    { label: 'Sample 2', data: matchData2 },
+  ],
+  Pit: [
+    { label: 'Sample 1', data: pitData1 },
+    { label: 'Sample 2', data: pitData2 },
+  ],
+};
 
 function Debug() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const phaseKey = searchParams.get('phase') ?? 'Match';
+  const phase = PHASE_CONFIG[phaseKey] ?? PHASE_CONFIG.Match;
+  const datasets = DATASETS[phaseKey] ?? DATASETS.Match;
+
   const [selected, setSelected] = useState(0);
   const [status, setStatus] = useState(null);
 
+  useEffect(() => {
+    if (!searchParams.get('phase')) {
+      setSearchParams({ phase: 'Match' }, { replace: true });
+    }
+    setSelected(0);
+    setStatus(null);
+  }, [phaseKey]);
+
   function loadDataset() {
     try {
-      localStorage.setItem('matches', JSON.stringify(DATASETS[selected].data));
-      setStatus({ type: 'success', message: `"${DATASETS[selected].label}" loaded.` });
+      const { label, data } = datasets[selected];
+      localStorage.setItem(phase.storageKey, JSON.stringify(data));
+      setStatus({ type: 'success', message: `"${label}" loaded.` });
     } catch {
       setStatus({ type: 'error', message: 'Failed to write to localStorage.' });
     }
   }
 
   function clearData() {
-    localStorage.removeItem('matches');
+    localStorage.removeItem(phase.storageKey);
     setStatus({ type: 'cleared', message: 'localStorage cleared.' });
   }
 
   return (
     <Layout header="Debug" tab={3}>
       <div className="flex flex-col gap-3 p-4">
+        <PhaseToggle />
         <p className="text-xs font-semibold uppercase tracking-wide text-[#868e96]">Load dataset</p>
         <select
           value={selected}
           onChange={(e) => setSelected(Number(e.target.value))}
           className="p-3 border border-[#212529] rounded-lg bg-white w-full"
         >
-          {DATASETS.map((dataset, i) => (
+          {datasets.map((dataset, i) => (
             <option key={dataset.label} value={i}>{dataset.label}</option>
           ))}
         </select>

@@ -1,0 +1,6 @@
+scouterName	teamNumber	weight	drivetrain	hasAutoAlign	autoDescription	hopperCapacity	shooterSpeed	intakeSpeed	supportedPaths	climbLevel	climbType	robotLength	robotHeight	robotWidth
+Alex	9036	110	Swerve	Yes	5-ball auto from trench, consistent hit rate	50	10	22	Both	L3	Front	25	25	29
+Jordan	2412	119	Tank	No	3-ball auto from initiation line	32	20	16	Trench	L2	Side	20	27	25
+Morgan	2910	115	Swerve	Yes	5-ball auto, can run trench or steal from opponent	53	14	24	Both	L3	Both	26	29	27
+Casey	254	112	Swerve	Yes	Complex multi-ball auto from trench, high cycle count	61	19	23	Both	L3	Both	24	26	28
+Sam	1678	116	Swerve	Yes	5-ball trench auto with high consistency	55	18	21	Both	L3	Front	25	28	26
