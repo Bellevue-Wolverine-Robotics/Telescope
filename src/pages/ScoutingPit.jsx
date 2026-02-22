@@ -7,6 +7,8 @@ import Switch from '../components/ui/Switch';
 import TextField from '../components/ui/TextField';
 import { PHASE_CONFIG, mergeAndStoreRecordData } from '../lib/RecordData';
 
+const col = key => PHASE_CONFIG.Pit.columns.find(c => c.key === key);
+
 const PAGES = ['Team Info', 'Robot', 'Performance', 'Dimensions'];
 
 function ScoutingPit() {
@@ -82,7 +84,17 @@ function ScoutingPit() {
           {page === 1 && (
             <>
               <NumericInput label="Weight (lbs)" value={data.weight}     onChange={set('weight')} />
-              <TextField    label="Drivetrain"   value={data.drivetrain} onChange={set('drivetrain')} placeholder="e.g. Swerve, Tank, Mecanum" />
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[var(--color-muted)]">Drivetrain</label>
+                <select
+                  value={data.drivetrain}
+                  onChange={e => set('drivetrain')(e.target.value)}
+                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                >
+                  <option value="">Select drivetrain...</option>
+                  {col('drivetrain').options.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
               <Switch label="Auto Align" value={data.hasAutoAlign} onChange={set('hasAutoAlign')} />
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-[var(--color-muted)]">Auto Notes</label>
@@ -102,9 +114,39 @@ function ScoutingPit() {
               <Counter   label="Hopper Capacity" value={data.hopperCapacity} onChange={set('hopperCapacity')} />
               <Counter   label="Shooter Speed"   value={data.shooterSpeed}   onChange={set('shooterSpeed')} />
               <Counter   label="Intake Speed"    value={data.intakeSpeed}    onChange={set('intakeSpeed')} />
-              <TextField label="Supported Paths" value={data.supportedPaths} onChange={set('supportedPaths')} placeholder="e.g. Left, Center, Right" />
-              <TextField label="Climb Level"     value={data.climbLevel}     onChange={set('climbLevel')}     placeholder="e.g. None, Low, Mid, High" />
-              <TextField label="Climb Type"      value={data.climbType}      onChange={set('climbType')}      placeholder="e.g. Hook, Elevator" />
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[var(--color-muted)]">Supported Paths</label>
+                <select
+                  value={data.supportedPaths}
+                  onChange={e => set('supportedPaths')(e.target.value)}
+                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                >
+                  <option value="">Select paths...</option>
+                  {col('supportedPaths').options.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[var(--color-muted)]">Climb Level</label>
+                <select
+                  value={data.climbLevel}
+                  onChange={e => set('climbLevel')(e.target.value)}
+                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                >
+                  <option value="">Select climb level...</option>
+                  {col('climbLevel').options.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[var(--color-muted)]">Climb Type</label>
+                <select
+                  value={data.climbType}
+                  onChange={e => set('climbType')(e.target.value)}
+                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                >
+                  <option value="">Select climb type...</option>
+                  {col('climbType').options.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
             </>
           )}
 
