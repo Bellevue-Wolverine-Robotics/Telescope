@@ -103,16 +103,16 @@ function ScoutingMatch() {
 
           {page === 1 && (
             <>
-              <Counter label="Fuel Missed Auto" value={data.fuelMissedAuto} onChange={set('fuelMissedAuto')} />
-              <Counter label="Auto Points"      value={data.autoPoints}     onChange={set('autoPoints')} />
+              <Counter label="Fuel Missed Auto" value={data.fuelMissedAuto} onChange={set('fuelMissedAuto')} min={col('fuelMissedAuto').min} max={col('fuelMissedAuto').max} />
+              <Counter label="Auto Points"      value={data.autoPoints}     onChange={set('autoPoints')}     min={col('autoPoints').min}     max={col('autoPoints').max} />
               <Switch  label="Auto Climb"       value={data.autoClimb}      onChange={set('autoClimb')} />
             </>
           )}
 
           {page === 2 && (
             <>
-              <Counter label="Cycles" value={data.cycles}      onChange={set('cycles')} />
-              <Counter label="Depot"  value={data.numberDepot} onChange={set('numberDepot')} />
+              <Counter label="Cycles" value={data.cycles}      onChange={set('cycles')}      min={col('cycles').min}      max={col('cycles').max} />
+              <Counter label="Depot"  value={data.numberDepot} onChange={set('numberDepot')} min={col('numberDepot').min} max={col('numberDepot').max} />
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-[var(--color-muted)]">Intake Type</label>
                 <select
@@ -145,8 +145,8 @@ function ScoutingMatch() {
               <Switch  label="Climb RP"         value={data.climbRP}        onChange={set('climbRP')} />
               <Switch  label="Yellow Card"      value={data.yellowCard}     onChange={set('yellowCard')} />
               <Switch  label="Broke Down"       value={data.brokeDown}      onChange={set('brokeDown')} />
-              <Counter label="Minor Fouls"      value={data.minorFouls}     onChange={set('minorFouls')} />
-              <Counter label="Major Fouls"      value={data.majorFouls}     onChange={set('majorFouls')} />
+              <Counter label="Minor Fouls"      value={data.minorFouls}     onChange={set('minorFouls')} min={col('minorFouls').min} max={col('minorFouls').max} />
+              <Counter label="Major Fouls"      value={data.majorFouls}     onChange={set('majorFouls')} min={col('majorFouls').min} max={col('majorFouls').max} />
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-[var(--color-muted)]">Playstyle</label>
                 <select

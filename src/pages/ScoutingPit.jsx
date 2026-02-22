@@ -111,9 +111,9 @@ function ScoutingPit() {
 
           {page === 2 && (
             <>
-              <Counter   label="Hopper Capacity" value={data.hopperCapacity} onChange={set('hopperCapacity')} />
-              <Counter   label="Shooter Speed"   value={data.shooterSpeed}   onChange={set('shooterSpeed')} />
-              <Counter   label="Intake Speed"    value={data.intakeSpeed}    onChange={set('intakeSpeed')} />
+              <Counter label="Hopper Capacity" value={data.hopperCapacity} onChange={set('hopperCapacity')} min={col('hopperCapacity').min} max={col('hopperCapacity').max} />
+              <Counter label="Shooter Speed"   value={data.shooterSpeed}   onChange={set('shooterSpeed')}   min={col('shooterSpeed').min}   max={col('shooterSpeed').max} />
+              <Counter label="Intake Speed"    value={data.intakeSpeed}    onChange={set('intakeSpeed')}    min={col('intakeSpeed').min}    max={col('intakeSpeed').max} />
               <div className="flex flex-col gap-1">
                 <label className="text-sm text-[var(--color-muted)]">Supported Paths</label>
                 <select
