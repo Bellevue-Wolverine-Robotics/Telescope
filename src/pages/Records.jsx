@@ -6,8 +6,8 @@ import Import from '../components/ui/Import';
 import PhaseToggle from '../components/ui/PhaseToggle';
 import {
   PHASE_CONFIG,
+  classifyAndValidateImport,
   convertRecordDataJSONToTSV,
-  convertRecordDataStringToJSON,
   convertRecordDataTSVToJSON,
   loadRecordDataAsJSON,
   mergeAndStoreRecordData,
@@ -31,6 +31,7 @@ function Records() {
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
   const [recordDataJSON, setRecordDataJSON] = useState(() => loadRecordDataAsJSON(phase));
+  const [message, setMessage] = useState(null);
   const tsvFileInputRef = useRef(null);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ function Records() {
       setSearchParams({ phase: 'Match' }, { replace: true });
     }
     setRecordDataJSON(loadRecordDataAsJSON(phase));
+    setMessage(null);
   }, [phaseKey]);
 
   const hasData = recordDataJSON.length > 0;
@@ -53,13 +55,39 @@ function Records() {
     URL.revokeObjectURL(url);
   }
 
+  function handleImport(parsed) {
+    const result = classifyAndValidateImport(parsed);
+    if (!result.valid) {
+      setMessage({ type: 'error', lines: result.errors });
+      return;
+    }
+
+    const summaryParts = [];
+    for (const [phaseKey, records] of Object.entries(result.byPhase)) {
+      if (records.length === 0) continue;
+      const phaseConfig = PHASE_CONFIG[phaseKey];
+      const existing    = loadRecordDataAsJSON(phaseConfig);
+      const existingKeys = new Set(existing.map(r => phaseConfig.getUniqueKey(r)));
+      const added  = records.filter(r => !existingKeys.has(phaseConfig.getUniqueKey(r))).length;
+      const merged = records.length - added;
+      mergeAndStoreRecordData(phaseConfig, records);
+      const sub = [];
+      if (added  > 0) sub.push(`${added} new`);
+      if (merged > 0) sub.push(`${merged} merged`);
+      summaryParts.push(`${records.length} ${phaseKey.toLowerCase()} record${records.length !== 1 ? 's' : ''} (${sub.join(', ')})`);
+    }
+
+    setRecordDataJSON(loadRecordDataAsJSON(phase));
+    const text = summaryParts.length ? summaryParts.join(' and ') + ' imported.' : 'No records to import.';
+    setMessage({ type: 'success', lines: [text] });
+  }
+
   function handleTSVImport(e) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
-      const imported = convertRecordDataTSVToJSON(phase, event.target.result);
-      setRecordDataJSON(mergeAndStoreRecordData(phase, imported));
+      handleImport(convertRecordDataTSVToJSON(event.target.result));
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -70,30 +98,42 @@ function Records() {
       {!(showQRImport || showQRExport) && (
         <div className="flex flex-col h-full">
           <PhaseToggle />
+          {message && (
+            <div className={`mx-2 mt-2 p-3 rounded-lg text-sm flex items-start justify-between gap-2 border ${
+              message.type === 'error'
+                ? 'bg-red-500/10 border-red-500/30 text-red-600'
+                : 'bg-green-500/10 border-green-500/30 text-green-700'
+            }`}>
+              <div className="flex flex-col gap-0.5">
+                {message.lines.map((line, i) => <span key={i}>{line}</span>)}
+              </div>
+              <button onClick={() => setMessage(null)} className="shrink-0 opacity-60 hover:opacity-100">✕</button>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-2 p-2">
             <button
               onClick={exportTSV}
               disabled={!hasData}
-              className="p-3 border rounded-lg flex justify-center text-white bg-[#212529] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-3 border rounded-lg flex justify-center text-[var(--color-on-primary)] bg-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Export TSV
             </button>
             <button
               onClick={() => setShowQRExport(true)}
               disabled={!hasData}
-              className="p-3 border rounded-lg flex justify-center text-white bg-[#212529] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-3 border rounded-lg flex justify-center text-[var(--color-on-primary)] bg-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Export QR
             </button>
             <button
               onClick={() => tsvFileInputRef.current.click()}
-              className="p-3 border border-[#212529] rounded-lg flex justify-center"
+              className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
             >
               Import TSV
             </button>
             <button
               onClick={() => setShowQRImport(true)}
-              className="p-3 border border-[#212529] rounded-lg flex justify-center"
+              className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
             >
               Import QR
             </button>
@@ -114,7 +154,7 @@ function Records() {
                     {phase.columns.map(col => (
                       <th
                         key={col.key}
-                        className="sticky top-0 px-3 py-2 text-left font-semibold whitespace-nowrap bg-[#212529] text-white border-b border-[#495057]"
+                        className="sticky top-0 px-3 py-2 text-left font-semibold whitespace-nowrap bg-[var(--color-primary)] text-[var(--color-on-primary)] border-b border-[var(--color-primary-sub)]"
                       >
                         {col.label}
                       </th>
@@ -123,11 +163,11 @@ function Records() {
                 </thead>
                 <tbody>
                   {recordDataJSON.map((record, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-[#f8f9fa]'}>
+                    <tr key={i} className={i % 2 === 0 ? 'bg-[var(--color-surface)]' : 'bg-[var(--color-surface-alt)]'}>
                       {phase.columns.map(col => (
                         <td
                           key={col.key}
-                          className="px-3 py-2 whitespace-nowrap border-b border-[#E9ECEF]"
+                          className="px-3 py-2 whitespace-nowrap border-b border-[var(--color-border)]"
                         >
                           <Cell column={col} value={record[col.key]} />
                         </td>
@@ -148,9 +188,13 @@ function Records() {
         <Import
           close={() => setShowQRImport(false)}
           onImport={(recordDataString) => {
-            const imported = convertRecordDataStringToJSON(recordDataString);
-            setRecordDataJSON(mergeAndStoreRecordData(phase, imported));
             setShowQRImport(false);
+            let parsed;
+            try { parsed = JSON.parse(recordDataString); } catch {
+              setMessage({ type: 'error', text: 'Invalid JSON format.' });
+              return;
+            }
+            handleImport(parsed);
           }}
         />
       )}

@@ -2,25 +2,25 @@ const MATCH_COLUMNS = [
   { key: 'scouterName',   label: 'Scouter',      type: 'string'  },
   { key: 'matchNumber',   label: 'Match',         type: 'number'  },
   { key: 'teamNumber',    label: 'Team',          type: 'number'  },
-  { key: 'robotPosition', label: 'Position',      type: 'string'  },
-  { key: 'fuelMissedAuto',label: 'Missed Auto',   type: 'number'  },
-  { key: 'autoPoints',    label: 'Auto Pts',      type: 'number'  },
+  { key: 'robotPosition', label: 'Position',      type: 'string',  options: ['Red Bottom', 'Red Center', 'Red Top', 'Blue Bottom', 'Blue Center', 'Blue Top'] },
+  { key: 'fuelMissedAuto',label: 'Missed Auto',   type: 'number',  min: 0, max: 100 },
+  { key: 'autoPoints',    label: 'Auto Pts',      type: 'number',  min: 0, max: 100 },
   { key: 'autoClimb',     label: 'Auto Climb',    type: 'boolean' },
-  { key: 'cycles',        label: 'Cycles',        type: 'number'  },
-  { key: 'numberDepot',   label: 'Depot',         type: 'number'  },
-  { key: 'intakeType',    label: 'Intake',        type: 'string'  },
-  { key: 'endgameClimb',  label: 'Climb',         type: 'string'  },
+  { key: 'cycles',        label: 'Cycles',        type: 'number',  min: 0, max: 100 },
+  { key: 'numberDepot',   label: 'Depot',         type: 'number',  min: 0, max: 100 },
+  { key: 'intakeType',    label: 'Intake',        type: 'string',  options: ['Over Bumper', 'Depot', 'Through Bumper'] },
+  { key: 'endgameClimb',  label: 'Climb',         type: 'string',  options: ['No Climb', 'L1', 'L2', 'L3'] },
   { key: 'superChargedRP',label: 'Super RP',      type: 'boolean' },
   { key: 'chargedRP',     label: 'Charged RP',    type: 'boolean' },
   { key: 'climbRP',       label: 'Climb RP',      type: 'boolean' },
   { key: 'yellowCard',    label: 'Yellow Card',   type: 'boolean' },
   { key: 'brokeDown',     label: 'Broke Down',    type: 'boolean' },
-  { key: 'minorFouls',    label: 'Minor Fouls',   type: 'number'  },
-  { key: 'majorFouls',    label: 'Major Fouls',   type: 'number'  },
-  { key: 'playstyle',     label: 'Playstyle',     type: 'string'  },
+  { key: 'minorFouls',    label: 'Minor Fouls',   type: 'number',  min: 0, max: 100 },
+  { key: 'majorFouls',    label: 'Major Fouls',   type: 'number',  min: 0, max: 100 },
+  { key: 'playstyle',     label: 'Playstyle',     type: 'string',  options: ['Offense', 'Defense', 'Both'] },
   { key: 'redScore',      label: 'Red',           type: 'number'  },
   { key: 'blueScore',     label: 'Blue',          type: 'number'  },
-  { key: 'result',        label: 'Result',        type: 'string'  },
+  { key: 'result',        label: 'Result',        type: 'string',  options: ['Win', 'Loss'] },
   { key: 'observations',  label: 'Notes',         type: 'text'    },
 ];
 
@@ -28,15 +28,15 @@ const PIT_COLUMNS = [
   { key: 'scouterName',   label: 'Scouter',       type: 'string'  },
   { key: 'teamNumber',    label: 'Team',           type: 'number'  },
   { key: 'weight',        label: 'Weight (lbs)',   type: 'number'  },
-  { key: 'drivetrain',    label: 'Drivetrain',     type: 'string'  },
+  { key: 'drivetrain',    label: 'Drivetrain',     type: 'string',  options: ['Swerve', 'Tank', 'Mecanum'] },
   { key: 'hasAutoAlign',  label: 'Auto Align',     type: 'boolean' },
   { key: 'autoDescription',label: 'Auto Notes',   type: 'text'    },
-  { key: 'hopperCapacity',label: 'Hopper',         type: 'number'  },
-  { key: 'shooterSpeed',  label: 'Shooter',        type: 'number'  },
-  { key: 'intakeSpeed',   label: 'Intake',         type: 'number'  },
-  { key: 'supportedPaths',label: 'Paths',          type: 'string'  },
-  { key: 'climbLevel',    label: 'Climb Lvl',      type: 'string'  },
-  { key: 'climbType',     label: 'Climb Type',     type: 'string'  },
+  { key: 'hopperCapacity',label: 'Hopper',         type: 'number',  min: 0, max: 100 },
+  { key: 'shooterSpeed',  label: 'Shooter',        type: 'number',  min: 0, max: 100 },
+  { key: 'intakeSpeed',   label: 'Intake',         type: 'number',  min: 0, max: 100 },
+  { key: 'supportedPaths',label: 'Paths',          type: 'string',  options: ['Bump', 'Trench', 'Both'] },
+  { key: 'climbLevel',    label: 'Climb Lvl',      type: 'string',  options: ['None', 'L1', 'L2', 'L3'] },
+  { key: 'climbType',     label: 'Climb Type',     type: 'string',  options: ['Side', 'Front', 'Both', 'Neither'] },
   { key: 'robotLength',   label: 'Length',         type: 'number'  },
   { key: 'robotHeight',   label: 'Height',         type: 'number'  },
   { key: 'robotWidth',    label: 'Width',          type: 'number'  },
@@ -57,6 +57,69 @@ export const PHASE_CONFIG = {
     sort:         (a, b) => a.teamNumber - b.teamNumber,
   },
 };
+
+export function classifyAndValidateImport(records) {
+  if (!Array.isArray(records))
+    return { valid: false, errors: ['Data must be a JSON array.'] };
+  if (records.length === 0)
+    return { valid: false, errors: ['Data array is empty.'] };
+
+  const schemas = [
+    { key: 'Match', columns: MATCH_COLUMNS },
+    { key: 'Pit',   columns: PIT_COLUMNS   },
+  ];
+
+  function checkRecord(columns, record) {
+    const expectedKeys = columns.map(c => c.key);
+    const expectedKeySet = new Set(expectedKeys);
+    const recordKeys = Object.keys(record);
+    const missing    = expectedKeys.filter(k => !(k in record));
+    const extra      = recordKeys.filter(k => !expectedKeySet.has(k));
+    const typeErrors = [];
+    for (const { key, type } of columns) {
+      if (!(key in record)) continue;
+      const v = record[key];
+      if (type === 'boolean' && typeof v !== 'boolean')
+        typeErrors.push(`"${key}" must be true or false`);
+      else if (type === 'number' && typeof v !== 'number')
+        typeErrors.push(`"${key}" must be a number`);
+      else if ((type === 'string' || type === 'text') && typeof v !== 'string')
+        typeErrors.push(`"${key}" must be a string`);
+    }
+    return { missing, extra, typeErrors, valid: missing.length === 0 && extra.length === 0 && typeErrors.length === 0 };
+  }
+
+  const byPhase = { Match: [], Pit: [] };
+  const errors  = [];
+
+  for (let i = 0; i < records.length; i++) {
+    const record = records[i];
+    if (typeof record !== 'object' || record === null || Array.isArray(record)) {
+      errors.push(`Row ${i + 1}: not an object.`);
+      continue;
+    }
+
+    const results = schemas.map(s => ({ key: s.key, ...checkRecord(s.columns, record) }));
+    const exact   = results.find(r => r.valid);
+    if (exact) {
+      byPhase[exact.key].push(record);
+      continue;
+    }
+
+    // Find closest schema by fewest key discrepancies
+    const closest = results.reduce((a, b) =>
+      (a.missing.length + a.extra.length) <= (b.missing.length + b.extra.length) ? a : b
+    );
+    const parts = [];
+    if (closest.missing.length)    parts.push(`missing ${closest.missing.map(k => `"${k}"`).join(', ')}`);
+    if (closest.extra.length)      parts.push(`unexpected ${closest.extra.map(k => `"${k}"`).join(', ')}`);
+    if (closest.typeErrors.length) parts.push(...closest.typeErrors);
+    errors.push(`Row ${i + 1} (closest to ${closest.key}): ${parts.join('; ')}.`);
+  }
+
+  if (errors.length > 0) return { valid: false, errors };
+  return { valid: true, byPhase };
+}
 
 export function convertRecordDataStringToJSON(recordDataString) {
   try {
@@ -103,8 +166,9 @@ export function mergeRecordData(phase, existing, imported) {
   return [...merged.values()].sort(phase.sort);
 }
 
-export function convertRecordDataTSVToJSON(phase, text) {
-  const columnByKey = new Map(phase.columns.map(col => [col.key, col]));
+export function convertRecordDataTSVToJSON(text) {
+  const allColumns = [...MATCH_COLUMNS, ...PIT_COLUMNS];
+  const columnByKey = new Map(allColumns.map(col => [col.key, col]));
   const [headerLine, ...dataLines] = text.trim().split(/\r?\n/);
   const keys = headerLine.split('\t');
   return dataLines.map(line => {

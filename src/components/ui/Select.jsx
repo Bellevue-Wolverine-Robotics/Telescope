@@ -1,7 +1,7 @@
 function Select(props) {
   return(
     <select
-    className="border border-[#ADB5BD] rounded-md p-3 my-1 [-webkit-appearance:none]"
+    className="border border-[var(--color-border-mid)] rounded-md p-3 my-1 [-webkit-appearance:none] bg-[var(--color-surface)] text-[var(--color-primary)]"
     value={props.value}
     onChange={(event) => props.onChange(event.target.value)}
     >

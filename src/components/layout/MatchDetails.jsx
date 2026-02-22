@@ -1,22 +1,26 @@
-import { useState } from 'react';
 import NumericInput from '../ui/NumericInput';
-import Select from '../ui/Select';
+import { PHASE_CONFIG } from '../../lib/RecordData';
 
-function MatchDetails(props) {
-  const [match, setMatch] = useState('');
-  const [team, setTeam] = useState('');
+const positionOptions = PHASE_CONFIG.Match.columns.find(c => c.key === 'robotPosition').options;
 
-  const onSubmit = () => {
-    if (match && team) {
-      props.onSubmit({match: match, team: team});
-    }
-  };
-
+function MatchDetails({ data, onChange }) {
   return (
     <>
-      <NumericInput inputMode="numeric" label="Match Number" value={match} onChange={setMatch} />
-      <NumericInput inputMode="numeric" label="Team Number" value={team} onChange={setTeam} />
-      <button onClick={onSubmit} className={`p-3 w-30 ${match && team ? 'bg-[#212529]' : 'bg-[#ADB5BD]'} text-white border rounded-lg flex w-full justify-center`}>Start</button>
+      <NumericInput label="Match Number" value={data.matchNumber} onChange={onChange('matchNumber')} />
+      <NumericInput label="Team Number"  value={data.teamNumber}  onChange={onChange('teamNumber')} />
+      <div className="flex flex-col gap-1">
+        <label className="text-sm text-[var(--color-muted)]">Robot Position</label>
+        <select
+          value={data.robotPosition}
+          onChange={e => onChange('robotPosition')(e.target.value)}
+          className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+        >
+          <option value="">Select position...</option>
+          {positionOptions.map(pos => (
+            <option key={pos} value={pos}>{pos}</option>
+          ))}
+        </select>
+      </div>
     </>
   );
 }

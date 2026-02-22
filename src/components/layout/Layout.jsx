@@ -4,13 +4,13 @@ function Layout(props) {
   const { search } = useLocation();
   return (
     <div className="flex flex-col h-full">
-      <header className="h-12 border-b border-[#E9ECEF] flex justify-center items-center text-lg font-semibold">
+      <header className="h-12 border-b border-[var(--color-border)] flex justify-center items-center text-lg font-semibold">
         {props.header}
       </header>
-      <div className="flex-1">
+      <div className="flex-1 min-h-0 overflow-hidden">
         {props.children}
       </div>
-      <div className="bg-[#f8f9fa] h-20 flex">
+      <div className="bg-[var(--color-surface-alt)] h-20 flex">
         <Link to={`/records${search}`} className="w-full h-full flex flex-col justify-center items-center text-xs">
           {props.tab === 0 ? (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
