@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Counter from '../components/ui/Counter';
@@ -9,28 +9,40 @@ import { PHASE_CONFIG, mergeAndStoreRecordData } from '../lib/RecordData';
 
 const col = key => PHASE_CONFIG.Pit.columns.find(c => c.key === key);
 
+const DRAFT_KEY = 'draftPit';
+
+const DEFAULT_DATA = {
+  scouterName:     localStorage.getItem('scouterName') ?? '',
+  teamNumber:      '',
+  weight:          '',
+  drivetrain:      '',
+  hasAutoAlign:    false,
+  autoDescription: '',
+  hopperCapacity:  0,
+  shooterSpeed:    0,
+  intakeSpeed:     0,
+  supportedPaths:  '',
+  climbLevel:      '',
+  climbType:       '',
+  robotLength:     '',
+  robotHeight:     '',
+  robotWidth:      '',
+};
+
 const PAGES = ['Team Info', 'Robot', 'Performance', 'Dimensions'];
+
+function loadDraft() {
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) ?? {}; } catch { return {}; }
+}
 
 function ScoutingPit() {
   const navigate = useNavigate();
-  const [page, setPage] = useState(0);
-  const [data, setData] = useState({
-    scouterName:     localStorage.getItem('scouterName') ?? '',
-    teamNumber:      '',
-    weight:          '',
-    drivetrain:      '',
-    hasAutoAlign:    false,
-    autoDescription: '',
-    hopperCapacity:  0,
-    shooterSpeed:    0,
-    intakeSpeed:     0,
-    supportedPaths:  '',
-    climbLevel:      '',
-    climbType:       '',
-    robotLength:     '',
-    robotHeight:     '',
-    robotWidth:      '',
-  });
+  const [page, setPage] = useState(() => loadDraft().page ?? 0);
+  const [data, setData] = useState(() => ({ ...DEFAULT_DATA, ...(loadDraft().data ?? {}) }));
+
+  useEffect(() => {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, page }));
+  }, [data, page]);
 
   const set = key => value => setData(prev => ({ ...prev, [key]: value }));
 
@@ -51,6 +63,7 @@ function ScoutingPit() {
       robotWidth:  Number(data.robotWidth),
     };
     mergeAndStoreRecordData(PHASE_CONFIG.Pit, [record]);
+    localStorage.removeItem(DRAFT_KEY);
     navigate('/scouting');
   }
 

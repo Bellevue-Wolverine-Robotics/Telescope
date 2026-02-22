@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Counter from '../components/ui/Counter';
@@ -10,36 +10,48 @@ import { PHASE_CONFIG, mergeAndStoreRecordData } from '../lib/RecordData';
 
 const col = key => PHASE_CONFIG.Match.columns.find(c => c.key === key);
 
+const DRAFT_KEY = 'draftMatch';
+
+const DEFAULT_DATA = {
+  scouterName:    localStorage.getItem('scouterName') ?? '',
+  matchNumber:    '',
+  teamNumber:     '',
+  robotPosition:  '',
+  fuelMissedAuto: 0,
+  autoPoints:     0,
+  autoClimb:      false,
+  cycles:         0,
+  numberDepot:    0,
+  intakeType:     '',
+  endgameClimb:   '',
+  superChargedRP: false,
+  chargedRP:      false,
+  climbRP:        false,
+  yellowCard:     false,
+  brokeDown:      false,
+  minorFouls:     0,
+  majorFouls:     0,
+  playstyle:      '',
+  redScore:       '',
+  blueScore:      '',
+  result:         '',
+  observations:   '',
+};
+
 const PAGES = ['Match Info', 'Autonomous', 'Teleop', 'Outcome'];
+
+function loadDraft() {
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) ?? {}; } catch { return {}; }
+}
 
 function ScoutingMatch() {
   const navigate = useNavigate();
-  const [page, setPage] = useState(0);
-  const [data, setData] = useState({
-    scouterName:    localStorage.getItem('scouterName') ?? '',
-    matchNumber:    '',
-    teamNumber:     '',
-    robotPosition:  '',
-    fuelMissedAuto: 0,
-    autoPoints:     0,
-    autoClimb:      false,
-    cycles:         0,
-    numberDepot:    0,
-    intakeType:     '',
-    endgameClimb:   '',
-    superChargedRP: false,
-    chargedRP:      false,
-    climbRP:        false,
-    yellowCard:     false,
-    brokeDown:      false,
-    minorFouls:     0,
-    majorFouls:     0,
-    playstyle:      '',
-    redScore:       '',
-    blueScore:      '',
-    result:         '',
-    observations:   '',
-  });
+  const [page, setPage] = useState(() => loadDraft().page ?? 0);
+  const [data, setData] = useState(() => ({ ...DEFAULT_DATA, ...(loadDraft().data ?? {}) }));
+
+  useEffect(() => {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, page }));
+  }, [data, page]);
 
   const set = key => value => setData(prev => ({ ...prev, [key]: value }));
 
@@ -73,6 +85,7 @@ function ScoutingMatch() {
       blueScore:   blue,
     };
     mergeAndStoreRecordData(PHASE_CONFIG.Match, [record]);
+    localStorage.removeItem(DRAFT_KEY);
     navigate('/scouting');
   }
 
