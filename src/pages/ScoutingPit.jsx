@@ -29,7 +29,7 @@ const DEFAULT_DATA = {
   robotWidth:      '',
 };
 
-const PAGES = ['Team Info', 'Robot', 'Performance', 'Dimensions'];
+const PAGES = ['Robot', 'Performance', 'Dimensions'];
 
 function loadDraft() {
   try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) ?? {}; } catch { return {}; }
@@ -47,8 +47,7 @@ function ScoutingPit() {
   const set = key => value => setData(prev => ({ ...prev, [key]: value }));
 
   const pageValid = [
-    !!data.teamNumber,
-    !!(data.weight && data.drivetrain),
+    !!(data.teamNumber && data.weight && data.drivetrain),
     !!(data.supportedPaths && data.climbLevel && data.climbType),
     !!(data.robotLength && data.robotHeight && data.robotWidth),
   ];
@@ -91,11 +90,8 @@ function ScoutingPit() {
         <div className="flex-1 min-h-0 overflow-y-auto px-4 flex flex-col gap-4 pb-2">
 
           {page === 0 && (
-            <NumericInput label="Team Number" value={data.teamNumber} onChange={set('teamNumber')} />
-          )}
-
-          {page === 1 && (
             <>
+              <NumericInput label="Team Number"  value={data.teamNumber} onChange={set('teamNumber')} />
               <NumericInput label="Weight (lbs)" value={data.weight}     onChange={set('weight')} />
               <div className="flex flex-col gap-1">
                 <label className="field-label">Drivetrain</label>
@@ -122,7 +118,7 @@ function ScoutingPit() {
             </>
           )}
 
-          {page === 2 && (
+          {page === 1 && (
             <>
               <Counter label="Hopper Capacity" value={data.hopperCapacity} onChange={set('hopperCapacity')} min={col('hopperCapacity').min} max={col('hopperCapacity').max} />
               <Counter label="Shooter Speed"   value={data.shooterSpeed}   onChange={set('shooterSpeed')}   min={col('shooterSpeed').min}   max={col('shooterSpeed').max} />
@@ -163,7 +159,7 @@ function ScoutingPit() {
             </>
           )}
 
-          {page === 3 && (
+          {page === 2 && (
             <>
               <NumericInput label="Length (in)" value={data.robotLength} onChange={set('robotLength')} />
               <NumericInput label="Height (in)" value={data.robotHeight} onChange={set('robotHeight')} />
