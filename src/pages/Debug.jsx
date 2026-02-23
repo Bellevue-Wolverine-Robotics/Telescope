@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import PhaseToggle from '../components/ui/PhaseToggle';
-import { PHASE_CONFIG } from '../lib/RecordData';
+import { PHASE_CONFIG, storeRecordData } from '../lib/RecordData';
 import matchData1 from '../../data/match/data_1.json';
 import matchData2 from '../../data/match/data_2.json';
 import pitData1 from '../../data/pit/data_1.json';
@@ -36,53 +36,47 @@ function Debug() {
     setStatus(null);
   }, [phaseKey]);
 
-  function loadDataset() {
+  async function loadDataset() {
     try {
       const { label, data } = datasets[selected];
-      localStorage.setItem(phase.storageKey, JSON.stringify(data));
+      await storeRecordData(phase, data);
       setStatus({ type: 'success', message: `"${label}" loaded.` });
     } catch {
-      setStatus({ type: 'error', message: 'Failed to write to localStorage.' });
+      setStatus({ type: 'error', message: 'Failed to write to IndexedDB.' });
     }
   }
 
-  function clearData() {
-    localStorage.removeItem(phase.storageKey);
-    setStatus({ type: 'cleared', message: 'localStorage cleared.' });
+  async function clearData() {
+    await storeRecordData(phase, []);
+    setStatus({ type: 'cleared', message: 'Data cleared.' });
   }
 
   return (
     <Layout header="Debug" tab={3}>
       <div className="flex flex-col gap-3 p-4">
         <PhaseToggle />
-        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted-alt)]">Load dataset</p>
+        <p className="section-label">Load dataset</p>
         <select
           value={selected}
           onChange={(e) => setSelected(Number(e.target.value))}
-          className="p-3 border border-[var(--color-primary)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] w-full"
+          className="field-input"
         >
           {datasets.map((dataset, i) => (
             <option key={dataset.label} value={i}>{dataset.label}</option>
           ))}
         </select>
-        <button
-          onClick={loadDataset}
-          className="p-3 bg-[var(--color-primary)] text-[var(--color-on-primary)] border rounded-lg flex justify-center"
-        >
+        <button onClick={loadDataset} className="btn-primary">
           Load
         </button>
-        <div className="border-t border-[var(--color-border)] my-1" />
-        <button
-          onClick={clearData}
-          className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
-        >
-          Clear localStorage
+        <div className="divider my-1" />
+        <button onClick={clearData} className="btn-outline">
+          Clear Data
         </button>
         {status && (
           <p className={`text-center text-sm ${
             status.type === 'success' ? 'text-green-600' :
             status.type === 'error'   ? 'text-red-600'   :
-                                        'text-gray-500'
+                                        'text-[var(--color-muted)]'
           }`}>
             {status.message}
           </p>
