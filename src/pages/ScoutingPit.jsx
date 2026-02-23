@@ -91,8 +91,8 @@ function ScoutingPit() {
 
           {page === 0 && (
             <>
-              <NumericInput label="Team Number"  value={data.teamNumber} onChange={set('teamNumber')} />
-              <NumericInput label="Weight (lbs)" value={data.weight}     onChange={set('weight')} />
+              <NumericInput label="Team Number"  value={data.teamNumber} onChange={set('teamNumber')} max={col('teamNumber').max} />
+              <NumericInput label="Weight (lbs)" value={data.weight}     onChange={set('weight')}     max={col('weight').max} />
               <div className="flex flex-col gap-1">
                 <label className="field-label">Drivetrain</label>
                 <select
@@ -161,9 +161,9 @@ function ScoutingPit() {
 
           {page === 2 && (
             <>
-              <NumericInput label="Length (in)" value={data.robotLength} onChange={set('robotLength')} />
-              <NumericInput label="Height (in)" value={data.robotHeight} onChange={set('robotHeight')} />
-              <NumericInput label="Width (in)"  value={data.robotWidth}  onChange={set('robotWidth')} />
+              <NumericInput label="Length (in)" value={data.robotLength} onChange={set('robotLength')} max={col('robotLength').max} />
+              <NumericInput label="Height (in)" value={data.robotHeight} onChange={set('robotHeight')} max={col('robotHeight').max} />
+              <NumericInput label="Width (in)"  value={data.robotWidth}  onChange={set('robotWidth')}  max={col('robotWidth').max} />
             </>
           )}
 

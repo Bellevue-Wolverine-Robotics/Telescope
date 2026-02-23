@@ -171,8 +171,8 @@ function ScoutingMatch() {
                   {col('playstyle').options.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
               </div>
-              <NumericInput label="Red Score"  value={data.redScore}  onChange={set('redScore')} />
-              <NumericInput label="Blue Score" value={data.blueScore} onChange={set('blueScore')} />
+              <NumericInput label="Red Score"  value={data.redScore}  onChange={set('redScore')}  max={col('redScore').max} />
+              <NumericInput label="Blue Score" value={data.blueScore} onChange={set('blueScore')} max={col('blueScore').max} />
               <div className="flex flex-col gap-1">
                 <label className="field-label">
                   Result{scoresTied ? ' (scores tied — select manually)' : ''}
