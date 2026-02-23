@@ -12,7 +12,7 @@ const col = key => PHASE_CONFIG.Pit.columns.find(c => c.key === key);
 const DRAFT_KEY = 'draftPit';
 
 const DEFAULT_DATA = {
-  scouterName:     localStorage.getItem('scouterName') ?? '',
+  scouterName:     '',
   teamNumber:      '',
   weight:          '',
   drivetrain:      '',
@@ -38,7 +38,7 @@ function loadDraft() {
 function ScoutingPit() {
   const navigate = useNavigate();
   const [page, setPage] = useState(() => loadDraft().page ?? 0);
-  const [data, setData] = useState(() => ({ ...DEFAULT_DATA, ...(loadDraft().data ?? {}) }));
+  const [data, setData] = useState(() => ({ ...DEFAULT_DATA, ...(loadDraft().data ?? {}), scouterName: localStorage.getItem('scouterName') ?? '' }));
 
   useEffect(() => {
     localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, page }));
@@ -98,11 +98,11 @@ function ScoutingPit() {
             <>
               <NumericInput label="Weight (lbs)" value={data.weight}     onChange={set('weight')} />
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Drivetrain</label>
+                <label className="field-label">Drivetrain</label>
                 <select
                   value={data.drivetrain}
                   onChange={e => set('drivetrain')(e.target.value)}
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                  className="field-input"
                 >
                   <option value="">Select drivetrain...</option>
                   {col('drivetrain').options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -110,13 +110,13 @@ function ScoutingPit() {
               </div>
               <Switch label="Auto Align" value={data.hasAutoAlign} onChange={set('hasAutoAlign')} />
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Auto Notes</label>
+                <label className="field-label">Auto Notes</label>
                 <textarea
                   value={data.autoDescription}
                   onChange={e => set('autoDescription')(e.target.value)}
                   rows={3}
                   placeholder="Describe autonomous capabilities..."
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] resize-none"
+                  className="field-input resize-none"
                 />
               </div>
             </>
@@ -128,33 +128,33 @@ function ScoutingPit() {
               <Counter label="Shooter Speed"   value={data.shooterSpeed}   onChange={set('shooterSpeed')}   min={col('shooterSpeed').min}   max={col('shooterSpeed').max} />
               <Counter label="Intake Speed"    value={data.intakeSpeed}    onChange={set('intakeSpeed')}    min={col('intakeSpeed').min}    max={col('intakeSpeed').max} />
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Supported Paths</label>
+                <label className="field-label">Supported Paths</label>
                 <select
                   value={data.supportedPaths}
                   onChange={e => set('supportedPaths')(e.target.value)}
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                  className="field-input"
                 >
                   <option value="">Select paths...</option>
                   {col('supportedPaths').options.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Climb Level</label>
+                <label className="field-label">Climb Level</label>
                 <select
                   value={data.climbLevel}
                   onChange={e => set('climbLevel')(e.target.value)}
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                  className="field-input"
                 >
                   <option value="">Select climb level...</option>
                   {col('climbLevel').options.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Climb Type</label>
+                <label className="field-label">Climb Type</label>
                 <select
                   value={data.climbType}
                   onChange={e => set('climbType')(e.target.value)}
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                  className="field-input"
                 >
                   <option value="">Select climb type...</option>
                   {col('climbType').options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -178,7 +178,7 @@ function ScoutingPit() {
           {page > 0 && (
             <button
               onClick={() => setPage(p => p - 1)}
-              className="flex-1 p-3 border border-[var(--color-primary)] rounded-lg text-[var(--color-primary)] bg-[var(--color-surface)]"
+              className="flex-1 btn-outline"
             >
               Back
             </button>
@@ -186,11 +186,7 @@ function ScoutingPit() {
           <button
             onClick={isLast ? handleSubmit : () => setPage(p => p + 1)}
             disabled={!isValid}
-            className={`flex-1 p-3 border rounded-lg text-[var(--color-on-primary)] ${
-              isValid
-                ? 'bg-[var(--color-primary)] border-[var(--color-primary)]'
-                : 'bg-[var(--color-border-mid)] border-[var(--color-border-mid)]'
-            }`}
+            className="flex-1 btn-primary"
           >
             {page === 0 ? 'Start' : isLast ? 'Submit' : 'Next'}
           </button>

@@ -99,11 +99,7 @@ function Records() {
         <div className="flex flex-col h-full">
           <PhaseToggle />
           {message && (
-            <div className={`mx-2 mt-2 p-3 rounded-lg text-sm flex items-start justify-between gap-2 border ${
-              message.type === 'error'
-                ? 'bg-red-500/10 border-red-500/30 text-red-600'
-                : 'bg-green-500/10 border-green-500/30 text-green-700'
-            }`}>
+            <div className={`message ${message.type}`}>
               <div className="flex flex-col gap-0.5">
                 {message.lines.map((line, i) => <span key={i}>{line}</span>)}
               </div>
@@ -111,32 +107,10 @@ function Records() {
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 p-2">
-            <button
-              onClick={exportTSV}
-              disabled={!hasData}
-              className="p-3 border rounded-lg flex justify-center text-[var(--color-on-primary)] bg-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Export TSV
-            </button>
-            <button
-              onClick={() => setShowQRExport(true)}
-              disabled={!hasData}
-              className="p-3 border rounded-lg flex justify-center text-[var(--color-on-primary)] bg-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Export QR
-            </button>
-            <button
-              onClick={() => tsvFileInputRef.current.click()}
-              className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
-            >
-              Import TSV
-            </button>
-            <button
-              onClick={() => setShowQRImport(true)}
-              className="p-3 border border-[var(--color-primary)] rounded-lg flex justify-center"
-            >
-              Import QR
-            </button>
+            <button onClick={exportTSV}              disabled={!hasData} className="btn-primary">Export TSV</button>
+            <button onClick={() => setShowQRExport(true)} disabled={!hasData} className="btn-primary">Export QR</button>
+            <button onClick={() => tsvFileInputRef.current.click()}  className="btn-outline">Import TSV</button>
+            <button onClick={() => setShowQRImport(true)}            className="btn-outline">Import QR</button>
           </div>
           <input
             ref={tsvFileInputRef}
@@ -152,23 +126,15 @@ function Records() {
                 <thead>
                   <tr>
                     {phase.columns.map(col => (
-                      <th
-                        key={col.key}
-                        className="sticky top-0 px-3 py-2 text-left font-semibold whitespace-nowrap bg-[var(--color-primary)] text-[var(--color-on-primary)] border-b border-[var(--color-primary-sub)]"
-                      >
-                        {col.label}
-                      </th>
+                      <th key={col.key} className="table-th">{col.label}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {recordDataJSON.map((record, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-[var(--color-surface)]' : 'bg-[var(--color-surface-alt)]'}>
+                    <tr key={i} className={i % 2 === 0 ? 'table-row-even' : 'table-row-odd'}>
                       {phase.columns.map(col => (
-                        <td
-                          key={col.key}
-                          className="px-3 py-2 whitespace-nowrap border-b border-[var(--color-border)]"
-                        >
+                        <td key={col.key} className="table-td">
                           <Cell column={col} value={record[col.key]} />
                         </td>
                       ))}
@@ -178,7 +144,7 @@ function Records() {
               </table>
             </div>
           ) : (
-            <div className="flex-1 flex justify-center items-center text-sm text-gray-400">
+            <div className="flex-1 flex justify-center items-center text-sm text-[var(--color-muted)]">
               No records found.
             </div>
           )}

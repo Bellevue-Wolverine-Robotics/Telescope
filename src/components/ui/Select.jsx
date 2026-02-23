@@ -1,9 +1,9 @@
 function Select(props) {
-  return(
+  return (
     <select
-    className="border border-[var(--color-border-mid)] rounded-md p-3 my-1 [-webkit-appearance:none] bg-[var(--color-surface)] text-[var(--color-primary)]"
-    value={props.value}
-    onChange={(event) => props.onChange(event.target.value)}
+      className="field-input my-1"
+      value={props.value}
+      onChange={(event) => props.onChange(event.target.value)}
     >
       <option value={0}>{props.placeholder}</option>
       {props.options.map((option, index) => <option value={index + 1} key={index}>{option}</option>)}

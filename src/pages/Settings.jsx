@@ -28,24 +28,24 @@ function Settings() {
     <Layout header="Settings" tab={2}>
       <div className="flex flex-col gap-6 p-6">
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-semibold uppercase tracking-wide text-[var(--color-muted-alt)]">Scouter Name</p>
+          <p className="section-label">Scouter Name</p>
           <input
             type="text"
             value={scouterName}
             onChange={(e) => handleScouterName(e.target.value)}
             placeholder="Enter your name"
-            className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] w-full"
+            className="field-input"
           />
         </div>
-        <div className="border-t border-[var(--color-border)]" />
+        <div className="divider" />
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-semibold uppercase tracking-wide text-[var(--color-muted-alt)]">Display Mode</p>
-          <div className="flex rounded-lg border border-[var(--color-primary)] overflow-hidden">
-            {['Light', 'Dark'].map((m, i) => (
+          <p className="section-label">Display Mode</p>
+          <div className="segment-control">
+            {['Light', 'Dark'].map((m) => (
               <button
                 key={m}
                 onClick={() => applyMode(m)}
-                className={`flex-1 py-3 text-sm font-medium ${i > 0 ? 'border-l border-[var(--color-primary)]' : ''} ${mode === m ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)]' : 'bg-[var(--color-surface)] text-[var(--color-primary)]'}`}
+                className={`segment-btn py-3 ${mode === m ? 'active' : ''}`}
               >
                 {m}
               </button>

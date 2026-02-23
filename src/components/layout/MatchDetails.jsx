@@ -9,11 +9,11 @@ function MatchDetails({ data, onChange }) {
       <NumericInput label="Match Number" value={data.matchNumber} onChange={onChange('matchNumber')} />
       <NumericInput label="Team Number"  value={data.teamNumber}  onChange={onChange('teamNumber')} />
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-[var(--color-muted)]">Robot Position</label>
+        <label className="field-label">Robot Position</label>
         <select
           value={data.robotPosition}
           onChange={e => onChange('robotPosition')(e.target.value)}
-          className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+          className="field-input"
         >
           <option value="">Select position...</option>
           {positionOptions.map(pos => (
