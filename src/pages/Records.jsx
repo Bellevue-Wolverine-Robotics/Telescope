@@ -30,7 +30,7 @@ function Records() {
 
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
-  const [recordDataJSON, setRecordDataJSON] = useState(() => loadRecordDataAsJSON(phase));
+  const [recordDataJSON, setRecordDataJSON] = useState([]);
   const [message, setMessage] = useState(null);
   const tsvFileInputRef = useRef(null);
 
@@ -38,8 +38,10 @@ function Records() {
     if (!searchParams.get('phase')) {
       setSearchParams({ phase: 'Match' }, { replace: true });
     }
-    setRecordDataJSON(loadRecordDataAsJSON(phase));
-    setMessage(null);
+    loadRecordDataAsJSON(phase).then(data => {
+      setRecordDataJSON(data);
+      setMessage(null);
+    });
   }, [phaseKey]);
 
   const hasData = recordDataJSON.length > 0;
@@ -55,7 +57,7 @@ function Records() {
     URL.revokeObjectURL(url);
   }
 
-  function handleImport(parsed) {
+  async function handleImport(parsed) {
     const result = classifyAndValidateImport(parsed);
     if (!result.valid) {
       setMessage({ type: 'error', lines: result.errors });
@@ -65,19 +67,19 @@ function Records() {
     const summaryParts = [];
     for (const [phaseKey, records] of Object.entries(result.byPhase)) {
       if (records.length === 0) continue;
-      const phaseConfig = PHASE_CONFIG[phaseKey];
-      const existing    = loadRecordDataAsJSON(phaseConfig);
+      const phaseConfig  = PHASE_CONFIG[phaseKey];
+      const existing     = await loadRecordDataAsJSON(phaseConfig);
       const existingKeys = new Set(existing.map(r => phaseConfig.getUniqueKey(r)));
       const added  = records.filter(r => !existingKeys.has(phaseConfig.getUniqueKey(r))).length;
       const merged = records.length - added;
-      mergeAndStoreRecordData(phaseConfig, records);
+      await mergeAndStoreRecordData(phaseConfig, records);
       const sub = [];
       if (added  > 0) sub.push(`${added} new`);
       if (merged > 0) sub.push(`${merged} merged`);
       summaryParts.push(`${records.length} ${phaseKey.toLowerCase()} record${records.length !== 1 ? 's' : ''} (${sub.join(', ')})`);
     }
 
-    setRecordDataJSON(loadRecordDataAsJSON(phase));
+    setRecordDataJSON(await loadRecordDataAsJSON(phase));
     const text = summaryParts.length ? summaryParts.join(' and ') + ' imported.' : 'No records to import.';
     setMessage({ type: 'success', lines: [text] });
   }

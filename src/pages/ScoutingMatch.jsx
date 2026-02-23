@@ -75,7 +75,7 @@ function ScoutingMatch() {
     !!(data.redScore && data.blueScore && effectiveResult),
   ];
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const record = {
       ...data,
       result:      effectiveResult,
@@ -84,7 +84,7 @@ function ScoutingMatch() {
       redScore:    red,
       blueScore:   blue,
     };
-    mergeAndStoreRecordData(PHASE_CONFIG.Match, [record]);
+    await mergeAndStoreRecordData(PHASE_CONFIG.Match, [record]);
     localStorage.removeItem(DRAFT_KEY);
     navigate('/scouting');
   }

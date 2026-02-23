@@ -52,7 +52,7 @@ function ScoutingPit() {
     !!(data.robotLength && data.robotHeight && data.robotWidth),
   ];
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const record = {
       ...data,
       teamNumber:  Number(data.teamNumber),
@@ -61,7 +61,7 @@ function ScoutingPit() {
       robotHeight: Number(data.robotHeight),
       robotWidth:  Number(data.robotWidth),
     };
-    mergeAndStoreRecordData(PHASE_CONFIG.Pit, [record]);
+    await mergeAndStoreRecordData(PHASE_CONFIG.Pit, [record]);
     localStorage.removeItem(DRAFT_KEY);
     navigate('/scouting');
   }

@@ -121,19 +121,47 @@ export function classifyAndValidateImport(records) {
   return { valid: true, byPhase };
 }
 
-export function convertRecordDataStringToJSON(recordDataString) {
-  try {
-    if (recordDataString) return JSON.parse(recordDataString);
-  } catch {}
-  return [];
+// ── IndexedDB storage ─────────────────────────────────────────────
+const DB_NAME    = 'scouting';
+const DB_VERSION = 1;
+const STORE_NAME = 'records';
+
+let _db = null;
+
+function openDB() {
+  if (_db) return Promise.resolve(_db);
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore(STORE_NAME, { keyPath: 'phase' });
+    };
+    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
+    req.onerror   = e => reject(e.target.error);
+  });
 }
 
-export function loadRecordDataAsJSON(phase) {
+export async function loadRecordDataAsJSON(phase) {
   try {
-    const raw = localStorage.getItem(phase.storageKey);
-    return convertRecordDataStringToJSON(raw);
-  } catch {}
-  return [];
+    const db = await openDB();
+    return await new Promise((resolve, reject) => {
+      const req = db.transaction(STORE_NAME, 'readonly')
+                    .objectStore(STORE_NAME)
+                    .get(phase.storageKey);
+      req.onsuccess = e => resolve(e.target.result?.data ?? []);
+      req.onerror   = e => reject(e.target.error);
+    });
+  } catch { return []; }
+}
+
+export async function storeRecordData(phase, recordDataJSON) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(STORE_NAME, 'readwrite')
+                  .objectStore(STORE_NAME)
+                  .put({ phase: phase.storageKey, data: recordDataJSON });
+    req.onsuccess = () => resolve();
+    req.onerror   = e => reject(e.target.error);
+  });
 }
 
 export function convertRecordDataJSONToTSV(phase, recordDataJSON) {
@@ -148,13 +176,10 @@ export function convertRecordDataJSONToTSV(phase, recordDataJSON) {
   return [header, ...rows].join('\n') + '\n';
 }
 
-export function storeRecordData(phase, recordDataJSON) {
-  localStorage.setItem(phase.storageKey, JSON.stringify(recordDataJSON));
-}
-
-export function mergeAndStoreRecordData(phase, recordDataJSON) {
-  const merged = mergeRecordData(phase, loadRecordDataAsJSON(phase), recordDataJSON);
-  storeRecordData(phase, merged);
+export async function mergeAndStoreRecordData(phase, recordDataJSON) {
+  const existing = await loadRecordDataAsJSON(phase);
+  const merged   = mergeRecordData(phase, existing, recordDataJSON);
+  await storeRecordData(phase, merged);
   return merged;
 }
 

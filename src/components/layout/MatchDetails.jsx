@@ -16,7 +16,7 @@ function MatchDetails({ data, onChange }) {
           className="field-input"
         >
           <option value="">Select position...</option>
-          {positionOptions.map(pos => (
+          {col('robotPosition').options.map(pos => (
             <option key={pos} value={pos}>{pos}</option>
           ))}
         </select>
