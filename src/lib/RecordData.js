@@ -1,13 +1,13 @@
 const MATCH_COLUMNS = [
   { key: 'scouterName',   label: 'Scouter',      type: 'string'  },
-  { key: 'matchNumber',   label: 'Match',         type: 'number'  },
-  { key: 'teamNumber',    label: 'Team',          type: 'number'  },
+  { key: 'matchNumber',   label: 'Match',         type: 'number',  min: 0, max: 200 },
+  { key: 'teamNumber',    label: 'Team',          type: 'number',  min: 0, max: 100000 },
   { key: 'robotPosition', label: 'Position',      type: 'string',  options: ['Red Bottom', 'Red Center', 'Red Top', 'Blue Bottom', 'Blue Center', 'Blue Top'] },
   { key: 'fuelMissedAuto',label: 'Missed Auto',   type: 'number',  min: 0, max: 100 },
-  { key: 'autoPoints',    label: 'Auto Pts',      type: 'number',  min: 0, max: 100 },
+  { key: 'autoPoints',    label: 'Auto Pts',      type: 'number',  min: 0, max: 300 },
   { key: 'autoClimb',     label: 'Auto Climb',    type: 'boolean' },
-  { key: 'cycles',        label: 'Cycles',        type: 'number',  min: 0, max: 100 },
-  { key: 'numberDepot',   label: 'Depot',         type: 'number',  min: 0, max: 100 },
+  { key: 'cycles',        label: 'Cycles',        type: 'number',  min: 0, max: 50 },
+  { key: 'numberDepot',   label: 'Depot',         type: 'number',  min: 0, max: 400 },
   { key: 'intakeType',    label: 'Intake',        type: 'string',  options: ['Over Bumper', 'Depot', 'Through Bumper'] },
   { key: 'endgameClimb',  label: 'Climb',         type: 'string',  options: ['No Climb', 'L1', 'L2', 'L3'] },
   { key: 'superChargedRP',label: 'Super RP',      type: 'boolean' },
@@ -15,31 +15,31 @@ const MATCH_COLUMNS = [
   { key: 'climbRP',       label: 'Climb RP',      type: 'boolean' },
   { key: 'yellowCard',    label: 'Yellow Card',   type: 'boolean' },
   { key: 'brokeDown',     label: 'Broke Down',    type: 'boolean' },
-  { key: 'minorFouls',    label: 'Minor Fouls',   type: 'number',  min: 0, max: 100 },
-  { key: 'majorFouls',    label: 'Major Fouls',   type: 'number',  min: 0, max: 100 },
+  { key: 'minorFouls',    label: 'Minor Fouls',   type: 'number',  min: 0, max: 50 },
+  { key: 'majorFouls',    label: 'Major Fouls',   type: 'number',  min: 0, max: 50 },
   { key: 'playstyle',     label: 'Playstyle',     type: 'string',  options: ['Offense', 'Defense', 'Both'] },
-  { key: 'redScore',      label: 'Red',           type: 'number'  },
-  { key: 'blueScore',     label: 'Blue',          type: 'number'  },
+  { key: 'redScore',      label: 'Red',           type: 'number',  min: 0, max: 2000 },
+  { key: 'blueScore',     label: 'Blue',          type: 'number',  min: 0, max: 2000 },
   { key: 'result',        label: 'Result',        type: 'string',  options: ['Win', 'Loss'] },
   { key: 'observations',  label: 'Notes',         type: 'text'    },
 ];
 
 const PIT_COLUMNS = [
   { key: 'scouterName',   label: 'Scouter',       type: 'string'  },
-  { key: 'teamNumber',    label: 'Team',           type: 'number'  },
-  { key: 'weight',        label: 'Weight (lbs)',   type: 'number'  },
+  { key: 'teamNumber',    label: 'Team',           type: 'number',  min: 0, max: 100000 },
+  { key: 'weight',        label: 'Weight (lbs)',   type: 'number',  min: 0, max: 200 },
   { key: 'drivetrain',    label: 'Drivetrain',     type: 'string',  options: ['Swerve', 'Tank', 'Mecanum'] },
   { key: 'hasAutoAlign',  label: 'Auto Align',     type: 'boolean' },
   { key: 'autoDescription',label: 'Auto Notes',   type: 'text'    },
-  { key: 'hopperCapacity',label: 'Hopper',         type: 'number',  min: 0, max: 100 },
+  { key: 'hopperCapacity',label: 'Hopper',         type: 'number',  min: 0, max: 200 },
   { key: 'shooterSpeed',  label: 'Shooter',        type: 'number',  min: 0, max: 100 },
   { key: 'intakeSpeed',   label: 'Intake',         type: 'number',  min: 0, max: 100 },
   { key: 'supportedPaths',label: 'Paths',          type: 'string',  options: ['Bump', 'Trench', 'Both'] },
   { key: 'climbLevel',    label: 'Climb Lvl',      type: 'string',  options: ['None', 'L1', 'L2', 'L3'] },
   { key: 'climbType',     label: 'Climb Type',     type: 'string',  options: ['Side', 'Front', 'Both', 'Neither'] },
-  { key: 'robotLength',   label: 'Length',         type: 'number'  },
-  { key: 'robotHeight',   label: 'Height',         type: 'number'  },
-  { key: 'robotWidth',    label: 'Width',          type: 'number'  },
+  { key: 'robotLength',   label: 'Length',         type: 'number',  min: 0, max: 150 },
+  { key: 'robotHeight',   label: 'Height',         type: 'number',  min: 0, max: 50 },
+  { key: 'robotWidth',    label: 'Width',          type: 'number',  min: 0, max: 150 },
 ];
 
 export const PHASE_CONFIG = {
@@ -121,19 +121,47 @@ export function classifyAndValidateImport(records) {
   return { valid: true, byPhase };
 }
 
-export function convertRecordDataStringToJSON(recordDataString) {
-  try {
-    if (recordDataString) return JSON.parse(recordDataString);
-  } catch {}
-  return [];
+// ── IndexedDB storage ─────────────────────────────────────────────
+const DB_NAME    = 'scouting';
+const DB_VERSION = 1;
+const STORE_NAME = 'records';
+
+let _db = null;
+
+function openDB() {
+  if (_db) return Promise.resolve(_db);
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore(STORE_NAME, { keyPath: 'phase' });
+    };
+    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
+    req.onerror   = e => reject(e.target.error);
+  });
 }
 
-export function loadRecordDataAsJSON(phase) {
+export async function loadRecordDataAsJSON(phase) {
   try {
-    const raw = localStorage.getItem(phase.storageKey);
-    return convertRecordDataStringToJSON(raw);
-  } catch {}
-  return [];
+    const db = await openDB();
+    return await new Promise((resolve, reject) => {
+      const req = db.transaction(STORE_NAME, 'readonly')
+                    .objectStore(STORE_NAME)
+                    .get(phase.storageKey);
+      req.onsuccess = e => resolve(e.target.result?.data ?? []);
+      req.onerror   = e => reject(e.target.error);
+    });
+  } catch { return []; }
+}
+
+export async function storeRecordData(phase, recordDataJSON) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(STORE_NAME, 'readwrite')
+                  .objectStore(STORE_NAME)
+                  .put({ phase: phase.storageKey, data: recordDataJSON });
+    req.onsuccess = () => resolve();
+    req.onerror   = e => reject(e.target.error);
+  });
 }
 
 export function convertRecordDataJSONToTSV(phase, recordDataJSON) {
@@ -148,13 +176,10 @@ export function convertRecordDataJSONToTSV(phase, recordDataJSON) {
   return [header, ...rows].join('\n') + '\n';
 }
 
-export function storeRecordData(phase, recordDataJSON) {
-  localStorage.setItem(phase.storageKey, JSON.stringify(recordDataJSON));
-}
-
-export function mergeAndStoreRecordData(phase, recordDataJSON) {
-  const merged = mergeRecordData(phase, loadRecordDataAsJSON(phase), recordDataJSON);
-  storeRecordData(phase, merged);
+export async function mergeAndStoreRecordData(phase, recordDataJSON) {
+  const existing = await loadRecordDataAsJSON(phase);
+  const merged   = mergeRecordData(phase, existing, recordDataJSON);
+  await storeRecordData(phase, merged);
   return merged;
 }
 

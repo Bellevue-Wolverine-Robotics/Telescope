@@ -4,14 +4,14 @@ function Layout(props) {
   const { search } = useLocation();
   return (
     <div className="flex flex-col h-full">
-      <header className="h-12 border-b border-[var(--color-border)] flex justify-center items-center text-lg font-semibold">
+      <header className="app-header">
         {props.header}
       </header>
       <div className="flex-1 min-h-0 overflow-hidden">
         {props.children}
       </div>
-      <div className="bg-[var(--color-surface-alt)] h-20 flex">
-        <Link to={`/records${search}`} className="w-full h-full flex flex-col justify-center items-center text-xs">
+      <div className="nav-bar">
+        <Link to={`/records${search}`} className="nav-link">
           {props.tab === 0 ? (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
             <path d="M21 6.375c0 2.692-4.03 4.875-9 4.875S3 9.067 3 6.375 7.03 1.5 12 1.5s9 2.183 9 4.875Z" />
@@ -26,7 +26,7 @@ function Layout(props) {
           )}
           <p>Records</p>
         </Link>
-        <Link to="/scouting" className="w-full h-full flex flex-col justify-center items-center text-xs">
+        <Link to="/scouting" className="nav-link">
           {props.tab === 1 ? (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
               <path fillRule="evenodd" d="M10.5 3A1.501 1.501 0 0 0 9 4.5h6A1.5 1.5 0 0 0 13.5 3h-3Zm-2.693.178A3 3 0 0 1 10.5 1.5h3a3 3 0 0 1 2.694 1.678c.497.042.992.092 1.486.15 1.497.173 2.57 1.46 2.57 2.929V19.5a3 3 0 0 1-3 3H6.75a3 3 0 0 1-3-3V6.257c0-1.47 1.073-2.756 2.57-2.93.493-.057.989-.107 1.487-.15Z" clipRule="evenodd" />
@@ -38,7 +38,7 @@ function Layout(props) {
           )}
           <p>Scouting</p>
         </Link>
-        <Link to={`/debug${search}`} className="w-full h-full flex flex-col justify-center items-center text-xs">
+        <Link to={`/debug${search}`} className="nav-link">
           {props.tab === 3 ? (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
               <path fillRule="evenodd" d="M17.307 4.565a1 1 0 1 0-1.614-1.13l-1.96 2.8a7.077 7.077 0 0 0-3.466 0l-1.96-2.8a1 1 0 1 0-1.614 1.13l1.671 2.387A7.036 7.036 0 0 0 5 12v1h14v-1a7.036 7.036 0 0 0-3.364-6.048l1.671-2.387ZM4 15a1 1 0 0 1 1-1h1.5v2a5.97 5.97 0 0 0 .301 1.872L5.29 18.955A1 1 0 1 0 6.71 20.28l1.197-1.197A6 6 0 0 0 12 21a6 6 0 0 0 4.093-1.917l1.197 1.197a1 1 0 1 0 1.414-1.414l-1.49-1.49A5.972 5.972 0 0 0 17.5 16v-2H19a1 1 0 1 0 0-2H5a1 1 0 0 1-1 1Z" clipRule="evenodd" />
@@ -50,7 +50,7 @@ function Layout(props) {
           )}
           <p>Debug</p>
         </Link>
-        <Link to="/settings" className="w-full h-full flex flex-col justify-center items-center text-xs">
+        <Link to="/settings" className="nav-link">
           {props.tab === 2 ? (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
               <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.922 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" clipRule="evenodd" />

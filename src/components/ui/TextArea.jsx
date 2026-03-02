@@ -3,12 +3,11 @@ function TextArea(props) {
     <div>
       <label className="font-semibold">{props.label}</label>
       <textarea
-      required
-      inputMode={props.inputMode}
-      type="text"
-      className="resize-none peer border border-[#ADB5BD] rounded-md p-3 my-1 w-full"
-      value={props.value}
-      onChange={(event) => props.onChange(event.target.value)}
+        required
+        inputMode={props.inputMode}
+        className="resize-none peer field-input my-1"
+        value={props.value}
+        onChange={(event) => props.onChange(event.target.value)}
       />
     </div>
   );

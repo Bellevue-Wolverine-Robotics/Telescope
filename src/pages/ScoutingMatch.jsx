@@ -13,7 +13,7 @@ const col = key => PHASE_CONFIG.Match.columns.find(c => c.key === key);
 const DRAFT_KEY = 'draftMatch';
 
 const DEFAULT_DATA = {
-  scouterName:    localStorage.getItem('scouterName') ?? '',
+  scouterName:    '',
   matchNumber:    '',
   teamNumber:     '',
   robotPosition:  '',
@@ -47,7 +47,7 @@ function loadDraft() {
 function ScoutingMatch() {
   const navigate = useNavigate();
   const [page, setPage] = useState(() => loadDraft().page ?? 0);
-  const [data, setData] = useState(() => ({ ...DEFAULT_DATA, ...(loadDraft().data ?? {}) }));
+  const [data, setData] = useState(() => ({ ...DEFAULT_DATA, ...(loadDraft().data ?? {}), scouterName: localStorage.getItem('scouterName') ?? '' }));
 
   useEffect(() => {
     localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, page }));
@@ -75,7 +75,7 @@ function ScoutingMatch() {
     !!(data.redScore && data.blueScore && effectiveResult),
   ];
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const record = {
       ...data,
       result:      effectiveResult,
@@ -84,7 +84,7 @@ function ScoutingMatch() {
       redScore:    red,
       blueScore:   blue,
     };
-    mergeAndStoreRecordData(PHASE_CONFIG.Match, [record]);
+    await mergeAndStoreRecordData(PHASE_CONFIG.Match, [record]);
     localStorage.removeItem(DRAFT_KEY);
     navigate('/scouting');
   }
@@ -127,22 +127,22 @@ function ScoutingMatch() {
               <Counter label="Cycles" value={data.cycles}      onChange={set('cycles')}      min={col('cycles').min}      max={col('cycles').max} />
               <Counter label="Depot"  value={data.numberDepot} onChange={set('numberDepot')} min={col('numberDepot').min} max={col('numberDepot').max} />
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Intake Type</label>
+                <label className="field-label">Intake Type</label>
                 <select
                   value={data.intakeType}
                   onChange={e => set('intakeType')(e.target.value)}
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                  className="field-input"
                 >
                   <option value="">Select intake type...</option>
                   {col('intakeType').options.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Endgame Climb</label>
+                <label className="field-label">Endgame Climb</label>
                 <select
                   value={data.endgameClimb}
                   onChange={e => set('endgameClimb')(e.target.value)}
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                  className="field-input"
                 >
                   <option value="">Select climb...</option>
                   {col('endgameClimb').options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -161,20 +161,20 @@ function ScoutingMatch() {
               <Counter label="Minor Fouls"      value={data.minorFouls}     onChange={set('minorFouls')} min={col('minorFouls').min} max={col('minorFouls').max} />
               <Counter label="Major Fouls"      value={data.majorFouls}     onChange={set('majorFouls')} min={col('majorFouls').min} max={col('majorFouls').max} />
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Playstyle</label>
+                <label className="field-label">Playstyle</label>
                 <select
                   value={data.playstyle}
                   onChange={e => set('playstyle')(e.target.value)}
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                  className="field-input"
                 >
                   <option value="">Select playstyle...</option>
                   {col('playstyle').options.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
               </div>
-              <NumericInput label="Red Score"  value={data.redScore}  onChange={set('redScore')} />
-              <NumericInput label="Blue Score" value={data.blueScore} onChange={set('blueScore')} />
+              <NumericInput label="Red Score"  value={data.redScore}  onChange={set('redScore')}  max={col('redScore').max} />
+              <NumericInput label="Blue Score" value={data.blueScore} onChange={set('blueScore')} max={col('blueScore').max} />
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">
+                <label className="field-label">
                   Result{scoresTied ? ' (scores tied — select manually)' : ''}
                 </label>
                 {derivedResult ? (
@@ -185,7 +185,7 @@ function ScoutingMatch() {
                   <select
                     value={data.result}
                     onChange={e => set('result')(e.target.value)}
-                    className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] [-webkit-appearance:none]"
+                    className="field-input"
                   >
                     <option value="">Select result...</option>
                     {col('result').options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -193,13 +193,13 @@ function ScoutingMatch() {
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-[var(--color-muted)]">Observations</label>
+                <label className="field-label">Observations</label>
                 <textarea
                   value={data.observations}
                   onChange={e => set('observations')(e.target.value)}
                   rows={3}
                   placeholder="Additional notes..."
-                  className="p-3 border border-[var(--color-border-mid)] rounded-lg bg-[var(--color-surface)] text-[var(--color-primary)] resize-none"
+                  className="field-input resize-none"
                 />
               </div>
             </>
@@ -212,7 +212,7 @@ function ScoutingMatch() {
           {page > 0 && (
             <button
               onClick={() => setPage(p => p - 1)}
-              className="flex-1 p-3 border border-[var(--color-primary)] rounded-lg text-[var(--color-primary)] bg-[var(--color-surface)]"
+              className="flex-1 btn-outline"
             >
               Back
             </button>
@@ -220,11 +220,7 @@ function ScoutingMatch() {
           <button
             onClick={isLast ? handleSubmit : () => setPage(p => p + 1)}
             disabled={!isValid}
-            className={`flex-1 p-3 border rounded-lg text-[var(--color-on-primary)] ${
-              isValid
-                ? 'bg-[var(--color-primary)] border-[var(--color-primary)]'
-                : 'bg-[var(--color-border-mid)] border-[var(--color-border-mid)]'
-            }`}
+            className="flex-1 btn-primary"
           >
             {page === 0 ? 'Start' : isLast ? 'Submit' : 'Next'}
           </button>

@@ -24,8 +24,8 @@ function Counter({ label, value, onChange, min = 0, max = 100 }) {
   return (
     <div>
       <label>{label}</label>
-      <div className="flex w-fit border border-[var(--color-border-mid)] rounded-md">
-        <button className="w-12 h-9" onClick={() => onChange(Math.min(value + 1, max))} disabled={value >= max}>+</button>
+      <div className="counter-wrap">
+        <button className="counter-btn" onClick={() => onChange(Math.min(value + 1, max))} disabled={value >= max}>+</button>
         <input
           type="number"
           value={display}
@@ -33,9 +33,9 @@ function Counter({ label, value, onChange, min = 0, max = 100 }) {
           onBlur={handleBlur}
           min={min}
           max={max}
-          className="w-10 h-9 border-x border-[var(--color-border-div)] text-center bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="counter-input"
         />
-        <button className="w-12 h-9" onClick={() => onChange(Math.max(value - 1, min))} disabled={value <= min}>-</button>
+        <button className="counter-btn" onClick={() => onChange(Math.max(value - 1, min))} disabled={value <= min}>-</button>
       </div>
     </div>
   );
