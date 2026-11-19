@@ -60,6 +60,8 @@ function ScoutingForm({ header, phase, draftKey }) {
   const navigate  = useNavigate();
   const pages     = phase.form.pages;
   const questions = pages.flatMap(p => p.questions);
+  // Return to the Scouting menu. Keeps the draft.
+  const exit      = () => navigate('/scouting');
 
   function loadDraft() {
     try { return JSON.parse(localStorage.getItem(draftKey)) ?? {}; } catch { return {}; }
@@ -88,7 +90,7 @@ function ScoutingForm({ header, phase, draftKey }) {
     }
     await mergeAndStoreRecordData(phase, [record]);
     localStorage.removeItem(draftKey);
-    navigate('/scouting');
+    exit();
   }
 
   const current = pages[page];
@@ -96,7 +98,7 @@ function ScoutingForm({ header, phase, draftKey }) {
   const isValid = current.questions.every(q => isAnswered(q, data[q.id]));
 
   return (
-    <Layout header={header} tab={1}>
+    <Layout header={header} tab={1} onBack={exit} hideNav>
       <div className="h-full flex flex-col">
 
         {/* Progress bar */}
@@ -131,7 +133,7 @@ function ScoutingForm({ header, phase, draftKey }) {
             disabled={!isValid}
             className="flex-1 btn-primary"
           >
-            {page === 0 ? 'Start' : isLast ? 'Submit' : 'Next'}
+            {isLast ? 'Submit' : 'Next'}
           </button>
         </div>
 

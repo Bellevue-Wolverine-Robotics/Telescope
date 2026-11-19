@@ -1,11 +1,10 @@
 import { readBarcodes } from 'zxing-wasm/reader';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { receiveFountain } from '../../lib/fountain';
 
 function Import(props) {
   const videoRef = useRef(null);
   const overlay = useRef(null);
-  const container = useRef(null);
 
   useEffect(() => {
     const receiveDroplet = receiveFountain();
@@ -14,12 +13,20 @@ function Import(props) {
     const canvas = new OffscreenCanvas(0, 0);
     const ctx = canvas.getContext('2d');
     let animationId;
+    let stopped = false; // set on close; the camera may still be starting
 
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }}).then(stream => {
+      // Closed before the camera started: turn it straight back off.
+      if (stopped) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
       video.srcObject = stream;
-      video.play();
+      // play() rejects harmlessly if the modal closes while it's starting.
+      video.play().catch(() => {});
 
       const scan = async () => {
+        if (stopped) return;
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
           // Set canvas to raw video dimensions
           canvas.width = video.videoWidth;
@@ -41,6 +48,7 @@ function Import(props) {
             formats: ['QRCode'],
             maxNumberOfSymbols: 1
           });
+          if (stopped) return;
 
           cctx.clearRect(0, 0, overlay.current.width, overlay.current.height);
 
@@ -64,40 +72,30 @@ function Import(props) {
             }
           }
         }
-        animationId = requestAnimationFrame(scan);
+        if (!stopped) animationId = requestAnimationFrame(scan);
       };
 
       scan();
     });
 
-    const close = (event) => {
-      if (!container.current.contains(event.target)) {
-        props.close();
-      }
-    };
-
-    document.addEventListener('pointerdown', close);
-
     return () => {
-      document.removeEventListener('pointerdown', close);
+      stopped = true;
       cancelAnimationFrame(animationId);
       video.srcObject?.getTracks().forEach(track => track.stop());
     };
   }, []);
 
   return (
-    <div className="flex justify-center items-center h-full p-5">
-      <div ref={container} className="relative">
-        <video 
-          ref={videoRef}
-          playsInline 
-          className="rounded-lg w-full h-full"
-        />
-        <canvas 
-          ref={overlay} 
-          className="absolute top-0 left-0 pointer-events-none w-full h-full" 
-        />
-      </div>
+    <div className="relative">
+      <video
+        ref={videoRef}
+        playsInline
+        className="rounded-lg w-full bg-black"
+      />
+      <canvas
+        ref={overlay}
+        className="absolute top-0 left-0 pointer-events-none w-full h-full"
+      />
     </div>
   );
 }
