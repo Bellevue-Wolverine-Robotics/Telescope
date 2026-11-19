@@ -125,50 +125,52 @@ function Scouting() {
 
   return (
     <Layout header="Scouting" tab={1}>
-      <div className="h-full overflow-y-auto">
-        <div className="flex flex-col gap-3 p-4">
-          <PhaseToggle />
-          <MenuCard
-            onClick={() => navigate(form.to)}
-            title="New"
-          >
-            {hasDraft(phase, form.draftKey) && (
-              <span className="badge">
-                <span className="size-1.5 rounded-full bg-[var(--color-primary)]" />
-                Draft saved
-              </span>
-            )}
-          </MenuCard>
-          <MenuCard
-            onClick={() => setShowTable(true)}
-            disabled={!hasData}
-            title="Records"
-          />
-          <MenuCard
-            onClick={() => setSheet('import')}
-            title="Import"
-          />
-          <MenuCard
-            onClick={() => setSheet('export')}
-            disabled={!hasData}
-            title="Export"
-          />
-          {message && (
-            <div className={`message ${message.type} m-0`}>
-              <div className="flex flex-col gap-0.5">
-                {message.lines.map((line, i) => <span key={i}>{line}</span>)}
+      <div className="h-full flex flex-col">
+        <PhaseToggle />
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <div className="flex flex-col gap-3 p-4">
+            <MenuCard
+              onClick={() => navigate(form.to)}
+              title="New"
+            >
+              {hasDraft(phase, form.draftKey) && (
+                <span className="badge">
+                  <span className="size-1.5 rounded-full bg-[var(--color-primary)]" />
+                  Draft saved
+                </span>
+              )}
+            </MenuCard>
+            <MenuCard
+              onClick={() => setShowTable(true)}
+              disabled={!hasData}
+              title="Records"
+            />
+            <MenuCard
+              onClick={() => setSheet('import')}
+              title="Import"
+            />
+            <MenuCard
+              onClick={() => setSheet('export')}
+              disabled={!hasData}
+              title="Export"
+            />
+            {message && (
+              <div className={`message ${message.type} m-0`}>
+                <div className="flex flex-col gap-0.5">
+                  {message.lines.map((line, i) => <span key={i}>{line}</span>)}
+                </div>
+                <button onClick={() => setMessage(null)} className="shrink-0 opacity-60 hover:opacity-100">✕</button>
               </div>
-              <button onClick={() => setMessage(null)} className="shrink-0 opacity-60 hover:opacity-100">✕</button>
-            </div>
-          )}
+            )}
+          </div>
+          <input
+            ref={csvFileInputRef}
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={handleCSVImport}
+          />
         </div>
-        <input
-          ref={csvFileInputRef}
-          type="file"
-          accept=".csv"
-          className="hidden"
-          onChange={handleCSVImport}
-        />
       </div>
       {showTable && (
         <RecordTable

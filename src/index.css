@@ -109,7 +109,7 @@ html, body {
     align-items: center;
   }
 
-  /* Segmented control: for choosing an option (Match/Pit, Light/Dark, No/Yes).
+  /* Segmented control: for choosing an option (Light/Dark, No/Yes).
      Deliberately unlike buttons, which are for actions. */
   .segment-control {
     display: flex;
@@ -135,6 +135,29 @@ html, body {
     color: var(--color-primary);
     font-weight: 600;
     box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+  }
+
+  /* Tabs: for switching between sections of a page (Match/Pit). */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tab {
+    flex: 1;
+    height: 2.75rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .tab.active {
+    color: var(--color-primary);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary);
   }
 
   /* App chrome */
