@@ -55,6 +55,6 @@ A form is a list of **pages**. Each page has a `title` (shown above the question
 ### Things to be careful about
 
 - **Don't rename or remove `matchNumber`, `robotPosition` (match form) or `teamNumber` (both forms).** The Records table uses them for sorting.
-- **Changing a form changes the data format.** Every device sharing data by QR code or TSV must be running the same version of the forms, or imports will be rejected.
+- **Changing a form changes the data format.** Every device sharing data by QR code or CSV must be running the same version of the forms, or imports will be rejected.
 - Watch your commas and quotes. Every question except the last one in a list needs a comma after its `}`. If the app fails to build after an edit, a missing or extra comma is the most likely cause.
 - The scouter's name and the time the form was submitted are recorded automatically. They aren't questions, so they aren't in these files.

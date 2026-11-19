@@ -2,46 +2,41 @@ import QRCode from 'qrcode';
 import { useEffect, useRef } from 'react';
 import { createFountain } from '../../lib/fountain';
 
-function Export(props) {
+function Export({ value, close }) {
   const canvas = useRef(null);
 
   useEffect(() => {
-    const createDroplet = createFountain(props.value, 512);
-    let droplet;
+    const createDroplet = createFountain(value, 512);
 
+    // Draw each droplet at one pixel per QR module. CSS scales the canvas up
+    // to fit the available space, so nothing needs redrawing on resize.
     const generate = () => {
-      droplet = createDroplet();
-      const length = Math.min(canvas.current.parentElement.offsetHeight * 0.9, canvas.current.parentElement.offsetWidth * 0.9);
-      QRCode.toCanvas(canvas.current, [{ data: droplet, mode: 'byte' }], { errorCorrectionLevel: 'L', width: length, height: length });
+      QRCode.toCanvas(canvas.current, [{ data: createDroplet(), mode: 'byte' }], { errorCorrectionLevel: 'L', scale: 1 });
+      // toCanvas sets a fixed pixel size inline; clear it so the CSS sizing applies
+      canvas.current.style.width  = '';
+      canvas.current.style.height = '';
     };
 
     generate();
     const interval = setInterval(generate, 1000 / 12);
 
-    const close = (event) => {
+    const handlePointerDown = (event) => {
       if (!canvas.current.parentElement.contains(event.target)) {
-        props.close();
+        close();
       }
     };
 
-    const resize = () => {
-      const length = Math.min(window.innerHeight * 0.9, window.innerWidth * 0.9);
-      QRCode.toCanvas(canvas.current, [{ data: droplet, mode: 'byte' }], { errorCorrectionLevel: 'L', width: length, height: length });
-    };
-
-    document.addEventListener('pointerdown', close);
-    document.addEventListener('resize', resize);
+    document.addEventListener('pointerdown', handlePointerDown);
 
     return () => {
       clearInterval(interval);
-      document.removeEventListener('pointerdown', close);
-      document.addEventListener('resize', resize);
+      document.removeEventListener('pointerdown', handlePointerDown);
     };
-  });
+  }, [value, close]);
 
   return (
-    <div className="flex h-full w-full justify-center items-center">
-      <canvas className="[image-rendering:pixelated]" ref={canvas} />
+    <div className="h-full w-full p-4">
+      <canvas className="h-full w-full object-contain [image-rendering:pixelated]" ref={canvas} />
     </div>
   );
 }

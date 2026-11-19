@@ -1,0 +1,6 @@
+timestamp,scouterName,matchNumber,teamNumber,robotPosition,fuelMissedAuto,autoPoints,autoClimb,cycles,numberDepot,intakeType,endgameClimb,superChargedRP,chargedRP,climbRP,yellowCard,brokeDown,minorFouls,majorFouls,playstyle,redScore,blueScore,observations
+2026-03-14T14:05:39Z,Alex,45,9036,Red Bottom,3,5,Yes,10,20,Over Bumper,L2,No,Yes,Yes,No,No,2,0,Offense,250,200,"Fast, holds a ton, ...."
+2026-03-14T14:21:27Z,Jordan,12,2412,Blue Top,1,3,No,7,14,Depot,L1,No,No,Yes,No,No,1,0,Defense,180,220,"Consistent but slow, good at defense"
+2026-03-14T14:36:00Z,Morgan,20,2910,Red Center,0,7,Yes,12,22,Over Bumper,L3,Yes,Yes,Yes,No,No,0,0,Offense,280,190,"Very strong auto, excellent climber"
+2026-03-14T14:43:17Z,Taylor,55,948,Blue Bottom,5,0,No,4,8,Over Bumper,No Climb,No,No,No,No,Yes,3,1,Offense,230,150,"Broke down mid-match, struggled with intake"
+2026-03-14T14:58:33Z,Riley,32,4131,Blue Center,2,4,No,8,16,Through Bumper,L2,No,Yes,Yes,No,No,1,0,Both,195,240,"Versatile intake, reliable climber"

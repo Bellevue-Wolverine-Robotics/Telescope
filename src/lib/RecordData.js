@@ -163,16 +163,56 @@ export async function storeRecordData(phase, recordDataJSON) {
   });
 }
 
-export function convertRecordDataJSONToTSV(phase, recordDataJSON) {
-  const header = phase.columns.map(col => col.key).join('\t');
+// Wrap a CSV field in quotes when it contains a comma, quote or line break,
+// doubling any quotes inside it (standard CSV, as used by Sheets and Excel).
+function escapeCSVField(value) {
+  const text = String(value);
+  return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+export function convertRecordDataJSONToCSV(phase, recordDataJSON) {
+  const header = phase.columns.map(col => escapeCSVField(col.key)).join(',');
   const rows = recordDataJSON.map(record =>
     phase.columns.map(({ key, type }) => {
       const value = record[key];
       if (type === 'boolean') return value ? 'Yes' : 'No';
-      return value ?? '';
-    }).join('\t')
+      return escapeCSVField(value ?? '');
+    }).join(',')
   );
   return [header, ...rows].join('\n') + '\n';
+}
+
+// Split CSV text into rows of fields, handling quoted fields that contain
+// commas, doubled quotes and line breaks.
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1); // strip byte order mark
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') inQuotes = false;
+      else field += c;
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ',') {
+      row.push(field); field = '';
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(field); field = '';
+      rows.push(row); row = [];
+    } else {
+      field += c;
+    }
+  }
+  if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+
+  // Ignore blank lines
+  return rows.filter(r => !(r.length === 1 && r[0] === ''));
 }
 
 export async function mergeAndStoreRecordData(phase, recordDataJSON) {
@@ -191,14 +231,12 @@ export function mergeRecordData(phase, existing, imported) {
   return [...merged.values()].sort(phase.sort);
 }
 
-export function convertRecordDataTSVToJSON(text) {
+export function convertRecordDataCSVToJSON(text) {
   const allColumns = [...MATCH_COLUMNS, ...PIT_COLUMNS];
   const columnByKey = new Map(allColumns.map(col => [col.key, col]));
-  const [headerLine, ...dataLines] = text.trim().split(/\r?\n/);
-  const keys = headerLine.split('\t');
-  return dataLines.map(line => {
-    const values = line.split('\t');
-    return Object.fromEntries(
+  const [keys = [], ...dataRows] = parseCSV(text);
+  return dataRows.map(values =>
+    Object.fromEntries(
       keys.map((key, i) => {
         const col = columnByKey.get(key);
         const raw = values[i] ?? '';
@@ -206,6 +244,6 @@ export function convertRecordDataTSVToJSON(text) {
         if (col?.type === 'number')  return [key, Number(raw)];
         return [key, raw];
       })
-    );
-  });
+    )
+  );
 }
