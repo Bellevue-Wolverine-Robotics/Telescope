@@ -1,5 +1,6 @@
 // Full-screen popup showing records as a scrollable table.
 // Tapping the dimmed strip at the top or Close dismisses it.
+// `tabs` (optional) is shown under the title, e.g. to switch between Match and Pit.
 
 // Table only: "Mar 14 14:05" in local time. Stored data and CSV keep the full ISO timestamp.
 function formatTimestamp(iso) {
@@ -23,7 +24,7 @@ function Cell({ column, value }) {
   return value ?? '–';
 }
 
-function RecordTable({ title, subtitle, columns, records, onClose }) {
+function RecordTable({ title, subtitle, tabs, columns, records, onClose }) {
   return (
     <div className="overlay items-end" onPointerDown={onClose}>
       <div className="sheet sheet-full" onPointerDown={e => e.stopPropagation()}>
@@ -31,6 +32,7 @@ function RecordTable({ title, subtitle, columns, records, onClose }) {
           <p className="text-lg font-semibold">{title}</p>
           {subtitle && <p className="text-sm text-[var(--color-muted)]">{subtitle}</p>}
         </div>
+        {tabs}
         <div className="flex-1 min-h-0 overflow-auto -mx-4">
           <table className="text-xs border-collapse w-max min-w-full">
             <thead>

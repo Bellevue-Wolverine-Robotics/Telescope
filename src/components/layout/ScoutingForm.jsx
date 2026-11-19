@@ -4,7 +4,7 @@ import Layout from './Layout';
 import Counter from '../ui/Counter';
 import NumericInput from '../ui/NumericInput';
 import Switch from '../ui/Switch';
-import { PHASE_CONFIG, mergeAndStoreRecordData } from '../../lib/RecordData';
+import { mergeAndStoreRecordData } from '../../lib/RecordData';
 
 function defaultValue(question) {
   switch (question.type) {
@@ -60,9 +60,8 @@ function ScoutingForm({ header, phase, draftKey }) {
   const navigate  = useNavigate();
   const pages     = phase.form.pages;
   const questions = pages.flatMap(p => p.questions);
-  // Return to the Scouting menu on this form's tab (Match or Pit). Keeps the draft.
-  const phaseKey  = Object.keys(PHASE_CONFIG).find(k => PHASE_CONFIG[k] === phase);
-  const exit      = () => navigate(`/scouting?phase=${phaseKey}`);
+  // Return to the Scouting menu. Keeps the draft.
+  const exit      = () => navigate('/scouting');
 
   function loadDraft() {
     try { return JSON.parse(localStorage.getItem(draftKey)) ?? {}; } catch { return {}; }

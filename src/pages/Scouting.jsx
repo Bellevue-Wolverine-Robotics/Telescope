@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
 import BottomSheet from '../components/ui/BottomSheet';
 import MenuCard from '../components/ui/MenuCard';
 import Modal from '../components/ui/Modal';
-import PhaseToggle from '../components/ui/PhaseToggle';
 import RecordTable from '../components/ui/RecordTable';
+import Tabs from '../components/ui/Tabs';
 import {
   PHASE_CONFIG,
   classifyAndValidateImport,
@@ -18,7 +18,9 @@ import {
   mergeAndStoreRecordData,
 } from '../lib/RecordData';
 
-// Form for each phase: where "New" goes and where its draft is saved.
+const PHASES = Object.keys(PHASE_CONFIG);
+
+// Form for each phase: where its "New" card goes and where its draft is saved.
 const FORMS = {
   Match: { to: '/scouting/match', draftKey: 'draftMatch' },
   Pit:   { to: '/scouting/pit',   draftKey: 'draftPit'   },
@@ -40,43 +42,39 @@ function hasDraft(phase, draftKey) {
   });
 }
 
+function plural(n) {
+  return `${n} record${n !== 1 ? 's' : ''}`;
+}
+
+async function loadAll() {
+  const lists = await Promise.all(PHASES.map(p => loadRecordDataAsJSON(PHASE_CONFIG[p])));
+  return Object.fromEntries(PHASES.map((p, i) => [p, lists[i]]));
+}
 
 function Scouting() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const phaseKey = searchParams.get('phase') ?? 'Match';
-  const phase = PHASE_CONFIG[phaseKey] ?? PHASE_CONFIG.Match;
-  const form = FORMS[phaseKey] ?? FORMS.Match;
   const navigate = useNavigate();
 
+  const [records, setRecords] = useState({ Match: [], Pit: [] });
+  const [tablePhase, setTablePhase] = useState(null); // 'Match' | 'Pit' | null (closed)
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
   const [sheet, setSheet] = useState(null); // 'import' | 'export' | null
-  const [showTable, setShowTable] = useState(false);
-  const [recordDataJSON, setRecordDataJSON] = useState([]);
   const [message, setMessage] = useState(null);
   const csvFileInputRef = useRef(null);
 
   useEffect(() => {
-    if (!searchParams.get('phase')) {
-      setSearchParams({ phase: 'Match' }, { replace: true });
-    }
-    loadRecordDataAsJSON(phase).then(data => {
-      setRecordDataJSON(data);
-      setMessage(null);
-    });
-  }, [phaseKey]);
+    loadAll().then(setRecords);
+  }, []);
 
-  const hasData = recordDataJSON.length > 0;
-  const phaseName = phaseKey.toLowerCase();
-  const count = recordDataJSON.length;
+  const hasData = PHASES.some(p => records[p].length > 0);
 
-  function exportCSV() {
-    const csv = convertRecordDataJSONToCSV(phase, recordDataJSON);
+  function exportCSV(phaseKey) {
+    const csv = convertRecordDataJSONToCSV(PHASE_CONFIG[phaseKey], records[phaseKey]);
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'scouting_data.csv';
+    a.download = `${phaseKey.toLowerCase()}_data.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -89,25 +87,25 @@ function Scouting() {
     }
 
     const summaryParts = [];
-    for (const [phaseKey, records] of Object.entries(result.byPhase)) {
-      if (records.length === 0) continue;
+    for (const [phaseKey, imported] of Object.entries(result.byPhase)) {
+      if (imported.length === 0) continue;
       const phaseConfig  = PHASE_CONFIG[phaseKey];
       const existing     = await loadRecordDataAsJSON(phaseConfig);
       const seen         = new Set(existing.map(r => getRecordIdentity(phaseConfig, r)));
       let added = 0;
-      for (const r of records) {
+      for (const r of imported) {
         const identity = getRecordIdentity(phaseConfig, r);
         if (!seen.has(identity)) { seen.add(identity); added++; }
       }
-      const alreadyHad = records.length - added;
-      await mergeAndStoreRecordData(phaseConfig, records);
+      const alreadyHad = imported.length - added;
+      await mergeAndStoreRecordData(phaseConfig, imported);
       const sub = [];
       if (added      > 0) sub.push(`${added} new`);
       if (alreadyHad > 0) sub.push(`${alreadyHad} already on this device`);
-      summaryParts.push(`${records.length} ${phaseKey.toLowerCase()} record${records.length !== 1 ? 's' : ''} (${sub.join(', ')})`);
+      summaryParts.push(`${imported.length} ${phaseKey.toLowerCase()} record${imported.length !== 1 ? 's' : ''} (${sub.join(', ')})`);
     }
 
-    setRecordDataJSON(await loadRecordDataAsJSON(phase));
+    setRecords(await loadAll());
     const text = summaryParts.length ? summaryParts.join(' and ') + ' imported.' : 'No records to import.';
     setMessage({ type: 'success', lines: [text] });
   }
@@ -123,62 +121,58 @@ function Scouting() {
     e.target.value = '';
   }
 
+  // Open the table on the first phase that has records.
+  function openTable() {
+    setTablePhase(PHASES.find(p => records[p].length > 0) ?? PHASES[0]);
+  }
+
   return (
     <Layout header="Scouting" tab={1}>
-      <div className="h-full flex flex-col">
-        <PhaseToggle />
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          <div className="flex flex-col gap-3 p-4">
-            <MenuCard
-              onClick={() => navigate(form.to)}
-              title="New"
-            >
-              {hasDraft(phase, form.draftKey) && (
+      <div className="h-full overflow-y-auto">
+        <div className="flex flex-col gap-2 p-4">
+
+          <p className="section-label px-1">New</p>
+          {PHASES.map(p => (
+            <MenuCard key={p} onClick={() => navigate(FORMS[p].to)} title={p}>
+              {hasDraft(PHASE_CONFIG[p], FORMS[p].draftKey) && (
                 <span className="badge">
                   <span className="size-1.5 rounded-full bg-[var(--color-primary)]" />
                   Draft saved
                 </span>
               )}
             </MenuCard>
-            <MenuCard
-              onClick={() => setShowTable(true)}
-              disabled={!hasData}
-              title="Records"
-            />
-            <MenuCard
-              onClick={() => setSheet('import')}
-              title="Import"
-            />
-            <MenuCard
-              onClick={() => setSheet('export')}
-              disabled={!hasData}
-              title="Export"
-            />
-            {message && (
-              <div className={`message ${message.type} m-0`}>
-                <div className="flex flex-col gap-0.5">
-                  {message.lines.map((line, i) => <span key={i}>{line}</span>)}
-                </div>
-                <button onClick={() => setMessage(null)} className="shrink-0 opacity-60 hover:opacity-100">✕</button>
+          ))}
+
+          <p className="section-label px-1 pt-4">Records</p>
+          <MenuCard onClick={openTable} disabled={!hasData} title="View" />
+          <MenuCard onClick={() => setSheet('import')} title="Import" />
+          <MenuCard onClick={() => setSheet('export')} disabled={!hasData} title="Export" />
+
+          {message && (
+            <div className={`message ${message.type} m-0 mt-2`}>
+              <div className="flex flex-col gap-0.5">
+                {message.lines.map((line, i) => <span key={i}>{line}</span>)}
               </div>
-            )}
-          </div>
-          <input
-            ref={csvFileInputRef}
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={handleCSVImport}
-          />
+              <button onClick={() => setMessage(null)} className="shrink-0 opacity-60 hover:opacity-100">✕</button>
+            </div>
+          )}
         </div>
+        <input
+          ref={csvFileInputRef}
+          type="file"
+          accept=".csv"
+          className="hidden"
+          onChange={handleCSVImport}
+        />
       </div>
-      {showTable && (
+      {tablePhase && (
         <RecordTable
-          title={`${phaseKey} records`}
-          subtitle={`${count} record${count !== 1 ? 's' : ''}`}
-          columns={phase.columns}
-          records={recordDataJSON}
-          onClose={() => setShowTable(false)}
+          title="Records"
+          subtitle={plural(records[tablePhase].length)}
+          tabs={<Tabs options={PHASES} value={tablePhase} onChange={setTablePhase} className="-mx-4" />}
+          columns={PHASE_CONFIG[tablePhase].columns}
+          records={records[tablePhase]}
+          onClose={() => setTablePhase(null)}
         />
       )}
       {showQRImport && (
@@ -202,11 +196,11 @@ function Scouting() {
       )}
       {showQRExport && (
         <Modal
-          title={`Export ${phaseName} records`}
+          title="Export records"
           description="Scan with Import → QR code on the other device."
           onClose={() => setShowQRExport(false)}
         >
-          <Export value={JSON.stringify(recordDataJSON)} />
+          <Export value={JSON.stringify(PHASES.flatMap(p => records[p]))} />
         </Modal>
       )}
       {sheet === 'import' && (
@@ -221,11 +215,15 @@ function Scouting() {
       )}
       {sheet === 'export' && (
         <BottomSheet
-          title={`Export ${phaseName} records`}
+          title="Export records"
           onClose={() => setSheet(null)}
           options={[
-            { label: 'CSV file', description: 'Download a spreadsheet file',         onSelect: exportCSV },
-            { label: 'QR code',  description: 'Show QR codes for another device to scan', onSelect: () => setShowQRExport(true) },
+            { label: 'QR code', description: 'Show match and pit records for another device to scan', onSelect: () => setShowQRExport(true) },
+            ...PHASES.filter(p => records[p].length > 0).map(p => ({
+              label:       `${p} CSV`,
+              description: `Download ${p.toLowerCase()} records as a spreadsheet file`,
+              onSelect:    () => exportCSV(p),
+            })),
           ]}
         />
       )}
