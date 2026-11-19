@@ -23,11 +23,14 @@ function Cell({ column, value }) {
   return value ?? '–';
 }
 
-function RecordTable({ title, columns, records, onClose }) {
+function RecordTable({ title, subtitle, columns, records, onClose }) {
   return (
     <div className="overlay items-end" onPointerDown={onClose}>
       <div className="sheet sheet-full" onPointerDown={e => e.stopPropagation()}>
-        <p className="text-lg font-semibold px-1">{title}</p>
+        <div className="px-1">
+          <p className="text-lg font-semibold">{title}</p>
+          {subtitle && <p className="text-sm text-[var(--color-muted)]">{subtitle}</p>}
+        </div>
         <div className="flex-1 min-h-0 overflow-auto -mx-4">
           <table className="text-xs border-collapse w-max min-w-full">
             <thead>

@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
 
-// Tappable card with a title, description and chevron (Scouting and Records menus).
+// Tappable card with a title and chevron (Scouting menu).
 // Pass `to` to navigate, or `onClick` for an action.
-function MenuCard({ to, onClick, disabled, title, description, children }) {
+function MenuCard({ to, onClick, disabled, title, children }) {
   const content = (
     <>
       <div className="flex-1 flex flex-col gap-1">
         <span className="font-semibold">{title}</span>
-        <span className="text-sm text-[var(--color-muted)]">{description}</span>
         {children}
       </div>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-5 shrink-0 text-[var(--color-muted)]">

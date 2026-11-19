@@ -4,7 +4,7 @@ import Layout from './Layout';
 import Counter from '../ui/Counter';
 import NumericInput from '../ui/NumericInput';
 import Switch from '../ui/Switch';
-import { mergeAndStoreRecordData } from '../../lib/RecordData';
+import { PHASE_CONFIG, mergeAndStoreRecordData } from '../../lib/RecordData';
 
 function defaultValue(question) {
   switch (question.type) {
@@ -60,6 +60,9 @@ function ScoutingForm({ header, phase, draftKey }) {
   const navigate  = useNavigate();
   const pages     = phase.form.pages;
   const questions = pages.flatMap(p => p.questions);
+  // Return to the Scouting menu on this form's tab (Match or Pit). Keeps the draft.
+  const phaseKey  = Object.keys(PHASE_CONFIG).find(k => PHASE_CONFIG[k] === phase);
+  const exit      = () => navigate(`/scouting?phase=${phaseKey}`);
 
   function loadDraft() {
     try { return JSON.parse(localStorage.getItem(draftKey)) ?? {}; } catch { return {}; }
@@ -88,7 +91,7 @@ function ScoutingForm({ header, phase, draftKey }) {
     }
     await mergeAndStoreRecordData(phase, [record]);
     localStorage.removeItem(draftKey);
-    navigate('/scouting');
+    exit();
   }
 
   const current = pages[page];
@@ -96,7 +99,7 @@ function ScoutingForm({ header, phase, draftKey }) {
   const isValid = current.questions.every(q => isAnswered(q, data[q.id]));
 
   return (
-    <Layout header={header} tab={1}>
+    <Layout header={header} tab={1} onBack={exit} hideNav>
       <div className="h-full flex flex-col">
 
         {/* Progress bar */}
@@ -121,9 +124,11 @@ function ScoutingForm({ header, phase, draftKey }) {
 
         {/* Navigation buttons */}
         <div className="px-4 pb-4 pt-2 flex gap-2">
-          <button onClick={page > 0 ? () => setPage(p => p - 1) : () => navigate('/scouting')} className="flex-1 btn-outline">
-            Back
-          </button>
+          {page > 0 && (
+            <button onClick={() => setPage(p => p - 1)} className="flex-1 btn-outline">
+              Back
+            </button>
+          )}
           <button
             onClick={isLast ? handleSubmit : () => setPage(p => p + 1)}
             disabled={!isValid}
