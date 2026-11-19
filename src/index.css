@@ -220,26 +220,6 @@ html, body {
   .switch-thumb.on  { transform: translateX(1.5rem); }
   .switch-thumb.off { transform: translateX(0); }
 
-  /* Floating label (TextInput) */
-  .floating-label {
-    position: absolute;
-    padding: 0.25rem;
-    color: var(--color-muted);
-    pointer-events: none;
-    left: 0.75rem;
-    top: 0.75rem;
-    transition: all 0.2s ease-in;
-  }
-
-  .peer:focus ~ .floating-label,
-  .peer:valid ~ .floating-label {
-    left: 0.5rem;
-    top: -0.5rem;
-    font-size: 0.75rem;
-    background-color: var(--color-surface);
-    color: var(--color-primary);
-  }
-
   /* Table */
   .table-th {
     position: sticky;

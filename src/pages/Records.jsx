@@ -7,8 +7,9 @@ import PhaseToggle from '../components/ui/PhaseToggle';
 import {
   PHASE_CONFIG,
   classifyAndValidateImport,
-  convertRecordDataJSONToTSV,
-  convertRecordDataTSVToJSON,
+  convertRecordDataJSONToCSV,
+  convertRecordDataCSVToJSON,
+  getRecordIdentity,
   loadRecordDataAsJSON,
   mergeAndStoreRecordData,
 } from '../lib/RecordData';
@@ -32,7 +33,7 @@ function Records() {
   const [showQRExport, setShowQRExport] = useState(false);
   const [recordDataJSON, setRecordDataJSON] = useState([]);
   const [message, setMessage] = useState(null);
-  const tsvFileInputRef = useRef(null);
+  const csvFileInputRef = useRef(null);
 
   useEffect(() => {
     if (!searchParams.get('phase')) {
@@ -46,13 +47,13 @@ function Records() {
 
   const hasData = recordDataJSON.length > 0;
 
-  function exportTSV() {
-    const tsv = convertRecordDataJSONToTSV(phase, recordDataJSON);
-    const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+  function exportCSV() {
+    const csv = convertRecordDataJSONToCSV(phase, recordDataJSON);
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'scouting_data.tsv';
+    a.download = 'scouting_data.csv';
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -69,13 +70,17 @@ function Records() {
       if (records.length === 0) continue;
       const phaseConfig  = PHASE_CONFIG[phaseKey];
       const existing     = await loadRecordDataAsJSON(phaseConfig);
-      const existingKeys = new Set(existing.map(r => phaseConfig.getUniqueKey(r)));
-      const added  = records.filter(r => !existingKeys.has(phaseConfig.getUniqueKey(r))).length;
-      const merged = records.length - added;
+      const seen         = new Set(existing.map(r => getRecordIdentity(phaseConfig, r)));
+      let added = 0;
+      for (const r of records) {
+        const identity = getRecordIdentity(phaseConfig, r);
+        if (!seen.has(identity)) { seen.add(identity); added++; }
+      }
+      const alreadyHad = records.length - added;
       await mergeAndStoreRecordData(phaseConfig, records);
       const sub = [];
-      if (added  > 0) sub.push(`${added} new`);
-      if (merged > 0) sub.push(`${merged} merged`);
+      if (added      > 0) sub.push(`${added} new`);
+      if (alreadyHad > 0) sub.push(`${alreadyHad} already on this device`);
       summaryParts.push(`${records.length} ${phaseKey.toLowerCase()} record${records.length !== 1 ? 's' : ''} (${sub.join(', ')})`);
     }
 
@@ -84,12 +89,12 @@ function Records() {
     setMessage({ type: 'success', lines: [text] });
   }
 
-  function handleTSVImport(e) {
+  function handleCSVImport(e) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
-      handleImport(convertRecordDataTSVToJSON(event.target.result));
+      handleImport(convertRecordDataCSVToJSON(event.target.result));
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -109,17 +114,17 @@ function Records() {
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 p-2">
-            <button onClick={exportTSV}              disabled={!hasData} className="btn-primary">Export TSV</button>
+            <button onClick={exportCSV}              disabled={!hasData} className="btn-primary">Export CSV</button>
             <button onClick={() => setShowQRExport(true)} disabled={!hasData} className="btn-primary">Export QR</button>
-            <button onClick={() => tsvFileInputRef.current.click()}  className="btn-outline">Import TSV</button>
+            <button onClick={() => csvFileInputRef.current.click()}  className="btn-outline">Import CSV</button>
             <button onClick={() => setShowQRImport(true)}            className="btn-outline">Import QR</button>
           </div>
           <input
-            ref={tsvFileInputRef}
+            ref={csvFileInputRef}
             type="file"
-            accept=".tsv"
+            accept=".csv"
             className="hidden"
-            onChange={handleTSVImport}
+            onChange={handleCSVImport}
           />
 
           {hasData ? (
@@ -159,7 +164,7 @@ function Records() {
             setShowQRImport(false);
             let parsed;
             try { parsed = JSON.parse(recordDataString); } catch {
-              setMessage({ type: 'error', text: 'Invalid JSON format.' });
+              setMessage({ type: 'error', lines: ['Invalid JSON format.'] });
               return;
             }
             handleImport(parsed);

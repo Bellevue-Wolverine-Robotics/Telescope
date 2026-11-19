@@ -22,8 +22,8 @@ function Counter({ label, value, onChange, min = 0, max = 100 }) {
   }
 
   return (
-    <div>
-      <label>{label}</label>
+    <div className="flex flex-col gap-1">
+      <label className="field-label">{label}</label>
       <div className="counter-wrap">
         <button className="counter-btn" onClick={() => onChange(Math.min(value + 1, max))} disabled={value >= max}>+</button>
         <input

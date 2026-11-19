@@ -1,62 +1,61 @@
-const MATCH_COLUMNS = [
-  { key: 'scouterName',   label: 'Scouter',      type: 'string'  },
-  { key: 'matchNumber',   label: 'Match',         type: 'number',  min: 0, max: 200 },
-  { key: 'teamNumber',    label: 'Team',          type: 'number',  min: 0, max: 100000 },
-  { key: 'robotPosition', label: 'Position',      type: 'string',  options: ['Red Bottom', 'Red Center', 'Red Top', 'Blue Bottom', 'Blue Center', 'Blue Top'] },
-  { key: 'fuelMissedAuto',label: 'Missed Auto',   type: 'number',  min: 0, max: 100 },
-  { key: 'autoPoints',    label: 'Auto Pts',      type: 'number',  min: 0, max: 300 },
-  { key: 'autoClimb',     label: 'Auto Climb',    type: 'boolean' },
-  { key: 'cycles',        label: 'Cycles',        type: 'number',  min: 0, max: 50 },
-  { key: 'numberDepot',   label: 'Depot',         type: 'number',  min: 0, max: 400 },
-  { key: 'intakeType',    label: 'Intake',        type: 'string',  options: ['Over Bumper', 'Depot', 'Through Bumper'] },
-  { key: 'endgameClimb',  label: 'Climb',         type: 'string',  options: ['No Climb', 'L1', 'L2', 'L3'] },
-  { key: 'superChargedRP',label: 'Super RP',      type: 'boolean' },
-  { key: 'chargedRP',     label: 'Charged RP',    type: 'boolean' },
-  { key: 'climbRP',       label: 'Climb RP',      type: 'boolean' },
-  { key: 'yellowCard',    label: 'Yellow Card',   type: 'boolean' },
-  { key: 'brokeDown',     label: 'Broke Down',    type: 'boolean' },
-  { key: 'minorFouls',    label: 'Minor Fouls',   type: 'number',  min: 0, max: 50 },
-  { key: 'majorFouls',    label: 'Major Fouls',   type: 'number',  min: 0, max: 50 },
-  { key: 'playstyle',     label: 'Playstyle',     type: 'string',  options: ['Offense', 'Defense', 'Both'] },
-  { key: 'redScore',      label: 'Red',           type: 'number',  min: 0, max: 2000 },
-  { key: 'blueScore',     label: 'Blue',          type: 'number',  min: 0, max: 2000 },
-  { key: 'result',        label: 'Result',        type: 'string',  options: ['Win', 'Loss'] },
-  { key: 'observations',  label: 'Notes',         type: 'text'    },
+import matchForm from '../forms/match.json';
+import pitForm from '../forms/pit.json';
+
+// Metadata is filled in automatically by the app (not asked on the form),
+// so it is defined here rather than in the form JSON files.
+const METADATA_COLUMNS = [
+  { key: 'timestamp',   label: 'Timestamp', type: 'string' },
+  { key: 'scouterName', label: 'Scouter',   type: 'string' },
 ];
 
-const PIT_COLUMNS = [
-  { key: 'scouterName',   label: 'Scouter',       type: 'string'  },
-  { key: 'teamNumber',    label: 'Team',           type: 'number',  min: 0, max: 100000 },
-  { key: 'weight',        label: 'Weight (lbs)',   type: 'number',  min: 0, max: 200 },
-  { key: 'drivetrain',    label: 'Drivetrain',     type: 'string',  options: ['Swerve', 'Tank', 'Mecanum'] },
-  { key: 'hasAutoAlign',  label: 'Auto Align',     type: 'boolean' },
-  { key: 'autoDescription',label: 'Auto Notes',   type: 'text'    },
-  { key: 'hopperCapacity',label: 'Hopper',         type: 'number',  min: 0, max: 200 },
-  { key: 'shooterSpeed',  label: 'Shooter',        type: 'number',  min: 0, max: 100 },
-  { key: 'intakeSpeed',   label: 'Intake',         type: 'number',  min: 0, max: 100 },
-  { key: 'supportedPaths',label: 'Paths',          type: 'string',  options: ['Bump', 'Trench', 'Both'] },
-  { key: 'climbLevel',    label: 'Climb Lvl',      type: 'string',  options: ['None', 'L1', 'L2', 'L3'] },
-  { key: 'climbType',     label: 'Climb Type',     type: 'string',  options: ['Side', 'Front', 'Both', 'Neither'] },
-  { key: 'robotLength',   label: 'Length',         type: 'number',  min: 0, max: 150 },
-  { key: 'robotHeight',   label: 'Height',         type: 'number',  min: 0, max: 50 },
-  { key: 'robotWidth',    label: 'Width',          type: 'number',  min: 0, max: 150 },
-];
+// How each question type from the form JSON is stored in a record.
+const QUESTION_TYPE_TO_COLUMN_TYPE = {
+  number:   'number',
+  counter:  'number',
+  dropdown: 'string',
+  switch:   'boolean',
+  notes:    'text',
+};
+
+function columnsFromForm(form) {
+  const questions = form.pages.flatMap(page => page.questions);
+  return [
+    ...METADATA_COLUMNS,
+    ...questions.map(q => ({
+      key:     q.id,
+      label:   q.tableLabel ?? q.label,
+      type:    QUESTION_TYPE_TO_COLUMN_TYPE[q.type],
+      min:     q.min,
+      max:     q.max,
+      options: q.options,
+    })),
+  ];
+}
+
+const MATCH_COLUMNS = columnsFromForm(matchForm);
+const PIT_COLUMNS   = columnsFromForm(pitForm);
 
 export const PHASE_CONFIG = {
   Match: {
-    columns:      MATCH_COLUMNS,
-    storageKey:   'matches',
-    getUniqueKey: m => `${m.matchNumber}-${m.teamNumber}`,
-    sort:         (a, b) => a.matchNumber - b.matchNumber ||
-                    (a.robotPosition < b.robotPosition ? -1 : a.robotPosition > b.robotPosition ? 1 : 0),
+    form:       matchForm,
+    columns:    MATCH_COLUMNS,
+    storageKey: 'matches',
+    sort:       (a, b) => a.matchNumber - b.matchNumber ||
+                  (a.robotPosition < b.robotPosition ? -1 : a.robotPosition > b.robotPosition ? 1 : 0),
   },
   Pit: {
-    columns:      PIT_COLUMNS,
-    storageKey:   'pit',
-    getUniqueKey: m => `${m.teamNumber}`,
-    sort:         (a, b) => a.teamNumber - b.teamNumber,
+    form:       pitForm,
+    columns:    PIT_COLUMNS,
+    storageKey: 'pit',
+    sort:       (a, b) => a.teamNumber - b.teamNumber,
   },
 };
+
+// Two records are duplicates only when every field is identical.
+// Records for the same match/team with different data are both kept.
+export function getRecordIdentity(phase, record) {
+  return JSON.stringify(phase.columns.map(({ key }) => record[key]));
+}
 
 export function classifyAndValidateImport(records) {
   if (!Array.isArray(records))
@@ -164,16 +163,56 @@ export async function storeRecordData(phase, recordDataJSON) {
   });
 }
 
-export function convertRecordDataJSONToTSV(phase, recordDataJSON) {
-  const header = phase.columns.map(col => col.key).join('\t');
+// Wrap a CSV field in quotes when it contains a comma, quote or line break,
+// doubling any quotes inside it (standard CSV, as used by Sheets and Excel).
+function escapeCSVField(value) {
+  const text = String(value);
+  return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+export function convertRecordDataJSONToCSV(phase, recordDataJSON) {
+  const header = phase.columns.map(col => escapeCSVField(col.key)).join(',');
   const rows = recordDataJSON.map(record =>
     phase.columns.map(({ key, type }) => {
       const value = record[key];
       if (type === 'boolean') return value ? 'Yes' : 'No';
-      return value ?? '';
-    }).join('\t')
+      return escapeCSVField(value ?? '');
+    }).join(',')
   );
   return [header, ...rows].join('\n') + '\n';
+}
+
+// Split CSV text into rows of fields, handling quoted fields that contain
+// commas, doubled quotes and line breaks.
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1); // strip byte order mark
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') inQuotes = false;
+      else field += c;
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ',') {
+      row.push(field); field = '';
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(field); field = '';
+      rows.push(row); row = [];
+    } else {
+      field += c;
+    }
+  }
+  if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+
+  // Ignore blank lines
+  return rows.filter(r => !(r.length === 1 && r[0] === ''));
 }
 
 export async function mergeAndStoreRecordData(phase, recordDataJSON) {
@@ -184,21 +223,20 @@ export async function mergeAndStoreRecordData(phase, recordDataJSON) {
 }
 
 export function mergeRecordData(phase, existing, imported) {
-  const merged = new Map(existing.map(m => [phase.getUniqueKey(m), m]));
+  const merged = new Map(existing.map(r => [getRecordIdentity(phase, r), r]));
   for (const record of imported) {
-    merged.set(phase.getUniqueKey(record), record);
+    const identity = getRecordIdentity(phase, record);
+    if (!merged.has(identity)) merged.set(identity, record);
   }
   return [...merged.values()].sort(phase.sort);
 }
 
-export function convertRecordDataTSVToJSON(text) {
+export function convertRecordDataCSVToJSON(text) {
   const allColumns = [...MATCH_COLUMNS, ...PIT_COLUMNS];
   const columnByKey = new Map(allColumns.map(col => [col.key, col]));
-  const [headerLine, ...dataLines] = text.trim().split(/\r?\n/);
-  const keys = headerLine.split('\t');
-  return dataLines.map(line => {
-    const values = line.split('\t');
-    return Object.fromEntries(
+  const [keys = [], ...dataRows] = parseCSV(text);
+  return dataRows.map(values =>
+    Object.fromEntries(
       keys.map((key, i) => {
         const col = columnByKey.get(key);
         const raw = values[i] ?? '';
@@ -206,6 +244,6 @@ export function convertRecordDataTSVToJSON(text) {
         if (col?.type === 'number')  return [key, Number(raw)];
         return [key, raw];
       })
-    );
-  });
+    )
+  );
 }

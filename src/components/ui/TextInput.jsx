@@ -1,15 +1,14 @@
 function TextInput(props) {
   return (
-    <div className="relative">
+    <div className="flex flex-col gap-1">
+      <label className="field-label">{props.label}</label>
       <input
-        required
         inputMode={props.inputMode}
         type="text"
-        className="peer field-input my-1"
+        className="field-input"
         value={props.value}
         onChange={(event) => props.onChange(event.target.value)}
       />
-      <label className="floating-label">{props.label}</label>
     </div>
   );
 }

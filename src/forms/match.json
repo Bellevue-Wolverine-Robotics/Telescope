@@ -1,0 +1,45 @@
+{
+  "pages": [
+    {
+      "title": "Match Info",
+      "questions": [
+        { "id": "matchNumber",   "label": "Match Number",   "tableLabel": "Match",    "type": "number",   "min": 0, "max": 200,    "required": true },
+        { "id": "teamNumber",    "label": "Team Number",    "tableLabel": "Team",     "type": "number",   "min": 0, "max": 100000, "required": true },
+        { "id": "robotPosition", "label": "Robot Position", "tableLabel": "Position", "type": "dropdown", "options": ["Red Bottom", "Red Center", "Red Top", "Blue Bottom", "Blue Center", "Blue Top"], "placeholder": "Select position...", "required": true }
+      ]
+    },
+    {
+      "title": "Autonomous",
+      "questions": [
+        { "id": "fuelMissedAuto", "label": "Fuel Missed Auto", "tableLabel": "Missed Auto", "type": "counter", "min": 0, "max": 100 },
+        { "id": "autoPoints",     "label": "Auto Points",      "tableLabel": "Auto Pts",    "type": "counter", "min": 0, "max": 300 },
+        { "id": "autoClimb",      "label": "Auto Climb",       "tableLabel": "Auto Climb",  "type": "switch" }
+      ]
+    },
+    {
+      "title": "Teleop",
+      "questions": [
+        { "id": "cycles",       "label": "Cycles",        "tableLabel": "Cycles", "type": "counter",  "min": 0, "max": 50 },
+        { "id": "numberDepot",  "label": "Depot",         "tableLabel": "Depot",  "type": "counter",  "min": 0, "max": 400 },
+        { "id": "intakeType",   "label": "Intake Type",   "tableLabel": "Intake", "type": "dropdown", "options": ["Over Bumper", "Depot", "Through Bumper"], "placeholder": "Select intake type...", "required": true },
+        { "id": "endgameClimb", "label": "Endgame Climb", "tableLabel": "Climb",  "type": "dropdown", "options": ["No Climb", "L1", "L2", "L3"], "placeholder": "Select climb...", "required": true }
+      ]
+    },
+    {
+      "title": "Outcome",
+      "questions": [
+        { "id": "superChargedRP", "label": "Super Charged RP", "tableLabel": "Super RP",    "type": "switch" },
+        { "id": "chargedRP",      "label": "Charged RP",       "tableLabel": "Charged RP",  "type": "switch" },
+        { "id": "climbRP",        "label": "Climb RP",         "tableLabel": "Climb RP",    "type": "switch" },
+        { "id": "yellowCard",     "label": "Yellow Card",      "tableLabel": "Yellow Card", "type": "switch" },
+        { "id": "brokeDown",      "label": "Broke Down",       "tableLabel": "Broke Down",  "type": "switch" },
+        { "id": "minorFouls",     "label": "Minor Fouls",      "tableLabel": "Minor Fouls", "type": "counter",  "min": 0, "max": 50 },
+        { "id": "majorFouls",     "label": "Major Fouls",      "tableLabel": "Major Fouls", "type": "counter",  "min": 0, "max": 50 },
+        { "id": "playstyle",      "label": "Playstyle",        "tableLabel": "Playstyle",   "type": "dropdown", "options": ["Offense", "Defense", "Both"], "placeholder": "Select playstyle..." },
+        { "id": "redScore",       "label": "Red Score",        "tableLabel": "Red",         "type": "number",   "min": 0, "max": 2000, "required": true },
+        { "id": "blueScore",      "label": "Blue Score",       "tableLabel": "Blue",        "type": "number",   "min": 0, "max": 2000, "required": true },
+        { "id": "observations",   "label": "Observations",     "tableLabel": "Notes",       "type": "notes",    "placeholder": "Additional notes..." }
+      ]
+    }
+  ]
+}
