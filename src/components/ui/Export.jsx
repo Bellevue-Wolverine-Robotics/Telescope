@@ -2,7 +2,7 @@ import QRCode from 'qrcode';
 import { useEffect, useRef } from 'react';
 import { createFountain } from '../../lib/fountain';
 
-function Export({ value, close }) {
+function Export({ value }) {
   const canvas = useRef(null);
 
   useEffect(() => {
@@ -19,23 +19,12 @@ function Export({ value, close }) {
 
     generate();
     const interval = setInterval(generate, 1000 / 12);
+    return () => clearInterval(interval);
+  }, [value]);
 
-    const handlePointerDown = (event) => {
-      if (!canvas.current.parentElement.contains(event.target)) {
-        close();
-      }
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener('pointerdown', handlePointerDown);
-    };
-  }, [value, close]);
-
+  // White background so the code stays scannable in dark mode.
   return (
-    <div className="h-full w-full p-4">
+    <div className="w-full aspect-square rounded-lg bg-white p-2">
       <canvas className="h-full w-full object-contain [image-rendering:pixelated]" ref={canvas} />
     </div>
   );

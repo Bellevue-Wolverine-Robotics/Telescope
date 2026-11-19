@@ -3,7 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
+import BottomSheet from '../components/ui/BottomSheet';
+import MenuCard from '../components/ui/MenuCard';
+import Modal from '../components/ui/Modal';
 import PhaseToggle from '../components/ui/PhaseToggle';
+import RecordTable from '../components/ui/RecordTable';
 import {
   PHASE_CONFIG,
   classifyAndValidateImport,
@@ -14,16 +18,6 @@ import {
   mergeAndStoreRecordData,
 } from '../lib/RecordData';
 
-function Cell({ column, value }) {
-  if (column.type === 'boolean') {
-    return <span className={value ? 'text-green-600' : 'text-gray-300'}>{value ? '✓' : '✕'}</span>;
-  }
-  if (column.type === 'text') {
-    return <span className="block max-w-40 truncate" title={value}>{value ?? '–'}</span>;
-  }
-  return value ?? '–';
-}
-
 function Records() {
   const [searchParams, setSearchParams] = useSearchParams();
   const phaseKey = searchParams.get('phase') ?? 'Match';
@@ -31,6 +25,8 @@ function Records() {
 
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
+  const [sheet, setSheet] = useState(null); // 'import' | 'export' | null
+  const [showTable, setShowTable] = useState(false);
   const [recordDataJSON, setRecordDataJSON] = useState([]);
   const [message, setMessage] = useState(null);
   const csvFileInputRef = useRef(null);
@@ -46,6 +42,8 @@ function Records() {
   }, [phaseKey]);
 
   const hasData = recordDataJSON.length > 0;
+  const phaseName = phaseKey.toLowerCase();
+  const count = recordDataJSON.length;
 
   function exportCSV() {
     const csv = convertRecordDataJSONToCSV(phase, recordDataJSON);
@@ -102,79 +100,97 @@ function Records() {
 
   return (
     <Layout header="Records" tab={0}>
-      {!(showQRImport || showQRExport) && (
-        <div className="flex flex-col h-full">
+      <div className="h-full overflow-y-auto">
+        <div className="flex flex-col gap-3 p-4">
           <PhaseToggle />
+          <MenuCard
+            onClick={() => setShowTable(true)}
+            disabled={!hasData}
+            title="View records"
+            description={hasData ? `${count} ${phaseName} record${count !== 1 ? 's' : ''}` : `No ${phaseName} records yet`}
+          />
+          <MenuCard
+            onClick={() => setSheet('import')}
+            title="Import"
+            description="Add records from a CSV file or QR code"
+          />
+          <MenuCard
+            onClick={() => setSheet('export')}
+            disabled={!hasData}
+            title="Export"
+            description={`Share ${phaseName} records as a CSV file or QR code`}
+          />
           {message && (
-            <div className={`message ${message.type}`}>
+            <div className={`message ${message.type} m-0`}>
               <div className="flex flex-col gap-0.5">
                 {message.lines.map((line, i) => <span key={i}>{line}</span>)}
               </div>
               <button onClick={() => setMessage(null)} className="shrink-0 opacity-60 hover:opacity-100">✕</button>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-2 p-2">
-            <button onClick={exportCSV}              disabled={!hasData} className="btn-primary">Export CSV</button>
-            <button onClick={() => setShowQRExport(true)} disabled={!hasData} className="btn-primary">Export QR</button>
-            <button onClick={() => csvFileInputRef.current.click()}  className="btn-outline">Import CSV</button>
-            <button onClick={() => setShowQRImport(true)}            className="btn-outline">Import QR</button>
-          </div>
-          <input
-            ref={csvFileInputRef}
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={handleCSVImport}
-          />
-
-          {hasData ? (
-            <div className="flex-1 overflow-auto">
-              <table className="text-xs border-collapse w-max min-w-full">
-                <thead>
-                  <tr>
-                    {phase.columns.map(col => (
-                      <th key={col.key} className="table-th">{col.label}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {recordDataJSON.map((record, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'table-row-even' : 'table-row-odd'}>
-                      {phase.columns.map(col => (
-                        <td key={col.key} className="table-td">
-                          <Cell column={col} value={record[col.key]} />
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="flex-1 flex justify-center items-center text-sm text-[var(--color-muted)]">
-              No records found.
-            </div>
-          )}
         </div>
-      )}
-      {showQRImport && (
-        <Import
-          close={() => setShowQRImport(false)}
-          onImport={(recordDataString) => {
-            setShowQRImport(false);
-            let parsed;
-            try { parsed = JSON.parse(recordDataString); } catch {
-              setMessage({ type: 'error', lines: ['Invalid JSON format.'] });
-              return;
-            }
-            handleImport(parsed);
-          }}
+        <input
+          ref={csvFileInputRef}
+          type="file"
+          accept=".csv"
+          className="hidden"
+          onChange={handleCSVImport}
+        />
+      </div>
+      {showTable && (
+        <RecordTable
+          title={`${phaseKey} records`}
+          columns={phase.columns}
+          records={recordDataJSON}
+          onClose={() => setShowTable(false)}
         />
       )}
+      {showQRImport && (
+        <Modal
+          title="Import from QR code"
+          description="Point the camera at the QR code on the other device."
+          onClose={() => setShowQRImport(false)}
+        >
+          <Import
+            onImport={(recordDataString) => {
+              setShowQRImport(false);
+              let parsed;
+              try { parsed = JSON.parse(recordDataString); } catch {
+                setMessage({ type: 'error', lines: ['Invalid JSON format.'] });
+                return;
+              }
+              handleImport(parsed);
+            }}
+          />
+        </Modal>
+      )}
       {showQRExport && (
-        <Export
-          close={() => setShowQRExport(false)}
-          value={JSON.stringify(recordDataJSON)}
+        <Modal
+          title={`Export ${phaseName} records`}
+          description="Scan with Import → QR code on the other device."
+          onClose={() => setShowQRExport(false)}
+        >
+          <Export value={JSON.stringify(recordDataJSON)} />
+        </Modal>
+      )}
+      {sheet === 'import' && (
+        <BottomSheet
+          title="Import records"
+          onClose={() => setSheet(null)}
+          options={[
+            { label: 'CSV file', description: 'Choose a .csv file from this device', onSelect: () => csvFileInputRef.current.click() },
+            { label: 'QR code',  description: 'Scan QR codes from another device',  onSelect: () => setShowQRImport(true) },
+          ]}
+        />
+      )}
+      {sheet === 'export' && (
+        <BottomSheet
+          title={`Export ${phaseName} records`}
+          onClose={() => setSheet(null)}
+          options={[
+            { label: 'CSV file', description: 'Download a spreadsheet file',         onSelect: exportCSV },
+            { label: 'QR code',  description: 'Show QR codes for another device to scan', onSelect: () => setShowQRExport(true) },
+          ]}
         />
       )}
     </Layout>
