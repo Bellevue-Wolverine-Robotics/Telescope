@@ -42,8 +42,8 @@ function hasDraft(phase, draftKey) {
   });
 }
 
-function plural(n) {
-  return `${n} record${n !== 1 ? 's' : ''}`;
+function entriesTotal(n) {
+  return `${n} ${n !== 1 ? 'entries' : 'entry'} total`;
 }
 
 async function loadAll() {
@@ -168,7 +168,7 @@ function Scouting() {
       {tablePhase && (
         <RecordTable
           title="Records"
-          subtitle={plural(records[tablePhase].length)}
+          subtitle={entriesTotal(records[tablePhase].length)}
           tabs={<Tabs options={PHASES} value={tablePhase} onChange={setTablePhase} className="-mx-4" />}
           columns={PHASE_CONFIG[tablePhase].columns}
           records={records[tablePhase]}
