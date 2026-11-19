@@ -142,7 +142,7 @@ function Scouting() {
           <MenuCard
             onClick={() => setShowTable(true)}
             disabled={!hasData}
-            title="View records"
+            title="Records"
           />
           <MenuCard
             onClick={() => setSheet('import')}
