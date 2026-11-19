@@ -12,6 +12,8 @@
   --color-muted:       #6C757D;
   --color-muted-alt:   #868e96;
   --color-on-primary:  #ffffff;
+  --color-segment-track: #E9ECEF;
+  --color-segment-thumb: #ffffff;
 }
 
 .dark {
@@ -25,6 +27,8 @@
   --color-muted:       #8899bb;
   --color-muted-alt:   #7a8eb0;
   --color-on-primary:  #1B2A4A;
+  --color-segment-track: #152238;
+  --color-segment-thumb: #2a3d5e;
 }
 
 /* ── Base layout ──────────────────────────────────────────────── */
@@ -105,31 +109,32 @@ html, body {
     align-items: center;
   }
 
-  /* Segmented control (PhaseToggle, Settings mode) */
+  /* Segmented control: for choosing an option (Match/Pit, Light/Dark, No/Yes).
+     Deliberately unlike buttons, which are for actions. */
   .segment-control {
     display: flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
     border-radius: 0.5rem;
-    border: 1px solid var(--color-primary);
-    overflow: hidden;
+    border: 1px solid var(--color-border-mid);
+    background-color: var(--color-segment-track);
   }
 
   .segment-btn {
     flex: 1;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    height: 2.25rem;
+    border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
-    background-color: var(--color-surface);
-    color: var(--color-primary);
-  }
-
-  .segment-btn + .segment-btn {
-    border-left: 1px solid var(--color-primary);
+    color: var(--color-muted);
+    transition: background-color 0.15s, color 0.15s;
   }
 
   .segment-btn.active {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
+    background-color: var(--color-segment-thumb);
+    color: var(--color-primary);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
   }
 
   /* App chrome */
@@ -164,26 +169,47 @@ html, body {
     border-top: 1px solid var(--color-border);
   }
 
-  /* Counter widget */
+  /* Dropdowns: appearance is reset above, so draw our own chevron */
+  select.field-input {
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23868e96'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+  }
+
+  /* Counter widget: same height and border as .field-input */
   .counter-wrap {
     display: flex;
-    width: fit-content;
+    width: 100%;
     border: 1px solid var(--color-border-mid);
-    border-radius: 0.375rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: var(--color-surface);
   }
 
   .counter-btn {
-    width: 3rem;
-    height: 2.25rem;
+    width: 4rem;
+    height: 3rem;
+    font-size: 1.25rem;
+    color: var(--color-primary);
+  }
+
+  .counter-btn:disabled {
+    color: var(--color-border-mid);
   }
 
   .counter-input {
-    width: 2.5rem;
-    height: 2.25rem;
+    flex: 1;
+    min-width: 0;
+    height: 3rem;
     border-left: 1px solid var(--color-border-div);
     border-right: 1px solid var(--color-border-div);
     text-align: center;
+    font-size: 1.125rem;
+    font-weight: 500;
     background: transparent;
+    color: var(--color-primary);
     -moz-appearance: textfield;
     appearance: textfield;
   }
@@ -194,32 +220,6 @@ html, body {
     margin: 0;
   }
 
-  /* Switch toggle */
-  .switch-track {
-    position: relative;
-    width: 3rem;
-    height: 1.5rem;
-    border-radius: 9999px;
-    transition: background-color 0.15s;
-  }
-
-  .switch-track.on  { background-color: var(--color-primary); }
-  .switch-track.off { background-color: var(--color-border-mid); }
-
-  .switch-thumb {
-    position: absolute;
-    top: 0.125rem;
-    left: 0.125rem;
-    width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 9999px;
-    background-color: var(--color-surface);
-    transition: transform 0.15s;
-  }
-
-  .switch-thumb.on  { transform: translateX(1.5rem); }
-  .switch-thumb.off { transform: translateX(0); }
-
   /* Table */
   .table-th {
     position: sticky;
@@ -228,9 +228,9 @@ html, body {
     text-align: left;
     font-weight: 600;
     white-space: nowrap;
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-    border-bottom: 1px solid var(--color-primary-sub);
+    background-color: var(--color-surface);
+    color: var(--color-muted);
+    border-bottom: 1px solid var(--color-border-mid);
   }
 
   .table-td {
@@ -238,6 +238,10 @@ html, body {
     white-space: nowrap;
     border-bottom: 1px solid var(--color-border);
   }
+
+  /* Line the table up with the 16px page gutter */
+  .table-th:first-child, .table-td:first-child { padding-left: 1rem; }
+  .table-th:last-child,  .table-td:last-child  { padding-right: 1rem; }
 
   .table-row-even { background-color: var(--color-surface); }
   .table-row-odd  { background-color: var(--color-surface-alt); }
@@ -266,4 +270,95 @@ html, body {
     border-color: rgb(34 197 94 / 0.3);
     color: rgb(21 128 61);
   }
+
+  /* Cards (Settings sections, Scouting menu) */
+  .card {
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    background-color: var(--color-surface-alt);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .nav-card {
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    background-color: var(--color-surface-alt);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .nav-card:disabled {
+    opacity: 0.5;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-primary);
+  }
+
+  /* Overlays: confirm dialog and bottom sheet */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(0 0 0 / 0.4);
+  }
+
+  .dialog {
+    width: 100%;
+    max-width: 22rem;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    background-color: var(--color-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 32rem;
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    border-radius: 0.75rem 0.75rem 0 0;
+    background-color: var(--color-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    animation: sheet-up 0.15s ease-out;
+  }
+
+  /* Full-height sheet (record table) */
+  .sheet-full {
+    height: calc(100% - 2rem);
+    max-width: none;
+  }
+
+  .sheet-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.125rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background-color: var(--color-surface-alt);
+    text-align: left;
+  }
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
 }

@@ -7,7 +7,7 @@ function PhaseToggle() {
   const phase = searchParams.get('phase') ?? 'Match';
 
   return (
-    <div className="segment-control mx-2 mt-2">
+    <div className="segment-control">
       {PHASES.map((p) => (
         <button
           key={p}

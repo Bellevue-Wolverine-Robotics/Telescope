@@ -121,17 +121,15 @@ function ScoutingForm({ header, phase, draftKey }) {
 
         {/* Navigation buttons */}
         <div className="px-4 pb-4 pt-2 flex gap-2">
-          {page > 0 && (
-            <button onClick={() => setPage(p => p - 1)} className="flex-1 btn-outline">
-              Back
-            </button>
-          )}
+          <button onClick={page > 0 ? () => setPage(p => p - 1) : () => navigate('/scouting')} className="flex-1 btn-outline">
+            Back
+          </button>
           <button
             onClick={isLast ? handleSubmit : () => setPage(p => p + 1)}
             disabled={!isValid}
             className="flex-1 btn-primary"
           >
-            {page === 0 ? 'Start' : isLast ? 'Submit' : 'Next'}
+            {isLast ? 'Submit' : 'Next'}
           </button>
         </div>
 
