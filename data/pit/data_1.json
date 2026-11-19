@@ -1,5 +1,6 @@
 [
   {
+    "timestamp": "2026-03-14T14:07:55Z",
     "scouterName": "Alex",
     "teamNumber": 9036,
     "weight": 110,
@@ -17,6 +18,7 @@
     "robotWidth": 29
   },
   {
+    "timestamp": "2026-03-14T14:17:17Z",
     "scouterName": "Jordan",
     "teamNumber": 2412,
     "weight": 119,
@@ -34,6 +36,7 @@
     "robotWidth": 25
   },
   {
+    "timestamp": "2026-03-14T14:25:40Z",
     "scouterName": "Morgan",
     "teamNumber": 2910,
     "weight": 115,
@@ -51,6 +54,7 @@
     "robotWidth": 27
   },
   {
+    "timestamp": "2026-03-14T14:40:20Z",
     "scouterName": "Taylor",
     "teamNumber": 948,
     "weight": 128,
@@ -68,6 +72,7 @@
     "robotWidth": 27
   },
   {
+    "timestamp": "2026-03-14T14:52:29Z",
     "scouterName": "Riley",
     "teamNumber": 4131,
     "weight": 121,

@@ -1,0 +1,33 @@
+{
+  "pages": [
+    {
+      "title": "Robot",
+      "questions": [
+        { "id": "teamNumber",      "label": "Team Number",  "tableLabel": "Team",         "type": "number",   "min": 0, "max": 100000, "required": true },
+        { "id": "weight",          "label": "Weight (lbs)", "tableLabel": "Weight (lbs)", "type": "number",   "min": 0, "max": 200,    "required": true },
+        { "id": "drivetrain",      "label": "Drivetrain",   "tableLabel": "Drivetrain",   "type": "dropdown", "options": ["Swerve", "Tank", "Mecanum"], "placeholder": "Select drivetrain...", "required": true },
+        { "id": "hasAutoAlign",    "label": "Auto Align",   "tableLabel": "Auto Align",   "type": "switch" },
+        { "id": "autoDescription", "label": "Auto Notes",   "tableLabel": "Auto Notes",   "type": "notes",    "placeholder": "Describe autonomous capabilities..." }
+      ]
+    },
+    {
+      "title": "Performance",
+      "questions": [
+        { "id": "hopperCapacity", "label": "Hopper Capacity", "tableLabel": "Hopper",     "type": "counter",  "min": 0, "max": 200 },
+        { "id": "shooterSpeed",   "label": "Shooter Speed",   "tableLabel": "Shooter",    "type": "counter",  "min": 0, "max": 100 },
+        { "id": "intakeSpeed",    "label": "Intake Speed",    "tableLabel": "Intake",     "type": "counter",  "min": 0, "max": 100 },
+        { "id": "supportedPaths", "label": "Supported Paths", "tableLabel": "Paths",      "type": "dropdown", "options": ["Bump", "Trench", "Both"], "placeholder": "Select paths...", "required": true },
+        { "id": "climbLevel",     "label": "Climb Level",     "tableLabel": "Climb Lvl",  "type": "dropdown", "options": ["None", "L1", "L2", "L3"], "placeholder": "Select climb level...", "required": true },
+        { "id": "climbType",      "label": "Climb Type",      "tableLabel": "Climb Type", "type": "dropdown", "options": ["Side", "Front", "Both", "Neither"], "placeholder": "Select climb type...", "required": true }
+      ]
+    },
+    {
+      "title": "Dimensions",
+      "questions": [
+        { "id": "robotLength", "label": "Length (in)", "tableLabel": "Length", "type": "number", "min": 0, "max": 150, "required": true },
+        { "id": "robotHeight", "label": "Height (in)", "tableLabel": "Height", "type": "number", "min": 0, "max": 50,  "required": true },
+        { "id": "robotWidth",  "label": "Width (in)",  "tableLabel": "Width",  "type": "number", "min": 0, "max": 150, "required": true }
+      ]
+    }
+  ]
+}

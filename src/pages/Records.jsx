@@ -9,6 +9,7 @@ import {
   classifyAndValidateImport,
   convertRecordDataJSONToTSV,
   convertRecordDataTSVToJSON,
+  getRecordIdentity,
   loadRecordDataAsJSON,
   mergeAndStoreRecordData,
 } from '../lib/RecordData';
@@ -69,13 +70,17 @@ function Records() {
       if (records.length === 0) continue;
       const phaseConfig  = PHASE_CONFIG[phaseKey];
       const existing     = await loadRecordDataAsJSON(phaseConfig);
-      const existingKeys = new Set(existing.map(r => phaseConfig.getUniqueKey(r)));
-      const added  = records.filter(r => !existingKeys.has(phaseConfig.getUniqueKey(r))).length;
-      const merged = records.length - added;
+      const seen         = new Set(existing.map(r => getRecordIdentity(phaseConfig, r)));
+      let added = 0;
+      for (const r of records) {
+        const identity = getRecordIdentity(phaseConfig, r);
+        if (!seen.has(identity)) { seen.add(identity); added++; }
+      }
+      const alreadyHad = records.length - added;
       await mergeAndStoreRecordData(phaseConfig, records);
       const sub = [];
-      if (added  > 0) sub.push(`${added} new`);
-      if (merged > 0) sub.push(`${merged} merged`);
+      if (added      > 0) sub.push(`${added} new`);
+      if (alreadyHad > 0) sub.push(`${alreadyHad} already on this device`);
       summaryParts.push(`${records.length} ${phaseKey.toLowerCase()} record${records.length !== 1 ? 's' : ''} (${sub.join(', ')})`);
     }
 
