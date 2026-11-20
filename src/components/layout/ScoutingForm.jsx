@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './Layout';
+import ConfirmDialog from '../ui/ConfirmDialog';
 import Counter from '../ui/Counter';
 import NumericInput from '../ui/NumericInput';
 import Switch from '../ui/Switch';
@@ -66,6 +67,21 @@ function ScoutingForm({ header, phase }) {
   const [data, setData] = useState(() =>
     Object.fromEntries(questions.map(q => [q.id, defaultValue(q)]))
   );
+  const [confirmExit, setConfirmExit] = useState(false);
+
+  // Started once the scouter has moved past the first page or changed an answer.
+  const started = page > 0 || questions.some(q => data[q.id] !== defaultValue(q));
+
+  // Back button: ask before throwing away a started form.
+  const leave = () => (started ? setConfirmExit(true) : exit());
+
+  // Reloading or closing the tab: let the browser show its own warning.
+  useEffect(() => {
+    if (!started) return;
+    const warn = e => e.preventDefault();
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [started]);
 
   const set = key => value => setData(prev => ({ ...prev, [key]: value }));
 
@@ -87,7 +103,7 @@ function ScoutingForm({ header, phase }) {
   const isValid = current.questions.every(q => isAnswered(q, data[q.id]));
 
   return (
-    <Layout header={header} tab={1} onBack={exit} hideNav>
+    <Layout header={header} tab={1} onBack={leave} hideNav>
       <div className="h-full flex flex-col">
 
         {/* Progress bar */}
@@ -127,6 +143,16 @@ function ScoutingForm({ header, phase }) {
         </div>
 
       </div>
+
+      {confirmExit && (
+        <ConfirmDialog
+          title="Discard this form?"
+          message="Your answers won't be saved."
+          confirmLabel="Discard"
+          onCancel={() => setConfirmExit(false)}
+          onConfirm={exit}
+        />
+      )}
     </Layout>
   );
 }
