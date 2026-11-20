@@ -4,9 +4,9 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => ({
-  // Served from https://<org>.github.io/Telescope/ on GitHub Pages
-  base: command === 'build' ? '/Telescope/' : '/',
+export default defineConfig({
+  // Defaults to the site root. Deploys under a sub-path (e.g. GitHub Pages) set BASE_PATH.
+  base: process.env.BASE_PATH || '/',
   server: { allowedHosts: true },
   plugins: [
     react({
@@ -34,4 +34,4 @@ export default defineConfig(({ command }) => ({
       },
     }),
   ],
-}));
+});
