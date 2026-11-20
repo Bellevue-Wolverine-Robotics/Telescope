@@ -1,0 +1,25 @@
+timestamp,scouterName,teamNumber,weight,drivetrain,hasAutoAlign,autoDescription,hopperCapacity,shooterSpeed,intakeSpeed,supportedPaths,climbLevel,climbType,robotLength,robotHeight,robotWidth
+2026-03-13T15:09:00Z,Riley,254,123,Swerve,Yes,Two-piece auto from depot,74,17,25,Both,L2,Both,30,22,24
+2026-03-13T15:18:00Z,Morgan,1678,118,Tank,No,No auto yet,40,7,19,Trench,L2,Both,31,29,30
+2026-03-13T15:29:00Z,Riley,2412,119,Mecanum,Yes,"3-ball auto, consistent",55,14,24,Trench,None,Neither,29,22,30
+2026-03-13T15:40:00Z,Casey,9036,102,Swerve,No,5-ball auto from trench,28,9,14,Trench,L2,Side,28,28,29
+2026-03-13T15:45:00Z,Riley,118,121,Tank,Yes,"3-ball auto, consistent",57,11,19,Bump,L1,Both,31,20,32
+2026-03-13T15:56:00Z,Casey,971,109,Swerve,Yes,5-ball auto from trench,69,14,28,Trench,None,Neither,29,20,27
+2026-03-13T16:00:00Z,Alex,1323,99,Tank,Yes,Drives forward only,72,19,26,Both,L2,Both,27,23,30
+2026-03-13T16:08:00Z,Taylor,4414,103,Tank,Yes,Shoots preload then intakes 2,65,17,28,Bump,L1,Front,32,23,31
+2026-03-13T16:20:00Z,Casey,3476,116,Swerve,Yes,5-ball auto from trench,54,13,22,Trench,L3,Side,31,27,28
+2026-03-13T16:24:00Z,Morgan,6328,102,Swerve,No,Shoots preload then intakes 2,28,6,13,Both,L2,Front,27,22,29
+2026-03-13T16:36:00Z,Alex,2056,87,Mecanum,Yes,5-ball auto from trench,43,9,15,Both,L3,Both,29,19,25
+2026-03-13T16:44:00Z,Casey,1114,107,Swerve,Yes,No auto yet,61,16,27,Bump,L2,Both,30,19,31
+2026-03-13T16:55:00Z,Taylor,5940,116,Swerve,Yes,Drives forward only,66,14,26,Bump,L2,Front,26,23,24
+2026-03-13T16:58:00Z,Jamie,8033,87,Tank,Yes,Shoots preload then intakes 2,52,14,21,Bump,L3,Front,30,23,25
+2026-03-13T17:04:00Z,Casey,604,95,Swerve,Yes,Drives forward only,72,18,32,Both,L1,Side,25,24,29
+2026-03-13T17:10:00Z,Sam,7157,124,Swerve,Yes,Shoots preload then intakes 2,61,12,25,Bump,L3,Side,30,20,28
+2026-03-13T17:13:00Z,Jamie,3310,121,Swerve,No,Shoots preload then intakes 2,43,13,18,Trench,L2,Side,27,28,32
+2026-03-13T17:21:00Z,Sam,2910,109,Mecanum,No,No auto yet,47,11,21,Bump,L2,Side,32,20,29
+2026-03-13T17:30:00Z,Riley,4613,106,Tank,Yes,"3-ball auto, consistent",78,18,29,Both,None,Neither,32,23,26
+2026-03-13T17:33:00Z,Sam,846,109,Mecanum,Yes,Two-piece auto from depot,63,17,24,Both,L2,Front,32,23,26
+2026-03-13T17:43:00Z,Riley,1690,109,Tank,Yes,Two-piece auto from depot,45,9,19,Both,L1,Both,29,29,32
+2026-03-13T17:48:00Z,Morgan,5199,108,Swerve,No,Drives forward only,45,10,17,Trench,None,Neither,32,20,25
+2026-03-13T17:55:00Z,Sam,7414,91,Swerve,Yes,Two-piece auto from depot,55,15,20,Bump,L3,Both,30,18,31
+2026-03-13T18:00:00Z,Taylor,649,119,Swerve,Yes,Shoots preload then intakes 2,72,15,32,Trench,None,Neither,26,18,27

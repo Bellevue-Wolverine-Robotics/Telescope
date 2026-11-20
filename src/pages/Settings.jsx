@@ -6,11 +6,14 @@ import matchData1 from '../../data/match/data_1.json';
 import matchData2 from '../../data/match/data_2.json';
 import pitData1 from '../../data/pit/data_1.json';
 import pitData2 from '../../data/pit/data_2.json';
+import matchData3 from '../../data/match/data_3.json';
+import pitData3 from '../../data/pit/data_3.json';
 
 // Each sample loads its Match and Pit data together.
 const SAMPLES = [
   { label: 'Sample 1', Match: matchData1, Pit: pitData1 },
   { label: 'Sample 2', Match: matchData2, Pit: pitData2 },
+  { label: 'Sample 3', Match: matchData3, Pit: pitData3 },
 ];
 
 const PHASES = Object.keys(PHASE_CONFIG);

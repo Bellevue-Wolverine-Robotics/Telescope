@@ -50,6 +50,17 @@ async function loadAll() {
   return Object.fromEntries(PHASES.map((p, i) => [p, lists[i]]));
 }
 
+function formatBytes(bytes) {
+  return bytes < 1024 ? `${Math.round(bytes)} B` : `${(bytes / 1024).toFixed(1)} KB`;
+}
+
+// e.g. "Transferred 4.2 KB in 0.27s (127.4 kbit/s)", sizes and rate uncompressed
+function formatTransfer({ bytes, seconds }) {
+  // A single QR code has no time between its first and last read, so there's no rate to show
+  if (seconds <= 0) return `Transferred ${formatBytes(bytes)} in a single QR code.`;
+  return `Transferred ${formatBytes(bytes)} in ${seconds.toFixed(2)}s (${(bytes * 8 / 1000 / seconds).toFixed(1)} kbit/s).`;
+}
+
 function Scouting() {
   const navigate = useNavigate();
 
@@ -78,7 +89,8 @@ function Scouting() {
     URL.revokeObjectURL(url);
   }
 
-  async function handleImport(parsed) {
+  // transfer: { bytes, seconds } when the records came over QR codes
+  async function handleImport(parsed, transfer) {
     const result = classifyAndValidateImport(parsed);
     if (!result.valid) {
       setMessage({ type: 'error', lines: result.errors });
@@ -106,7 +118,7 @@ function Scouting() {
 
     setRecords(await loadAll());
     const text = summaryParts.length ? summaryParts.join(' and ') + ' imported.' : 'No records to import.';
-    setMessage({ type: 'success', lines: [text] });
+    setMessage({ type: 'success', lines: transfer ? [text, formatTransfer(transfer)] : [text] });
   }
 
   function handleCSVImport(e) {
@@ -187,14 +199,14 @@ function Scouting() {
           onClose={() => setShowQRImport(false)}
         >
           <Import
-            onImport={(recordDataString) => {
+            onImport={(recordDataString, transfer) => {
               setShowQRImport(false);
               let parsed;
               try { parsed = JSON.parse(recordDataString); } catch {
                 setMessage({ type: 'error', lines: ['Invalid JSON format.'] });
                 return;
               }
-              handleImport(parsed);
+              handleImport(parsed, transfer);
             }}
           />
         </Modal>
