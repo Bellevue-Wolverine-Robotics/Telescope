@@ -4,7 +4,6 @@ import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
 import Import from '../components/ui/Import';
 import BottomSheet from '../components/ui/BottomSheet';
-import MenuCard from '../components/ui/MenuCard';
 import Modal from '../components/ui/Modal';
 import RecordTable from '../components/ui/RecordTable';
 import Tabs from '../components/ui/Tabs';
@@ -20,10 +19,26 @@ import {
 
 const PHASES = Object.keys(PHASE_CONFIG);
 
-// Form for each phase: where its "New" card goes and where its draft is saved.
+const ICON = { fill: 'none', viewBox: '0 0 24 24', strokeWidth: 1.5, stroke: 'currentColor', className: 'size-8' };
+
+const StopwatchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" {...ICON}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10 2.25h4M12 2.25v3M18.25 6.25l1.25-1.25M12 9.75v3.75" />
+    <circle cx="12" cy="13.5" r="7.5" />
+  </svg>
+);
+
+const WrenchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" {...ICON}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
+  </svg>
+);
+
+// Form for each phase: its tile icon, where it goes and where its draft is saved.
 const FORMS = {
-  Match: { to: '/scouting/match', draftKey: 'draftMatch' },
-  Pit:   { to: '/scouting/pit',   draftKey: 'draftPit'   },
+  Match: { to: '/scouting/match', draftKey: 'draftMatch', Icon: StopwatchIcon },
+  Pit:   { to: '/scouting/pit',   draftKey: 'draftPit',   Icon: WrenchIcon    },
 };
 
 // The form saves a draft as soon as it opens, so only count it as in progress
@@ -42,8 +57,8 @@ function hasDraft(phase, draftKey) {
   });
 }
 
-function entriesTotal(n) {
-  return `${n} ${n !== 1 ? 'entries' : 'entry'} total`;
+function entries(n, kind) {
+  return `${n} ${kind} ${n !== 1 ? 'entries' : 'entry'}`;
 }
 
 async function loadAll() {
@@ -131,22 +146,35 @@ function Scouting() {
       <div className="h-full overflow-y-auto">
         <div className="flex flex-col gap-2 p-4">
 
-          <p className="section-label px-1">New</p>
-          {PHASES.map(p => (
-            <MenuCard key={p} onClick={() => navigate(FORMS[p].to)} title={p}>
-              {hasDraft(PHASE_CONFIG[p], FORMS[p].draftKey) && (
-                <span className="badge">
-                  <span className="size-1.5 rounded-full bg-[var(--color-primary)]" />
-                  Draft saved
-                </span>
-              )}
-            </MenuCard>
-          ))}
+          <div className="flex gap-3">
+            {PHASES.map(p => {
+              const { to, draftKey, Icon } = FORMS[p];
+              return (
+                <button key={p} type="button" onClick={() => navigate(to)} className="start-tile">
+                  <Icon />
+                  <span className="text-lg font-semibold">{p}</span>
+                  {hasDraft(PHASE_CONFIG[p], draftKey) && (
+                    <span className="badge text-inherit absolute bottom-2">
+                      <span className="size-1.5 rounded-full bg-current" />
+                      Draft saved
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
           <p className="section-label px-1 pt-4">Records</p>
-          <MenuCard onClick={openTable} disabled={!hasData} title="View" />
-          <MenuCard onClick={() => setSheet('import')} title="Import" />
-          <MenuCard onClick={() => setSheet('export')} disabled={!hasData} title="Export" />
+          <div className="card">
+            <p className="text-sm text-[var(--color-muted)]">
+              {PHASES.map(p => entries(records[p].length, p.toLowerCase())).join(' · ')}
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <button onClick={openTable} disabled={!hasData} className="btn-outline">View</button>
+              <button onClick={() => setSheet('import')} className="btn-outline">Import</button>
+              <button onClick={() => setSheet('export')} disabled={!hasData} className="btn-outline">Export</button>
+            </div>
+          </div>
 
           {message && (
             <div className={`message ${message.type} m-0 mt-2`}>
@@ -168,8 +196,7 @@ function Scouting() {
       {tablePhase && (
         <RecordTable
           title="Records"
-          subtitle={entriesTotal(records[tablePhase].length)}
-          tabs={<Tabs options={PHASES} value={tablePhase} onChange={setTablePhase} className="-mx-4" />}
+          tabs={<Tabs options={PHASES} value={tablePhase} onChange={setTablePhase} className="-mx-6" />}
           columns={PHASE_CONFIG[tablePhase].columns}
           records={records[tablePhase]}
           onClose={() => setTablePhase(null)}
