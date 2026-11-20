@@ -1,7 +1,16 @@
-import { readBarcodes } from 'zxing-wasm/reader';
+import { prepareZXingModule, readBarcodes } from 'zxing-wasm/reader';
+import zxingWasmUrl from 'zxing-wasm/reader/zxing_reader.wasm?url';
 import { useEffect, useRef, useState } from 'react';
 import { receiveFountain } from '../../lib/fountain';
 import { decompress } from '../../lib/compression';
+
+// Load the QR decoder from the app's own files instead of the default CDN, so the service worker
+// caches it and QR import works offline
+prepareZXingModule({
+  overrides: {
+    locateFile: (path, prefix) => (path.endsWith('.wasm') ? zxingWasmUrl : prefix + path),
+  },
+});
 
 // Reads an export's QR codes with the camera. Calls onImport(text, transfer) once the export is
 // fully received, where transfer is { bytes, seconds } for the transfer rate summary.

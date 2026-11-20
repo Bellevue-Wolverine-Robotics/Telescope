@@ -158,7 +158,20 @@ export async function loadRecordDataAsJSON(phase) {
   } catch { return []; }
 }
 
+// Ask the browser to keep this site's storage instead of clearing it when space runs low or the
+// site goes unused for a while. Chrome and Safari decide on their own; Firefox asks the user.
+// Asked when records are first saved, once per session.
+let persistRequested = false;
+function requestPersistentStorage() {
+  if (persistRequested || !navigator.storage?.persist) return;
+  persistRequested = true;
+  navigator.storage.persisted()
+    .then(persisted => persisted || navigator.storage.persist())
+    .catch(() => {});
+}
+
 export async function storeRecordData(phase, recordDataJSON) {
+  requestPersistentStorage();
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const req = db.transaction(STORE_NAME, 'readwrite')
