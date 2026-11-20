@@ -35,27 +35,11 @@ const WrenchIcon = () => (
   </svg>
 );
 
-// Form for each phase: its tile icon, where it goes and where its draft is saved.
+// Form for each phase: its tile icon and where it goes.
 const FORMS = {
-  Match: { to: '/scouting/match', draftKey: 'draftMatch', Icon: StopwatchIcon },
-  Pit:   { to: '/scouting/pit',   draftKey: 'draftPit',   Icon: WrenchIcon    },
+  Match: { to: '/scouting/match', Icon: StopwatchIcon },
+  Pit:   { to: '/scouting/pit',   Icon: WrenchIcon    },
 };
-
-// The form saves a draft as soon as it opens, so only count it as in progress
-// once the scouter has moved past the first page or entered something.
-function hasDraft(phase, draftKey) {
-  let draft;
-  try { draft = JSON.parse(localStorage.getItem(draftKey)); } catch { return false; }
-  if (!draft) return false;
-  if ((draft.page ?? 0) > 0) return true;
-  return phase.form.pages.flatMap(p => p.questions).some(q => {
-    const v = draft.data?.[q.id];
-    if (v === undefined) return false;
-    if (q.type === 'counter') return v !== (q.min ?? 0);
-    if (q.type === 'switch')  return v !== false;
-    return v !== '';
-  });
-}
 
 function entries(n, kind) {
   return `${n} ${kind} ${n !== 1 ? 'entries' : 'entry'}`;
@@ -148,17 +132,11 @@ function Scouting() {
 
           <div className="flex gap-3">
             {PHASES.map(p => {
-              const { to, draftKey, Icon } = FORMS[p];
+              const { to, Icon } = FORMS[p];
               return (
                 <button key={p} type="button" onClick={() => navigate(to)} className="start-tile">
                   <Icon />
                   <span className="text-lg font-semibold">{p}</span>
-                  {hasDraft(PHASE_CONFIG[p], draftKey) && (
-                    <span className="badge text-inherit absolute bottom-2">
-                      <span className="size-1.5 rounded-full bg-current" />
-                      Draft saved
-                    </span>
-                  )}
                 </button>
               );
             })}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './Layout';
 import Counter from '../ui/Counter';
@@ -56,26 +56,16 @@ function Question({ question, value, onChange }) {
   }
 }
 
-function ScoutingForm({ header, phase, draftKey }) {
+function ScoutingForm({ header, phase }) {
   const navigate  = useNavigate();
   const pages     = phase.form.pages;
   const questions = pages.flatMap(p => p.questions);
-  // Return to the Scouting menu. Keeps the draft.
   const exit      = () => navigate('/scouting');
 
-  function loadDraft() {
-    try { return JSON.parse(localStorage.getItem(draftKey)) ?? {}; } catch { return {}; }
-  }
-
-  const [page, setPage] = useState(() => Math.min(loadDraft().page ?? 0, pages.length - 1));
-  const [data, setData] = useState(() => ({
-    ...Object.fromEntries(questions.map(q => [q.id, defaultValue(q)])),
-    ...(loadDraft().data ?? {}),
-  }));
-
-  useEffect(() => {
-    localStorage.setItem(draftKey, JSON.stringify({ data, page }));
-  }, [data, page, draftKey]);
+  const [page, setPage] = useState(0);
+  const [data, setData] = useState(() =>
+    Object.fromEntries(questions.map(q => [q.id, defaultValue(q)]))
+  );
 
   const set = key => value => setData(prev => ({ ...prev, [key]: value }));
 
@@ -89,7 +79,6 @@ function ScoutingForm({ header, phase, draftKey }) {
       record[q.id] = q.type === 'number' ? Number(value) : value;
     }
     await mergeAndStoreRecordData(phase, [record]);
-    localStorage.removeItem(draftKey);
     exit();
   }
 
