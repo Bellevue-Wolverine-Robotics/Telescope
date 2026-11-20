@@ -109,6 +109,10 @@ html, body {
     align-items: center;
   }
 
+  .btn-outline:disabled {
+    opacity: 0.5;
+  }
+
   /* Segmented control: for choosing an option (Light/Dark, No/Yes).
      Deliberately unlike buttons, which are for actions. */
   .segment-control {
@@ -317,19 +321,24 @@ html, body {
     gap: 0.75rem;
   }
 
-  .nav-card {
-    border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
-    background-color: var(--color-surface-alt);
-    padding: 1rem;
+  /* Home page: large tiles that start a Match or Pit form */
+  /* Icon and name are centred; the draft badge sits at the bottom edge. */
+  .start-tile {
+    position: relative;
+    flex: 1;
+    height: 8rem;
+    border-radius: 1rem;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
-    width: 100%;
+    justify-content: center;
+    gap: 0.25rem;
   }
 
-  .nav-card:disabled {
-    opacity: 0.5;
+  .start-tile:active {
+    opacity: 0.85;
   }
 
   .badge {
@@ -362,11 +371,14 @@ html, body {
     gap: 0.5rem;
   }
 
+  /* Bottom sheet. Extra inner padding keeps its buttons clear of rounded
+     phone corners. Closed by dragging down (see Sheet.jsx). */
   .sheet {
     width: 100%;
     max-width: 32rem;
-    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
-    border-radius: 0.75rem 0.75rem 0 0;
+    padding: 0 1.5rem calc(2rem + env(safe-area-inset-bottom));
+    border-radius: 1rem 1rem 0 0;
+    overflow: hidden;
     background-color: var(--color-surface);
     display: flex;
     flex-direction: column;
@@ -378,6 +390,35 @@ html, body {
   .sheet-full {
     height: calc(100% - 2rem);
     max-width: none;
+    padding-bottom: 0;
+  }
+
+  /* Drag area: handle plus header. touch-action stops the page scrolling while dragging. */
+  .sheet-drag {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-bottom: 0.25rem;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .sheet-handle {
+    align-self: center;
+    padding: 0.625rem 1.5rem 0.375rem;
+  }
+
+  .sheet-handle span {
+    display: block;
+    width: 2.5rem;
+    height: 0.3125rem;
+    border-radius: 9999px;
+    background-color: var(--color-border-mid);
+  }
+
+  .overlay-out {
+    background-color: transparent;
+    transition: background-color 0.15s;
   }
 
   .sheet-option {
