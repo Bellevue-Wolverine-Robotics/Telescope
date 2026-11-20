@@ -1,0 +1,101 @@
+timestamp,scouterName,matchNumber,teamNumber,robotPosition,fuelMissedAuto,autoPoints,autoClimb,cycles,numberDepot,intakeType,endgameClimb,superChargedRP,chargedRP,climbRP,yellowCard,brokeDown,minorFouls,majorFouls,playstyle,redScore,blueScore,observations
+2026-03-14T09:03:50Z,Sam,1,7414,Red Bottom,3,11,No,13,29,Through Bumper,L3,No,Yes,Yes,No,No,3,0,Defense,142,201,Struggled to intake from the floor
+2026-03-14T09:04:18Z,Riley,1,2910,Red Center,4,9,No,12,25,Depot,L2,No,No,Yes,No,No,1,0,Defense,142,201,Bumper fell off
+2026-03-14T09:05:31Z,Casey,1,7157,Red Top,2,13,Yes,3,1,Through Bumper,No Climb,No,Yes,No,No,Yes,3,0,Offense,142,201,Broke down mid-match
+2026-03-14T09:05:59Z,Morgan,1,604,Blue Bottom,1,15,No,14,31,Depot,L1,No,No,No,No,No,2,0,Offense,142,201,Very accurate shooter
+2026-03-14T09:07:01Z,Taylor,1,846,Blue Center,3,13,No,13,28,Depot,L2,No,No,No,No,No,0,0,Offense,142,201,Lost comms for ~10 seconds
+2026-03-14T09:07:42Z,Jamie,1,1678,Blue Top,5,8,No,8,18,Through Bumper,L2,No,No,No,No,No,2,0,Defense,142,201,Climbed with 5s to spare
+2026-03-14T09:14:38Z,Alex,2,649,Red Bottom,1,15,No,17,35,Depot,No Climb,No,Yes,No,No,No,3,0,Offense,120,131,
+2026-03-14T09:15:51Z,Jordan,2,2056,Red Center,4,7,No,7,22,Through Bumper,L3,No,No,No,No,No,3,0,Defense,120,131,Missed most auto shots
+2026-03-14T09:16:10Z,Sam,2,4414,Red Top,2,14,No,13,27,Over Bumper,L1,No,No,No,No,No,0,0,Offense,120,131,Struggled to intake from the floor
+2026-03-14T09:16:19Z,Riley,2,846,Blue Bottom,3,11,No,13,28,Depot,L2,No,Yes,Yes,No,No,2,0,Offense,120,131,
+2026-03-14T09:17:29Z,Casey,2,2412,Blue Center,2,11,Yes,12,32,Depot,No Climb,No,No,Yes,No,No,1,0,Both,120,131,
+2026-03-14T09:18:02Z,Morgan,2,4613,Blue Top,1,12,No,16,36,Through Bumper,No Climb,Yes,No,No,No,No,1,0,Defense,120,131,"Great driver, very smooth"
+2026-03-14T09:25:06Z,Sam,3,9036,Red Bottom,4,5,No,6,12,Through Bumper,L2,No,Yes,No,No,No,1,0,Offense,126,124,
+2026-03-14T09:26:38Z,Riley,3,3476,Red Center,3,9,No,12,27,Depot,L3,No,No,Yes,No,No,2,0,Offense,126,124,Slow to line up for climb
+2026-03-14T09:26:53Z,Casey,3,4613,Red Top,2,14,No,15,34,Through Bumper,No Climb,No,No,No,No,No,1,1,Defense,126,124,
+2026-03-14T09:28:12Z,Morgan,3,971,Blue Bottom,1,13,No,13,30,Over Bumper,No Climb,No,No,No,No,No,1,0,Defense,126,124,"Great driver, very smooth"
+2026-03-14T09:28:14Z,Taylor,3,8033,Blue Center,4,10,No,12,26,Over Bumper,L3,No,No,No,No,No,2,0,Offense,126,124,"Strong defense, pinned opponents"
+2026-03-14T09:29:34Z,Jamie,3,3310,Blue Top,3,10,No,9,24,Through Bumper,No Climb,No,No,Yes,Yes,No,1,0,Both,126,124,Shooter jammed in teleop
+2026-03-14T09:36:26Z,Alex,4,4414,Red Bottom,2,11,No,15,29,Over Bumper,No Climb,No,Yes,No,No,No,0,0,Offense,261,141,Struggled to intake from the floor
+2026-03-14T09:36:14Z,Jordan,4,7157,Red Center,2,9,No,12,31,Through Bumper,L3,No,Yes,Yes,No,No,3,0,Offense,261,141,
+2026-03-14T09:37:00Z,Sam,4,971,Red Top,2,12,No,15,30,Over Bumper,No Climb,No,Yes,Yes,No,No,2,1,Defense,261,141,Slow to line up for climb
+2026-03-14T09:38:20Z,Riley,4,1690,Blue Bottom,3,7,No,8,19,Through Bumper,No Climb,No,Yes,No,No,No,1,0,Offense,261,141,Climbed with 5s to spare
+2026-03-14T09:39:17Z,Casey,4,604,Blue Center,1,14,Yes,14,32,Depot,L1,No,Yes,No,No,No,2,0,Offense,261,141,"Fast cycles, holds a lot"
+2026-03-14T09:39:39Z,Morgan,4,2910,Blue Top,3,9,No,10,24,Depot,L2,Yes,Yes,Yes,No,No,3,0,Defense,261,141,Bumper fell off
+2026-03-14T09:46:46Z,Sam,5,1114,Red Bottom,0,13,No,15,30,Over Bumper,L2,No,No,Yes,No,No,2,0,Both,250,185,Slow to line up for climb
+2026-03-14T09:48:30Z,Riley,5,254,Red Center,2,13,No,17,35,Depot,L2,No,No,Yes,No,No,3,0,Defense,250,185,Very accurate shooter
+2026-03-14T09:48:36Z,Casey,5,7414,Red Top,3,13,Yes,12,29,Through Bumper,L3,Yes,No,Yes,No,No,1,0,Defense,250,185,"Great driver, very smooth"
+2026-03-14T09:49:12Z,Morgan,5,604,Blue Bottom,2,15,No,18,30,Depot,L1,No,Yes,Yes,No,No,0,1,Offense,250,185,"Fast cycles, holds a lot"
+2026-03-14T09:50:45Z,Taylor,5,2412,Blue Center,2,13,No,15,31,Depot,No Climb,No,No,Yes,No,No,1,1,Both,250,185,Played defense the whole match
+2026-03-14T09:52:07Z,Jamie,5,7157,Blue Top,2,13,No,12,30,Through Bumper,L3,No,Yes,No,No,No,1,0,Offense,250,185,Climbed with 5s to spare
+2026-03-14T09:59:14Z,Alex,6,1678,Red Bottom,5,8,No,6,18,Through Bumper,L2,No,No,No,No,No,1,0,Defense,212,124,
+2026-03-14T10:00:24Z,Jordan,6,971,Red Center,2,11,No,13,27,Over Bumper,No Climb,No,No,No,No,No,1,0,Defense,212,124,Struggled to intake from the floor
+2026-03-14T10:02:21Z,Sam,6,2412,Red Top,1,14,Yes,14,30,Depot,No Climb,No,No,No,No,No,1,0,Both,212,124,Consistent but slow
+2026-03-14T10:02:47Z,Riley,6,6328,Blue Bottom,5,6,Yes,7,12,Depot,L2,No,No,No,No,No,1,0,Defense,212,124,Missed most auto shots
+2026-03-14T10:03:08Z,Casey,6,2910,Blue Center,3,9,No,10,21,Depot,L2,No,No,Yes,No,No,2,0,Defense,212,124,Tipped over near the end
+2026-03-14T10:04:13Z,Morgan,6,254,Blue Top,0,11,No,15,30,Depot,L2,No,Yes,No,Yes,No,3,0,Defense,212,124,Tipped over near the end
+2026-03-14T10:10:37Z,Sam,7,9036,Red Bottom,5,8,No,9,14,Through Bumper,L2,No,No,No,No,No,2,0,Offense,251,242,
+2026-03-14T10:12:13Z,Riley,7,254,Red Center,2,14,No,13,33,Depot,L2,Yes,No,No,No,No,1,1,Defense,251,242,"Strong defense, pinned opponents"
+2026-03-14T10:11:46Z,Casey,7,1678,Red Top,5,8,No,7,18,Through Bumper,No Climb,Yes,No,Yes,No,No,3,1,Defense,251,242,Missed most auto shots
+2026-03-14T10:12:25Z,Morgan,7,1323,Blue Bottom,2,15,No,14,30,Through Bumper,L2,No,Yes,No,No,No,2,0,Offense,251,242,Struggled to intake from the floor
+2026-03-14T10:14:11Z,Taylor,7,2412,Blue Center,1,12,Yes,13,26,Depot,No Climb,No,Yes,No,No,No,2,0,Both,251,242,"Strong defense, pinned opponents"
+2026-03-14T10:14:16Z,Jamie,7,1114,Blue Top,1,15,Yes,17,30,Over Bumper,L2,No,No,Yes,No,No,1,0,Both,251,242,Tipped over near the end
+2026-03-14T10:21:06Z,Alex,8,9036,Red Bottom,5,7,Yes,8,15,Through Bumper,L2,No,No,No,No,No,2,0,Offense,270,165,"Great driver, very smooth"
+2026-03-14T10:22:24Z,Jordan,8,604,Red Center,0,13,No,17,31,Depot,L1,No,Yes,No,No,No,1,1,Offense,270,165,
+2026-03-14T10:23:49Z,Sam,8,7414,Red Top,3,10,No,11,28,Through Bumper,L3,No,No,No,No,No,2,0,Defense,270,165,Consistent but slow
+2026-03-14T10:24:33Z,Riley,8,5199,Blue Bottom,3,9,Yes,11,21,Depot,No Climb,No,Yes,Yes,No,No,1,1,Both,270,165,Missed most auto shots
+2026-03-14T10:25:25Z,Casey,8,1323,Blue Center,0,15,Yes,17,30,Through Bumper,L2,Yes,Yes,Yes,No,No,2,0,Offense,270,165,"Great driver, very smooth"
+2026-03-14T10:26:49Z,Morgan,8,1690,Blue Top,3,7,No,8,21,Through Bumper,L1,No,No,Yes,No,No,1,0,Offense,270,165,"Strong defense, pinned opponents"
+2026-03-14T10:33:33Z,Sam,9,2412,Red Bottom,1,12,Yes,14,27,Depot,No Climb,No,No,Yes,No,No,0,0,Both,142,206,"Great driver, very smooth"
+2026-03-14T10:34:37Z,Riley,9,1690,Red Center,3,10,Yes,11,21,Through Bumper,L1,No,Yes,No,No,No,3,0,Offense,142,206,Struggled to intake from the floor
+2026-03-14T10:36:01Z,Casey,9,118,Red Top,3,9,No,2,5,Depot,No Climb,No,Yes,No,Yes,Yes,2,0,Both,142,206,Broke down mid-match
+2026-03-14T10:36:34Z,Morgan,9,846,Blue Bottom,1,12,No,14,29,Depot,L2,No,No,No,No,No,1,0,Offense,142,206,Consistent but slow
+2026-03-14T10:37:27Z,Taylor,9,2910,Blue Center,4,9,No,10,19,Depot,L2,No,Yes,Yes,No,No,1,0,Defense,142,206,Climbed with 5s to spare
+2026-03-14T10:39:14Z,Jamie,9,5199,Blue Top,4,7,Yes,10,17,Depot,No Climb,Yes,Yes,No,No,No,0,0,Both,142,206,"Great driver, very smooth"
+2026-03-14T10:45:30Z,Alex,10,1678,Red Bottom,4,7,No,10,16,Through Bumper,L2,No,Yes,No,No,No,2,1,Defense,311,287,
+2026-03-14T10:46:04Z,Jordan,10,9036,Red Center,4,8,No,3,3,Through Bumper,No Climb,Yes,No,No,No,Yes,1,1,Offense,311,287,Broke down mid-match
+2026-03-14T10:47:26Z,Sam,10,1690,Red Top,4,8,No,12,22,Through Bumper,L1,No,No,No,No,No,2,0,Offense,311,287,Shooter jammed in teleop
+2026-03-14T10:47:44Z,Riley,10,8033,Blue Bottom,4,10,Yes,13,23,Over Bumper,L3,No,No,No,No,No,1,0,Offense,311,287,
+2026-03-14T10:48:40Z,Casey,10,6328,Blue Center,5,6,No,8,15,Depot,L2,No,No,No,No,No,3,0,Defense,311,287,
+2026-03-14T10:49:55Z,Morgan,10,604,Blue Top,0,13,No,15,36,Depot,L1,No,Yes,No,No,No,1,0,Offense,311,287,Shooter jammed in teleop
+2026-03-14T10:56:27Z,Sam,11,604,Red Bottom,1,13,Yes,17,34,Depot,L1,No,No,No,No,No,0,0,Offense,211,275,Played defense the whole match
+2026-03-14T10:58:14Z,Riley,11,9036,Red Center,5,9,No,9,13,Through Bumper,L2,No,No,Yes,No,No,2,0,Offense,211,275,Consistent but slow
+2026-03-14T10:58:45Z,Casey,11,3476,Red Top,2,12,No,2,3,Depot,No Climb,No,Yes,Yes,No,Yes,1,1,Offense,211,275,Broke down mid-match
+2026-03-14T10:59:42Z,Morgan,11,4613,Blue Bottom,1,15,No,15,35,Through Bumper,No Climb,No,No,Yes,No,No,0,0,Defense,211,275,Consistent but slow
+2026-03-14T11:00:49Z,Taylor,11,971,Blue Center,3,10,No,15,30,Over Bumper,No Climb,Yes,No,No,No,No,3,0,Defense,211,275,
+2026-03-14T11:01:52Z,Jamie,11,7157,Blue Top,3,13,Yes,12,28,Through Bumper,No Climb,No,No,No,No,No,2,1,Offense,211,275,Consistent but slow
+2026-03-14T11:08:15Z,Alex,12,1114,Red Bottom,2,13,Yes,15,35,Over Bumper,L2,No,Yes,Yes,No,No,2,1,Both,243,313,Struggled to intake from the floor
+2026-03-14T11:09:50Z,Jordan,12,1690,Red Center,3,10,No,11,18,Through Bumper,L1,No,No,Yes,No,No,0,0,Offense,243,313,Played defense the whole match
+2026-03-14T11:10:20Z,Sam,12,1678,Red Top,5,6,No,9,17,Through Bumper,L2,No,No,Yes,No,No,3,1,Defense,243,313,"Great driver, very smooth"
+2026-03-14T11:10:34Z,Riley,12,604,Blue Bottom,0,13,No,16,32,Depot,L1,No,Yes,Yes,No,No,2,0,Offense,243,313,Shooter jammed in teleop
+2026-03-14T11:12:01Z,Casey,12,2412,Blue Center,2,11,Yes,16,34,Depot,No Climb,Yes,Yes,No,No,No,1,0,Both,243,313,"Strong defense, pinned opponents"
+2026-03-14T11:12:33Z,Morgan,12,6328,Blue Top,5,7,No,5,15,Depot,L2,No,No,Yes,No,No,3,0,Defense,243,313,Played defense the whole match
+2026-03-14T11:19:17Z,Sam,13,118,Red Bottom,4,9,Yes,11,20,Depot,L1,No,No,Yes,No,No,1,1,Both,290,243,Climbed with 5s to spare
+2026-03-14T11:21:32Z,Riley,13,4414,Red Center,3,11,No,0,1,Over Bumper,No Climb,No,Yes,Yes,No,Yes,2,0,Offense,290,243,Broke down mid-match
+2026-03-14T11:21:46Z,Casey,13,8033,Red Top,3,11,No,13,24,Over Bumper,No Climb,Yes,Yes,No,No,No,0,1,Offense,290,243,Bumper fell off
+2026-03-14T11:22:43Z,Morgan,13,971,Blue Bottom,1,12,No,15,29,Over Bumper,No Climb,No,Yes,Yes,No,No,0,1,Defense,290,243,Lost comms for ~10 seconds
+2026-03-14T11:24:51Z,Taylor,13,6328,Blue Center,5,7,No,6,10,Depot,L2,No,No,No,No,No,2,0,Defense,290,243,Consistent but slow
+2026-03-14T11:24:54Z,Jamie,13,3476,Blue Top,3,11,No,12,26,Depot,No Climb,Yes,No,No,No,No,1,0,Offense,290,243,Bumper fell off
+2026-03-14T11:31:33Z,Alex,14,604,Red Bottom,0,15,No,16,35,Depot,L1,No,Yes,Yes,No,No,2,0,Offense,161,279,Tipped over near the end
+2026-03-14T11:33:21Z,Jordan,14,254,Red Center,2,13,No,17,34,Depot,L2,No,No,Yes,No,No,1,0,Defense,161,279,Lost comms for ~10 seconds
+2026-03-14T11:33:56Z,Sam,14,2056,Red Top,5,8,No,9,20,Through Bumper,L3,No,No,Yes,No,No,2,0,Defense,161,279,
+2026-03-14T11:35:18Z,Riley,14,7157,Blue Bottom,2,12,No,11,27,Through Bumper,L3,No,No,Yes,No,No,2,0,Offense,161,279,"Strong defense, pinned opponents"
+2026-03-14T11:35:34Z,Casey,14,4613,Blue Center,2,15,Yes,15,34,Through Bumper,No Climb,No,Yes,Yes,No,No,1,0,Defense,161,279,"Fast cycles, holds a lot"
+2026-03-14T11:36:03Z,Morgan,14,649,Blue Top,0,16,Yes,17,34,Depot,No Climb,No,Yes,No,No,No,0,0,Offense,161,279,"Fast cycles, holds a lot"
+2026-03-14T11:42:31Z,Sam,15,118,Red Bottom,3,11,No,11,22,Depot,L1,Yes,No,No,No,No,1,0,Both,143,317,Struggled to intake from the floor
+2026-03-14T11:42:56Z,Riley,15,1114,Red Center,2,15,Yes,17,36,Over Bumper,L2,No,Yes,No,No,No,2,0,Both,143,317,Tipped over near the end
+2026-03-14T11:44:13Z,Casey,15,971,Red Top,1,12,No,14,28,Over Bumper,No Climb,Yes,No,Yes,No,No,1,0,Defense,143,317,"Great driver, very smooth"
+2026-03-14T11:44:29Z,Morgan,15,5940,Blue Bottom,3,14,No,12,25,Depot,L2,No,No,No,No,No,1,1,Defense,143,317,Missed most auto shots
+2026-03-14T11:46:21Z,Taylor,15,2910,Blue Center,3,9,No,1,0,Depot,No Climb,No,No,No,No,Yes,2,0,Defense,143,317,Broke down mid-match
+2026-03-14T11:46:33Z,Jamie,15,649,Blue Top,2,12,Yes,15,34,Depot,No Climb,No,No,Yes,No,No,0,0,Offense,143,317,Played defense the whole match
+2026-03-14T11:53:34Z,Alex,16,4613,Red Bottom,1,16,Yes,14,33,Through Bumper,No Climb,No,No,Yes,No,No,3,0,Defense,295,223,
+2026-03-14T11:54:42Z,Jordan,16,4414,Red Center,1,11,Yes,15,32,Over Bumper,L1,No,No,Yes,No,No,2,0,Offense,295,223,"Fast cycles, holds a lot"
+2026-03-14T11:55:57Z,Sam,16,5199,Red Top,4,10,No,9,19,Depot,No Climb,No,No,No,No,No,2,0,Both,295,223,
+2026-03-14T11:56:36Z,Riley,16,6328,Blue Bottom,6,4,No,8,10,Depot,L2,No,No,No,No,No,2,0,Defense,295,223,Struggled to intake from the floor
+2026-03-14T11:57:15Z,Casey,16,7157,Blue Center,3,12,Yes,11,30,Through Bumper,L3,No,Yes,No,No,No,2,1,Offense,295,223,Lost comms for ~10 seconds
+2026-03-14T11:57:23Z,Morgan,16,2412,Blue Top,2,11,No,15,31,Depot,No Climb,No,No,No,No,No,1,0,Both,295,223,"Great driver, very smooth"
+2026-03-14T12:05:47Z,Sam,17,2056,Red Bottom,4,7,Yes,7,19,Through Bumper,L3,No,Yes,No,No,No,2,0,Defense,125,286,"Strong defense, pinned opponents"
+2026-03-14T12:06:17Z,Riley,17,2412,Red Center,2,14,No,14,33,Depot,No Climb,No,No,Yes,No,No,2,0,Both,125,286,Bumper fell off
+2026-03-14T12:06:25Z,Casey,17,649,Red Top,1,15,No,15,35,Depot,No Climb,Yes,No,No,No,No,2,0,Offense,125,286,Consistent but slow
+2026-03-14T12:06:54Z,Morgan,17,4414,Blue Bottom,1,14,Yes,13,31,Over Bumper,L1,No,No,No,No,No,2,0,Offense,125,286,Lost comms for ~10 seconds

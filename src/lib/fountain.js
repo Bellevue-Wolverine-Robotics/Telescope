@@ -42,88 +42,87 @@ export function createFountain(content, dropletLength) {
   };
 }
 
+// Decodes droplets by Gaussian elimination over GF(2). Each droplet is an equation saying which
+// source chunks XOR together to give its content. Once there are as many independent equations as
+// chunks, every chunk can be solved. The rank (independent equations so far) out of the chunk count
+// is exact progress, available through receive.progress().
 export function receiveFountain() {
-  const eliminated = new Map();
-  const buffer = [];
-  let initiated = false;
+  let chunkCount = 0;
+  let chunkLength = 0;
+  let totalLength = 0;
+  let words = 0;
   let sampleChunks;
+  let pivots; // pivots[c]: the equation whose lowest chunk is c
+  let rank = 0;
+  let result = null;
+  const seenSeeds = new Set();
 
-  return (droplet) => {
+  const receive = (droplet) => {
+    if (result !== null) return result;
+
     // Parse the total message length and seed out of the droplet
-    const view = new DataView(droplet.buffer);
-    const totalLength = view.getUint32(0);
+    const view = new DataView(droplet.buffer, droplet.byteOffset, droplet.byteLength);
     const seed = view.getUint32(4);
-    const content = new Uint8Array(droplet.slice(8));
-    const chunkCount = Math.ceil(totalLength / content.length);
+    const content = droplet.slice(8);
 
-    if (!initiated) {
+    if (!sampleChunks) {
+      totalLength = view.getUint32(0);
+      chunkLength = content.length;
+      chunkCount = Math.ceil(totalLength / chunkLength);
+      words = Math.ceil(chunkCount / 32);
       sampleChunks = chunksSampler(chunkCount);
-      initiated = true;
+      pivots = new Array(chunkCount);
     }
 
-    // Determine the source chunks used in the droplet from the seed
-    const sampledChunks = sampleChunks(seed);
+    // The camera reads the same QR code on many frames; only use each droplet once
+    if (seenSeeds.has(seed)) return null;
+    seenSeeds.add(seed);
 
-    // If the droplet is made up of multiple source chunks, attempt to reduce it by the already eliminated chunks
-    if (sampledChunks.length > 1) {
-      for (const [k, v] of eliminated) {
-        if (sampledChunks.includes(k)) {
-          for (let i = 0; i < content.length; i++) {
-            content[i] ^= v[i];
-          }
+    // Mark the source chunks used in the droplet, determined from the seed
+    const mask = new Uint32Array(words);
+    for (const chunk of sampleChunks(seed)) mask[chunk >>> 5] |= 1 << (chunk & 31);
 
-          sampledChunks.splice(sampledChunks.indexOf(k), 1);
+    // Eliminate chunks that already have an equation, lowest first. An equation never contains
+    // chunks below its own pivot, so XORing it in never brings back a chunk already cleared.
+    // The first chunk with no equation yet makes this droplet that chunk's equation.
+    // If every chunk is eliminated, the droplet only repeated information already received.
+    for (let c = 0; c < chunkCount; c++) {
+      const w = c >>> 5;
+      if (mask[w] === 0) { c = w * 32 + 31; continue; }
+      if (((mask[w] >>> (c & 31)) & 1) === 0) continue;
+
+      const pivot = pivots[c];
+      if (!pivot) {
+        pivots[c] = { mask, content };
+        rank++;
+        break;
+      }
+      for (let i = w; i < words; i++) mask[i] ^= pivot.mask[i];
+      for (let i = 0; i < chunkLength; i++) content[i] ^= pivot.content[i];
+    }
+
+    if (rank < chunkCount) return null;
+
+    // Back-substitute from the last chunk up, so each equation is left holding just its own chunk
+    for (let c = chunkCount - 1; c >= 0; c--) {
+      const { mask, content } = pivots[c];
+      for (let d = c + 1; d < chunkCount; d++) {
+        if ((mask[d >>> 5] >>> (d & 31)) & 1) {
+          const solved = pivots[d].content;
+          for (let i = 0; i < chunkLength; i++) content[i] ^= solved[i];
         }
       }
     }
 
-    // If the droplet was eliminated to a single source chunk, use it to eliminate other buffered droplets
-    // If we eliminate buffered droplets in this process, we'll recursively use them to eliminate more buffered droplets
-    // Otherwise, if it was not fully eliminated, add the droplet to the buffer
-    if (sampledChunks.length === 1) {
-      eliminated.set(sampledChunks[0], content);
-      let checks = [[sampledChunks[0], content]];
+    const encoded = new Uint8Array(chunkCount * chunkLength);
+    for (let c = 0; c < chunkCount; c++) encoded.set(pivots[c].content, c * chunkLength);
 
-      while (checks.length > 0) {
-        let [checkChunk, checkContent] = checks.pop();
-
-        for (let a = 0; a < buffer.length; a++) {
-          let [bufferChunks, bufferContent] = buffer[a];
-
-          if (bufferChunks.includes(checkChunk)) {
-            for (let b = 0; b < content.length; b++) {
-              bufferContent[b] ^= checkContent[b];
-            }
-
-            bufferChunks.splice(bufferChunks.indexOf(checkChunk), 1);
-
-            if (bufferChunks.length === 1) {
-              checks.push([bufferChunks[0], bufferContent]);
-              eliminated.set(bufferChunks[0], bufferContent);
-              buffer.splice(a, 1);
-              a--;
-            }
-          }
-        }
-      }
-    } else {
-      buffer.push([sampledChunks, content]);
-    }
-
-    if (eliminated.size === chunkCount) {
-      const chunks = [...eliminated.entries()].sort((a, b) => a[0] - b[0]).map(([k, v]) => v);
-
-      const encoded = new Uint8Array(chunkCount * content.length);
-
-      for (let i = 0; i < chunks.length; i++) {
-        encoded.set(chunks[i], i * content.length);
-      }
-
-      return new TextDecoder().decode(encoded.slice(0, totalLength));
-    } else {
-      return null;
-    }
+    result = new TextDecoder().decode(encoded.slice(0, totalLength));
+    return result;
   };
+
+  receive.progress = () => ({ rank, total: chunkCount });
+  return receive;
 }
 
 function chunksSampler(count) {
