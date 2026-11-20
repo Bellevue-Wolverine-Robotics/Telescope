@@ -25,15 +25,15 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Reports the site's path on Pages (e.g. /Telescope), passed to the build below
+      - id: pages
+        uses: actions/configure-pages@v5
+
       - run: npm ci
 
       - run: npm run build
-
-      # GitHub Pages has no SPA rewrites; serving index.html as the 404 page
-      # lets react-router handle deep links like /Telescope/settings.
-      - run: cp dist/index.html dist/404.html
-
-      - uses: actions/configure-pages@v5
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
 
       - uses: actions/upload-pages-artifact@v4
         with:

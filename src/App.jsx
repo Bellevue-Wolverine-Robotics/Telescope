@@ -7,9 +7,7 @@ import ScoutingMatch from './pages/ScoutingMatch';
 function App() {
   return (
     <Routes>
-      <Route index element={<Navigate to="/scouting" />} />
-      {/* The Records page is now part of Scouting; keep old links working. */}
-      <Route path="/records" element={<Navigate to="/scouting" replace />} />
+      <Route path="*" element={<Navigate to="/scouting" replace />} />
       <Route path="/scouting" element={<Scouting />} />
       <Route path="/scouting/match" element={<ScoutingMatch />} />
       <Route path="/scouting/pit" element={<ScoutingPit />} />
