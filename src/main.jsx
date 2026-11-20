@@ -1,6 +1,6 @@
   import { StrictMode } from 'react';
   import { createRoot } from 'react-dom/client';
-  import { BrowserRouter } from "react-router-dom";
+  import { MemoryRouter } from "react-router-dom";
   import './index.css';
   import App from './App';
 
@@ -10,8 +10,10 @@
 
   createRoot(document.getElementById('root')).render(
     <StrictMode>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      {/* Single page: in-app navigation never touches browser history, so a
+          back-swipe can't leave a form without the discard prompt. */}
+      <MemoryRouter initialEntries={["/scouting"]}>
         <App />
-      </BrowserRouter>
+      </MemoryRouter>
     </StrictMode>
   );
