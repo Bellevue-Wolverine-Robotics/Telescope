@@ -35,19 +35,25 @@ function columnsFromForm(form) {
 const MATCH_COLUMNS = columnsFromForm(matchForm);
 const PIT_COLUMNS   = columnsFromForm(pitForm);
 
+// Records are ordered oldest first by the app-filled timestamp, so sorting never
+// depends on which questions a form asks. Timestamps are ISO 8601 UTC strings,
+// which sort correctly as plain text.
+function byTimestamp(a, b) {
+  const ta = a.timestamp ?? '';
+  const tb = b.timestamp ?? '';
+  return ta < tb ? -1 : ta > tb ? 1 : 0;
+}
+
 export const PHASE_CONFIG = {
   Match: {
     form:       matchForm,
     columns:    MATCH_COLUMNS,
     storageKey: 'matches',
-    sort:       (a, b) => a.matchNumber - b.matchNumber ||
-                  (a.robotPosition < b.robotPosition ? -1 : a.robotPosition > b.robotPosition ? 1 : 0),
   },
   Pit: {
     form:       pitForm,
     columns:    PIT_COLUMNS,
     storageKey: 'pit',
-    sort:       (a, b) => a.teamNumber - b.teamNumber,
   },
 };
 
@@ -228,7 +234,7 @@ export function mergeRecordData(phase, existing, imported) {
     const identity = getRecordIdentity(phase, record);
     if (!merged.has(identity)) merged.set(identity, record);
   }
-  return [...merged.values()].sort(phase.sort);
+  return [...merged.values()].sort(byTimestamp);
 }
 
 export function convertRecordDataCSVToJSON(text) {
