@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './Layout';
+import ConfirmDialog from '../ui/ConfirmDialog';
 import Counter from '../ui/Counter';
 import NumericInput from '../ui/NumericInput';
 import Switch from '../ui/Switch';
@@ -56,26 +57,31 @@ function Question({ question, value, onChange }) {
   }
 }
 
-function ScoutingForm({ header, phase, draftKey }) {
+function ScoutingForm({ header, phase }) {
   const navigate  = useNavigate();
   const pages     = phase.form.pages;
   const questions = pages.flatMap(p => p.questions);
-  // Return to the Scouting menu. Keeps the draft.
   const exit      = () => navigate('/scouting');
 
-  function loadDraft() {
-    try { return JSON.parse(localStorage.getItem(draftKey)) ?? {}; } catch { return {}; }
-  }
+  const [page, setPage] = useState(0);
+  const [data, setData] = useState(() =>
+    Object.fromEntries(questions.map(q => [q.id, defaultValue(q)]))
+  );
+  const [confirmExit, setConfirmExit] = useState(false);
 
-  const [page, setPage] = useState(() => Math.min(loadDraft().page ?? 0, pages.length - 1));
-  const [data, setData] = useState(() => ({
-    ...Object.fromEntries(questions.map(q => [q.id, defaultValue(q)])),
-    ...(loadDraft().data ?? {}),
-  }));
+  // Started once the scouter has moved past the first page or changed an answer.
+  const started = page > 0 || questions.some(q => data[q.id] !== defaultValue(q));
 
+  // Back button: ask before throwing away a started form.
+  const leave = () => (started ? setConfirmExit(true) : exit());
+
+  // Reloading or closing the tab: let the browser show its own warning.
   useEffect(() => {
-    localStorage.setItem(draftKey, JSON.stringify({ data, page }));
-  }, [data, page, draftKey]);
+    if (!started) return;
+    const warn = e => e.preventDefault();
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [started]);
 
   const set = key => value => setData(prev => ({ ...prev, [key]: value }));
 
@@ -89,7 +95,6 @@ function ScoutingForm({ header, phase, draftKey }) {
       record[q.id] = q.type === 'number' ? Number(value) : value;
     }
     await mergeAndStoreRecordData(phase, [record]);
-    localStorage.removeItem(draftKey);
     exit();
   }
 
@@ -98,7 +103,7 @@ function ScoutingForm({ header, phase, draftKey }) {
   const isValid = current.questions.every(q => isAnswered(q, data[q.id]));
 
   return (
-    <Layout header={header} tab={1} onBack={exit} hideNav>
+    <Layout header={header} tab={1} onBack={leave} hideNav>
       <div className="h-full flex flex-col">
 
         {/* Progress bar */}
@@ -138,6 +143,16 @@ function ScoutingForm({ header, phase, draftKey }) {
         </div>
 
       </div>
+
+      {confirmExit && (
+        <ConfirmDialog
+          title="Discard this form?"
+          message="Your answers won't be saved."
+          confirmLabel="Discard"
+          onCancel={() => setConfirmExit(false)}
+          onConfirm={exit}
+        />
+      )}
     </Layout>
   );
 }
