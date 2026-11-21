@@ -16,7 +16,6 @@ function OutdatedFormBanner() {
   const outdated = device ? PHASES.filter(p => device[p].outdated) : [];
   if (outdated.length === 0) return null;
 
-  const names = outdated.join(' and ');
   const kinds = outdated.map(p => p.toLowerCase()).join(' and ');
 
   async function clear() {
@@ -28,7 +27,7 @@ function OutdatedFormBanner() {
     <>
       <div className="update-banner">
         <span>
-          {outdated.length > 1 ? `Newer ${names} forms are` : `A newer ${names} form is`} available.
+          {outdated.length > 1 ? `Newer ${kinds} forms are` : `A newer ${kinds} form is`} available.
           Export your {kinds} records, then clear them to update.
         </span>
         <button type="button" onClick={() => setConfirming(true)} className="update-banner-btn">
