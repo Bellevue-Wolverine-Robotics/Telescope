@@ -126,7 +126,7 @@ function FormPages({ header, phaseKey, form }) {
           {pages.map((_, i) => (
             <div
               key={i}
-              className={`h-1 flex-1 rounded-full ${i <= page ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border)]'}`}
+              className={`h-1 flex-1 rounded-full ${i <= page ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border)]'}`}
             />
           ))}
         </div>

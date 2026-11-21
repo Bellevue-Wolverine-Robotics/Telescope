@@ -2,8 +2,12 @@
 
 /* ── Design tokens ────────────────────────────────────────────── */
 :root {
+  /* Text colour */
   --color-primary:     #212529;
   --color-primary-sub: #495057;
+  /* Solid buttons, start tiles, active tab underline, progress bars */
+  --color-accent:      #212529;
+  --color-btn-outline: #212529;
   --color-surface:     #ffffff;
   --color-surface-alt: #f8f9fa;
   --color-border:      #E9ECEF;
@@ -17,18 +21,20 @@
 }
 
 .dark {
-  --color-primary:     #C9A227;
-  --color-primary-sub: #a07a10;
-  --color-surface:     #1B2A4A;
-  --color-surface-alt: #152238;
-  --color-border:      #2a3d5e;
-  --color-border-mid:  #3a5070;
-  --color-border-div:  #243450;
-  --color-muted:       #8899bb;
-  --color-muted-alt:   #7a8eb0;
-  --color-on-primary:  #1B2A4A;
-  --color-segment-track: #152238;
-  --color-segment-thumb: #2a3d5e;
+  --color-primary:     #E6E9EF;
+  --color-primary-sub: #B4BDCC;
+  --color-accent:      #D9B44A;
+  --color-btn-outline: #3A4760;
+  --color-surface:     #121A2B;
+  --color-surface-alt: #1A2438;
+  --color-border:      #263248;
+  --color-border-mid:  #3A4760;
+  --color-border-div:  #2A364D;
+  --color-muted:       #94A3B8;
+  --color-muted-alt:   #7C8BA3;
+  --color-on-primary:  #121A2B;
+  --color-segment-track: #121A2B;
+  --color-segment-thumb: #2A364D;
 }
 
 /* ── Base layout ──────────────────────────────────────────────── */
@@ -83,9 +89,9 @@ html, body {
   /* Buttons */
   .btn-primary {
     padding: 0.75rem;
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--color-accent);
     border-radius: 0.5rem;
-    background-color: var(--color-primary);
+    background-color: var(--color-accent);
     color: var(--color-on-primary);
     display: flex;
     justify-content: center;
@@ -100,7 +106,7 @@ html, body {
 
   .btn-outline {
     padding: 0.75rem;
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--color-btn-outline);
     border-radius: 0.5rem;
     background-color: var(--color-surface);
     color: var(--color-primary);
@@ -161,7 +167,7 @@ html, body {
   .tab.active {
     color: var(--color-primary);
     font-weight: 600;
-    border-bottom-color: var(--color-primary);
+    border-bottom-color: var(--color-accent);
   }
 
   /* App chrome */
@@ -304,11 +310,15 @@ html, body {
     color: rgb(220 38 38);
   }
 
+  .dark .message.error   { color: rgb(248 113 113); }
+
   .message.success {
     background-color: rgb(34 197 94 / 0.1);
     border-color: rgb(34 197 94 / 0.3);
     color: rgb(21 128 61);
   }
+
+  .dark .message.success { color: rgb(74 222 128); }
 
   /* Stays under the header while this device is held on an older form */
   .update-banner {
@@ -343,12 +353,35 @@ html, body {
     gap: 0.75rem;
   }
 
+  /* Settings: a card holding a list of rows, label on the left and control on the right */
+  .settings-list {
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    background-color: var(--color-surface-alt);
+    overflow: hidden;
+  }
+
+  .settings-row {
+    width: 100%;
+    min-height: 3.5rem;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .settings-row + .settings-row {
+    border-top: 1px solid var(--color-border);
+  }
+
   /* Home page: large tiles that start a Match or Pit form */
   .start-tile {
     flex: 1;
     height: 8rem;
     border-radius: 1rem;
-    background-color: var(--color-primary);
+    background-color: var(--color-accent);
     color: var(--color-on-primary);
     display: flex;
     flex-direction: column;
