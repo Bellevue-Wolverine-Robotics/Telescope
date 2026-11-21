@@ -310,6 +310,28 @@ html, body {
     color: rgb(21 128 61);
   }
 
+  /* Stays under the header while this device is held on an older form */
+  .update-banner {
+    padding: 0.625rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    background-color: rgb(245 158 11 / 0.12);
+    border-bottom: 1px solid rgb(245 158 11 / 0.35);
+    color: rgb(180 83 9);
+  }
+
+  .dark .update-banner { color: rgb(251 191 36); }
+
+  .update-banner-btn {
+    flex-shrink: 0;
+    padding: 0.375rem 0.875rem;
+    border-radius: 0.5rem;
+    border: 1px solid currentColor;
+    font-weight: 600;
+  }
+
   /* Cards (Settings sections, Scouting menu) */
   .card {
     border: 1px solid var(--color-border);
