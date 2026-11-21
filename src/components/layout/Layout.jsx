@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import OutdatedFormBanner from './OutdatedFormBanner';
 
 function Layout(props) {
   return (
@@ -13,6 +14,8 @@ function Layout(props) {
         )}
         {props.header}
       </header>
+      {/* Not while filling in a form, where clearing records would get in the way */}
+      {!props.hideNav && <OutdatedFormBanner />}
       <div className="flex-1 min-h-0 overflow-hidden">
         {props.children}
       </div>

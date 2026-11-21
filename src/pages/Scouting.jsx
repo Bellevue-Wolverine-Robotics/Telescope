@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Export from '../components/ui/Export';
@@ -8,16 +8,14 @@ import Modal from '../components/ui/Modal';
 import RecordTable from '../components/ui/RecordTable';
 import Tabs from '../components/ui/Tabs';
 import {
-  PHASE_CONFIG,
+  PHASES,
+  addRecords,
   classifyAndValidateImport,
   convertRecordDataJSONToCSV,
   convertRecordDataCSVToJSON,
-  getRecordIdentity,
-  loadRecordDataAsJSON,
-  mergeAndStoreRecordData,
+  loadAllPhases,
 } from '../lib/RecordData';
-
-const PHASES = Object.keys(PHASE_CONFIG);
+import useDeviceData from '../lib/useDeviceData';
 
 const ICON = { fill: 'none', viewBox: '0 0 24 24', strokeWidth: 1.5, stroke: 'currentColor', className: 'size-8' };
 
@@ -45,11 +43,6 @@ function entries(n, kind) {
   return `${n} ${kind} ${n !== 1 ? 'entries' : 'entry'}`;
 }
 
-async function loadAll() {
-  const lists = await Promise.all(PHASES.map(p => loadRecordDataAsJSON(PHASE_CONFIG[p])));
-  return Object.fromEntries(PHASES.map((p, i) => [p, lists[i]]));
-}
-
 function formatBytes(bytes) {
   return bytes < 1024 ? `${Math.round(bytes)} B` : `${(bytes / 1024).toFixed(1)} KB`;
 }
@@ -64,7 +57,8 @@ function formatTransfer({ bytes, seconds }) {
 function Scouting() {
   const navigate = useNavigate();
 
-  const [records, setRecords] = useState({ Match: [], Pit: [] });
+  const device = useDeviceData();
+  const records = Object.fromEntries(PHASES.map(p => [p, device?.[p].records ?? []]));
   const [tablePhase, setTablePhase] = useState(null); // 'Match' | 'Pit' | null (closed)
   const [showQRImport, setShowQRImport] = useState(false);
   const [showQRExport, setShowQRExport] = useState(false);
@@ -72,14 +66,10 @@ function Scouting() {
   const [message, setMessage] = useState(null);
   const csvFileInputRef = useRef(null);
 
-  useEffect(() => {
-    loadAll().then(setRecords);
-  }, []);
-
   const hasData = PHASES.some(p => records[p].length > 0);
 
   function exportCSV(phaseKey) {
-    const csv = convertRecordDataJSONToCSV(PHASE_CONFIG[phaseKey], records[phaseKey]);
+    const csv = convertRecordDataJSONToCSV(device[phaseKey].columns, records[phaseKey]);
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -91,7 +81,8 @@ function Scouting() {
 
   // transfer: { bytes, seconds } when the records came over QR codes
   async function handleImport(parsed, transfer) {
-    const result = classifyAndValidateImport(parsed);
+    // Read fresh, so the check uses the forms as they are right now
+    const result = classifyAndValidateImport(parsed, await loadAllPhases());
     if (!result.valid) {
       setMessage({ type: 'error', lines: result.errors });
       return;
@@ -100,23 +91,14 @@ function Scouting() {
     const summaryParts = [];
     for (const [phaseKey, imported] of Object.entries(result.byPhase)) {
       if (imported.length === 0) continue;
-      const phaseConfig  = PHASE_CONFIG[phaseKey];
-      const existing     = await loadRecordDataAsJSON(phaseConfig);
-      const seen         = new Set(existing.map(r => getRecordIdentity(phaseConfig, r)));
-      let added = 0;
-      for (const r of imported) {
-        const identity = getRecordIdentity(phaseConfig, r);
-        if (!seen.has(identity)) { seen.add(identity); added++; }
-      }
+      const added      = await addRecords(phaseKey, imported);
       const alreadyHad = imported.length - added;
-      await mergeAndStoreRecordData(phaseConfig, imported);
       const sub = [];
       if (added      > 0) sub.push(`${added} new`);
       if (alreadyHad > 0) sub.push(`${alreadyHad} already on this device`);
       summaryParts.push(`${imported.length} ${phaseKey.toLowerCase()} record${imported.length !== 1 ? 's' : ''} (${sub.join(', ')})`);
     }
 
-    setRecords(await loadAll());
     const text = summaryParts.length ? summaryParts.join(' and ') + ' imported.' : 'No records to import.';
     setMessage({ type: 'success', lines: transfer ? [text, formatTransfer(transfer)] : [text] });
   }
@@ -125,8 +107,8 @@ function Scouting() {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (event) => {
-      handleImport(convertRecordDataCSVToJSON(event.target.result));
+    reader.onload = async (event) => {
+      handleImport(convertRecordDataCSVToJSON(event.target.result, await loadAllPhases()));
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -187,7 +169,7 @@ function Scouting() {
         <RecordTable
           title="Records"
           tabs={<Tabs options={PHASES} value={tablePhase} onChange={setTablePhase} className="-mx-6" />}
-          columns={PHASE_CONFIG[tablePhase].columns}
+          columns={device[tablePhase].columns}
           records={records[tablePhase]}
           onClose={() => setTablePhase(null)}
         />

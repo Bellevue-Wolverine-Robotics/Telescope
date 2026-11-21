@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
-import { PHASE_CONFIG, loadRecordDataAsJSON, storeRecordData } from '../lib/RecordData';
+import { PHASES, loadAllPhases, replaceRecords } from '../lib/RecordData';
 import matchData1 from '../../data/match/data_1.json';
 import matchData2 from '../../data/match/data_2.json';
 import pitData1 from '../../data/pit/data_1.json';
@@ -15,8 +15,6 @@ const SAMPLES = [
   { label: 'Sample 2', Match: matchData2, Pit: pitData2 },
   { label: 'Sample 3', Match: matchData3, Pit: pitData3 },
 ];
-
-const PHASES = Object.keys(PHASE_CONFIG);
 
 function plural(n, word) {
   return `${n} ${word} record${n !== 1 ? 's' : ''}`;
@@ -49,8 +47,8 @@ function Settings() {
   }
 
   async function countRecords() {
-    const counts = await Promise.all(PHASES.map(p => loadRecordDataAsJSON(PHASE_CONFIG[p])));
-    return PHASES.map((p, i) => plural(counts[i].length, p.toLowerCase())).join(' and ');
+    const device = await loadAllPhases();
+    return PHASES.map(p => plural(device[p].records.length, p.toLowerCase())).join(' and ');
   }
 
   async function askLoadSample() {
@@ -61,7 +59,7 @@ function Settings() {
       confirmLabel: 'Replace',
       onConfirm:    async () => {
         try {
-          for (const p of PHASES) await storeRecordData(PHASE_CONFIG[p], sample[p]);
+          for (const p of PHASES) await replaceRecords(p, sample[p]);
           setMessage({ type: 'success', text: `${sample.label} loaded.` });
         } catch {
           setMessage({ type: 'error', text: 'Failed to save sample data.' });
@@ -77,7 +75,7 @@ function Settings() {
       confirmLabel: 'Delete',
       onConfirm:    async () => {
         try {
-          for (const p of PHASES) await storeRecordData(PHASE_CONFIG[p], []);
+          for (const p of PHASES) await replaceRecords(p, []);
           setMessage({ type: 'success', text: 'All data cleared.' });
         } catch {
           setMessage({ type: 'error', text: 'Failed to clear data.' });

@@ -5,7 +5,7 @@ import ConfirmDialog from '../ui/ConfirmDialog';
 import Counter from '../ui/Counter';
 import NumericInput from '../ui/NumericInput';
 import Switch from '../ui/Switch';
-import { mergeAndStoreRecordData } from '../../lib/RecordData';
+import { addRecords, loadPhase } from '../../lib/RecordData';
 
 function defaultValue(question) {
   switch (question.type) {
@@ -57,9 +57,24 @@ function Question({ question, value, onChange }) {
   }
 }
 
-function ScoutingForm({ header, phase }) {
+// Fills in a phase's form as saved on this device, which stays on an older form until its records
+// are cleared, so every record on the device has the same questions.
+function ScoutingForm({ header, phaseKey }) {
+  const [form, setForm] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    loadPhase(phaseKey).then(phase => { if (active) setForm(phase.form); });
+    return () => { active = false; };
+  }, [phaseKey]);
+
+  if (!form) return <Layout header={header} tab={1} hideNav />;
+  return <FormPages header={header} phaseKey={phaseKey} form={form} />;
+}
+
+function FormPages({ header, phaseKey, form }) {
   const navigate  = useNavigate();
-  const pages     = phase.form.pages;
+  const pages     = form.pages;
   const questions = pages.flatMap(p => p.questions);
   const exit      = () => navigate('/scouting');
 
@@ -94,7 +109,7 @@ function ScoutingForm({ header, phase }) {
       const value = data[q.id] ?? defaultValue(q);
       record[q.id] = q.type === 'number' ? Number(value) : value;
     }
-    await mergeAndStoreRecordData(phase, [record]);
+    await addRecords(phaseKey, [record]);
     exit();
   }
 
