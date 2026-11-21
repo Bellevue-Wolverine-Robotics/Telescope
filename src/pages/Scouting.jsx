@@ -169,6 +169,7 @@ function Scouting() {
         <RecordTable
           title="Records"
           tabs={<Tabs options={PHASES} value={tablePhase} onChange={setTablePhase} className="-mx-6" />}
+          scrollKey={tablePhase}
           columns={device[tablePhase].columns}
           records={records[tablePhase]}
           onClose={() => setTablePhase(null)}

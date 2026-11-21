@@ -2,6 +2,8 @@ import Sheet from './Sheet';
 
 // Full-height sheet showing records as a scrollable table.
 // `tabs` (optional) is shown under the title, e.g. to switch between Match and Pit.
+// `scrollKey` (optional): when it changes, the table starts again at the top left,
+// so switching tabs doesn't keep the previous tab's scroll position.
 
 // Table only: "Mar 14 14:05" in local time. Stored data and CSV keep the full ISO timestamp.
 function formatTimestamp(iso) {
@@ -25,7 +27,7 @@ function Cell({ column, value }) {
   return value ?? '–';
 }
 
-function RecordTable({ title, subtitle, tabs, columns, records, onClose }) {
+function RecordTable({ title, subtitle, tabs, scrollKey, columns, records, onClose }) {
   return (
     <Sheet
       full
@@ -38,7 +40,7 @@ function RecordTable({ title, subtitle, tabs, columns, records, onClose }) {
       }
     >
       {tabs}
-      <div className="flex-1 min-h-0 overflow-auto -mx-6">
+      <div key={scrollKey} className="flex-1 min-h-0 overflow-auto -mx-6">
         <table className="text-xs border-collapse w-max min-w-full">
           <thead>
             <tr>
