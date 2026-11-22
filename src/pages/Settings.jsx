@@ -58,38 +58,43 @@ function Settings() {
       <div className="h-full overflow-y-auto">
         <div className="flex flex-col gap-2 p-4">
 
-          <p className="section-label px-1">Scouter</p>
-          <div className="card">
-            <div className="flex flex-col gap-1">
-              <label className="field-label">Name</label>
+          <p className="section-label px-1">General</p>
+          <div className="settings-list">
+            <div className="settings-row">
+              <label htmlFor="scouter-name" className="shrink-0">Name</label>
               <input
+                id="scouter-name"
                 type="text"
                 value={scouterName}
                 onChange={(e) => handleScouterName(e.target.value)}
                 placeholder="Enter your name"
-                className="field-input"
+                className="field-input py-2 max-w-52"
               />
             </div>
-          </div>
-
-          <p className="section-label px-1 pt-4">Display</p>
-          <div className="card">
-            <div className="segment-control">
-              {['Light', 'Dark'].map((m) => (
-                <button
-                  key={m}
-                  onClick={() => applyMode(m)}
-                  className={`segment-btn h-10 ${mode === m ? 'active' : ''}`}
-                >
-                  {m}
-                </button>
-              ))}
+            <div className="settings-row">
+              <span className="shrink-0">Appearance</span>
+              <div className="segment-control w-44">
+                {['Light', 'Dark'].map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => applyMode(m)}
+                    className={`segment-btn h-8 ${mode === m ? 'active' : ''}`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
           <p className="section-label px-1 pt-4">Data</p>
-          <div className="card">
-            <button onClick={askClearData} className="btn-outline">Clear all data</button>
+          <div className="settings-list">
+            <button onClick={askClearData} className="settings-row">
+              <span>Clear all data</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-5 text-[var(--color-muted-alt)]">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
           </div>
 
           {message && (

@@ -139,7 +139,7 @@ function Import({ onImport }) {
       </div>
       <div className="h-2 rounded-full bg-[var(--color-border)] overflow-hidden">
         <div
-          className="h-full rounded-full bg-[var(--color-primary)] transition-[width] duration-200"
+          className="h-full rounded-full bg-[var(--color-accent)] transition-[width] duration-200"
           style={{ width: `${progress * 100}%` }}
         />
       </div>
