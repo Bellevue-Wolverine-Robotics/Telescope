@@ -8,6 +8,10 @@ export default defineConfig({
   // Defaults to the site root. Deploys under a sub-path (e.g. GitHub Pages) set BASE_PATH.
   base: process.env.BASE_PATH || '/',
   server: { allowedHosts: true },
+  // Shown in Settings > About: the GitHub Actions run number, or "dev" for a local build
+  define: {
+    __BUILD_NUMBER__: JSON.stringify(process.env.GITHUB_RUN_NUMBER || 'dev'),
+  },
   plugins: [
     react({
       babel: {

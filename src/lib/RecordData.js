@@ -55,6 +55,17 @@ function formSignature(form) {
   );
 }
 
+// A short id for a form's signature (8 hex characters, 32-bit FNV-1a), so two devices can check
+// they're on the same form. Changes only when the signature does.
+export function formHash(form) {
+  let hash = 0x811c9dc5;
+  for (const ch of formSignature(form)) {
+    hash ^= ch.codePointAt(0);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
 // Records are ordered oldest first by the app-filled timestamp, so sorting never
 // depends on which questions a form asks. Timestamps are ISO 8601 UTC strings,
 // which sort correctly as plain text.

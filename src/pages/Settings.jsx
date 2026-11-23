@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
-import { PHASES, loadAllPhases, replaceRecords } from '../lib/RecordData';
+import { PHASES, formHash, loadAllPhases, replaceRecords } from '../lib/RecordData';
+import useDeviceData from '../lib/useDeviceData';
 
 function plural(n, word) {
   return `${n} ${word} record${n !== 1 ? 's' : ''}`;
@@ -16,6 +17,7 @@ function Settings() {
   );
   const [confirm, setConfirm] = useState(null);
   const [message, setMessage] = useState(null);
+  const device = useDeviceData();
 
   function applyMode(newMode) {
     setMode(newMode);
@@ -95,6 +97,23 @@ function Settings() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
               </svg>
             </button>
+          </div>
+
+          <p className="section-label px-1 pt-4">About</p>
+          <div className="settings-list">
+            <div className="settings-row">
+              <span className="shrink-0">Build</span>
+              <span className="text-[var(--color-muted)]">{__BUILD_NUMBER__}</span>
+            </div>
+            {/* The form this device is using, which stays on an older one while it has records from it */}
+            {PHASES.map(p => (
+              <div key={p} className="settings-row">
+                <span className="shrink-0">{p} form</span>
+                <span className="text-[var(--color-muted)]">
+                  {device && `${formHash(device[p].form)}${device[p].outdated ? ' (outdated)' : ''}`}
+                </span>
+              </div>
+            ))}
           </div>
 
           {message && (
