@@ -36,6 +36,9 @@ export default defineConfig({
         // Pages like /scouting/match are handled by the app, so serve index.html for them
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
+        // Puts Workbox inside sw.js instead of a separate file it imports, so an update check only
+        // has to compare one file
+        inlineWorkboxRuntime: true,
       },
     }),
   ],

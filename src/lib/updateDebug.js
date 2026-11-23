@@ -64,3 +64,21 @@ export function useDebugLog() {
     () => entries,
   );
 }
+
+// Fetches sw.js straight from the server and logs a short hash of its contents and a few headers,
+// to see whether the bytes really change between update checks (e.g. altered by a proxy).
+export async function logServiceWorkerFile(when) {
+  try {
+    const response = await fetch(`${import.meta.env.BASE_URL}sw.js`, { cache: 'no-store' });
+    const bytes = await response.arrayBuffer();
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    const hash = [...new Uint8Array(digest).slice(0, 4)].map(b => b.toString(16).padStart(2, '0')).join('');
+    const headers = ['last-modified', 'etag', 'cf-cache-status', 'content-encoding']
+      .map(name => response.headers.get(name) && `${name}=${response.headers.get(name)}`)
+      .filter(Boolean)
+      .join(' ');
+    debugLog(`${when}: sw.js ${bytes.byteLength} bytes, hash ${hash} ${headers}`);
+  } catch (e) {
+    debugLog(`${when}: couldn't read sw.js (${e.message})`);
+  }
+}

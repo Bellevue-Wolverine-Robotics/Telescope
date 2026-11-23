@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { registerSW } from 'virtual:pwa-register';
-import { debugLog, describeWorkers } from './updateDebug';
+import { debugLog, describeWorkers, logServiceWorkerFile } from './updateDebug';
 
 // How often to look for a new version while the app stays open
 const CHECK_INTERVAL_MS = 30 * 60 * 1000;
@@ -29,9 +29,11 @@ registerSW({
     if (!reg) return;
     registration = reg;
     debugLog(`registered: ${describeWorkers(reg)}`);
+    logServiceWorkerFile('at load');
     reg.addEventListener('updatefound', () => {
       const worker = reg.installing;
       debugLog(`update found: ${describeWorkers(reg)}`);
+      logServiceWorkerFile('update found');
       worker?.addEventListener('statechange', () => debugLog(`new worker is ${worker.state}: ${describeWorkers(reg)}`));
     });
     navigator.serviceWorker.addEventListener('controllerchange', () => debugLog(`controller changed: ${describeWorkers(reg)}`));
