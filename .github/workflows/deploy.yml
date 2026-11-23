@@ -34,6 +34,8 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          # Shown in Settings > About
+          BUILD_NUMBER: ${{ github.run_number }}
 
       - uses: actions/upload-pages-artifact@v4
         with:
