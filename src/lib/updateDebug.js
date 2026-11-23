@@ -82,3 +82,29 @@ export async function logServiceWorkerFile(when) {
     debugLog(`${when}: couldn't read sw.js (${e.message})`);
   }
 }
+
+// Downloads each file the service worker stores for offline use, the way its install does, and logs
+// how each one went, to find a download that fails or never finishes.
+export async function logOfflineFiles() {
+  try {
+    const sw = await (await fetch(`${import.meta.env.BASE_URL}sw.js`, { cache: 'no-store' })).text();
+    const urls = [...sw.matchAll(/url:"([^"]+)"/g)].map(m => m[1]);
+    debugLog(`offline files: ${urls.length} to check`);
+    for (const url of urls) {
+      const start = performance.now();
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      try {
+        const response = await fetch(`${import.meta.env.BASE_URL}${url}`, { cache: 'reload', signal: controller.signal });
+        const size = (await response.arrayBuffer()).byteLength;
+        debugLog(`  ${url}: ${response.status}, ${size} bytes, ${Math.round(performance.now() - start)} ms`);
+      } catch (e) {
+        debugLog(`  ${url}: FAILED after ${Math.round(performance.now() - start)} ms (${e.name})`);
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+  } catch (e) {
+    debugLog(`offline files: couldn't check (${e.message})`);
+  }
+}

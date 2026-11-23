@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { registerSW } from 'virtual:pwa-register';
-import { debugLog, describeWorkers, logServiceWorkerFile } from './updateDebug';
+import { debugLog, describeWorkers, logOfflineFiles, logServiceWorkerFile } from './updateDebug';
 
 // How often to look for a new version while the app stays open
 const CHECK_INTERVAL_MS = 30 * 60 * 1000;
@@ -33,6 +33,8 @@ registerSW({
     registration = reg;
     debugLog(`registered: ${describeWorkers(reg)}`);
     logServiceWorkerFile('at load');
+    // Only while nothing has finished installing, which is when the install seems to get stuck
+    if (!reg.active) logOfflineFiles();
     reg.addEventListener('updatefound', () => {
       const worker = reg.installing;
       debugLog(`update found: ${describeWorkers(reg)}`);
