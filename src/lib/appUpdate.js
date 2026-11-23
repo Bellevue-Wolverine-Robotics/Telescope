@@ -23,6 +23,9 @@ registerSW({
   // Never reload a tab by itself: another tab may be partway through a form. Only the tab that
   // tapped Update reloads (see applyUpdate).
   onNeedReload() {},
+  onRegisterError(error) {
+    debugLog(`registration failed: ${error?.message ?? error}`);
+  },
   // The browser checks for a new version when the app is opened. Phones usually resume an app
   // without reopening it, so also check whenever it comes back on screen and every so often.
   onRegisteredSW(_url, reg) {
