@@ -3,6 +3,8 @@
   import { MemoryRouter } from "react-router-dom";
   import './index.css';
   import App from './App';
+// Registers the service worker that keeps the app working offline and checks for updates
+import './lib/appUpdate';
 
   if (localStorage.getItem('displayMode') === 'Dark') {
     document.documentElement.classList.add('dark');

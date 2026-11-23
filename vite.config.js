@@ -26,7 +26,8 @@ export default defineConfig({
       // A new version waits until every Telescope tab is closed, then takes over on the next
       // launch. Never reloads the page by itself, so a half-filled form isn't lost.
       registerType: 'prompt',
-      injectRegister: 'script-defer',
+      // Registered by src/lib/appUpdate.js, which shows the update banner
+      injectRegister: false,
       workbox: {
         // Everything the app needs, including the QR scanner's WebAssembly decoder
         globPatterns: ['**/*.{js,css,html,wasm,svg,png,ico,webmanifest}'],
