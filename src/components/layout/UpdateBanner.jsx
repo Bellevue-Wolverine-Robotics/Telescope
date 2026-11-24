@@ -4,9 +4,9 @@ import { applyUpdate } from '../../lib/appUpdate';
 function UpdateBanner() {
   return (
     <div className="update-banner">
-      <span>A new version of Telescope is ready.</span>
+      <span>A newer version of the app is available.</span>
       <button type="button" onClick={applyUpdate} className="update-banner-btn">
-        Update
+        Refresh
       </button>
     </div>
   );

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { PHASES, loadAllPhases, replaceRecords } from '../lib/RecordData';
-import { clearDebugLog, useDebugLog } from '../lib/updateDebug'; // TEMPORARY
 
 function plural(n, word) {
   return `${n} ${word} record${n !== 1 ? 's' : ''}`;
@@ -17,7 +16,6 @@ function Settings() {
   );
   const [confirm, setConfirm] = useState(null);
   const [message, setMessage] = useState(null);
-  const debugEntries = useDebugLog(); // TEMPORARY
 
   function applyMode(newMode) {
     setMode(newMode);
@@ -104,18 +102,6 @@ function Settings() {
             <div className="settings-row">
               <span className="shrink-0">Build</span>
               <span className="text-[var(--color-muted)]">{__BUILD_NUMBER__}</span>
-            </div>
-          </div>
-
-          {/* TEMPORARY: update diagnostics, remove before merging */}
-          <p className="section-label px-1 pt-4">Update log (temporary)</p>
-          <div className="settings-list p-3 flex flex-col gap-2">
-            <pre className="text-xs whitespace-pre-wrap break-all select-text">
-              {debugEntries.length ? debugEntries.join('\n') : 'Empty'}
-            </pre>
-            <div className="flex gap-2">
-              <button type="button" className="btn-outline flex-1" onClick={() => navigator.clipboard?.writeText(debugEntries.join('\n'))}>Copy</button>
-              <button type="button" className="btn-outline flex-1" onClick={clearDebugLog}>Clear</button>
             </div>
           </div>
 
