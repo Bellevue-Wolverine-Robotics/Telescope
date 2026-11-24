@@ -8,6 +8,10 @@ export default defineConfig({
   // Defaults to the site root. Deploys under a sub-path (e.g. GitHub Pages) set BASE_PATH.
   base: process.env.BASE_PATH || '/',
   server: { allowedHosts: true },
+  // Shown in Settings > About. The deploy workflow sets BUILD_NUMBER; local builds show "dev".
+  define: {
+    __BUILD_NUMBER__: JSON.stringify(process.env.BUILD_NUMBER || 'dev'),
+  },
   plugins: [
     react({
       babel: {
@@ -22,7 +26,8 @@ export default defineConfig({
       // A new version waits until every Telescope tab is closed, then takes over on the next
       // launch. Never reloads the page by itself, so a half-filled form isn't lost.
       registerType: 'prompt',
-      injectRegister: 'script-defer',
+      // Registered by src/lib/appUpdate.js, which shows the update banner
+      injectRegister: false,
       workbox: {
         // Everything the app needs, including the QR scanner's WebAssembly decoder
         globPatterns: ['**/*.{js,css,html,wasm,svg,png,ico,webmanifest}'],

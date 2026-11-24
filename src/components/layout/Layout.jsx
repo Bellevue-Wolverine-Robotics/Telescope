@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import OutdatedFormBanner from './OutdatedFormBanner';
+import UpdateBanner from './UpdateBanner';
+import { useUpdateReady } from '../../lib/appUpdate';
 
 function Layout(props) {
+  const updateReady = useUpdateReady();
+
   return (
     <div className="flex flex-col h-full">
       <header className="app-header">
@@ -14,8 +18,9 @@ function Layout(props) {
         )}
         {props.header}
       </header>
-      {/* Not while filling in a form, where clearing records would get in the way */}
-      {!props.hideNav && <OutdatedFormBanner />}
+      {/* Not while filling in a form, where updating or clearing records would get in the way.
+          A waiting update comes first: the outdated form banner returns afterwards if it still applies. */}
+      {!props.hideNav && (updateReady ? <UpdateBanner /> : <OutdatedFormBanner />)}
       <div className="flex-1 min-h-0 overflow-hidden">
         {props.children}
       </div>

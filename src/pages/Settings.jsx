@@ -97,6 +97,14 @@ function Settings() {
             </button>
           </div>
 
+          <p className="section-label px-1 pt-4">About</p>
+          <div className="settings-list">
+            <div className="settings-row">
+              <span className="shrink-0">Build</span>
+              <span className="text-[var(--color-muted)]">{__BUILD_NUMBER__}</span>
+            </div>
+          </div>
+
           {message && (
             <div className={`message ${message.type} mx-0`}>
               <span>{message.text}</span>
