@@ -142,7 +142,7 @@ function FormPages({ header, phaseKey, form }) {
         </div>
 
         {/* Navigation buttons (extra bottom padding keeps them clear of rounded phone corners) */}
-        <div className="px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] flex gap-2">
+        <div className="px-4 pt-2 pb-[max(2rem,env(safe-area-inset-bottom))] flex gap-2">
           {page > 0 && (
             <button onClick={() => setPage(p => p - 1)} className="flex-1 btn-outline">
               Back

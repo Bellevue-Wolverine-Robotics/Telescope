@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { PHASES, loadAllPhases, replaceRecords } from '../lib/RecordData';
+import { applyDisplayMode } from '../lib/displayMode';
 
 function plural(n, word) {
   return `${n} ${word} record${n !== 1 ? 's' : ''}`;
@@ -20,11 +21,7 @@ function Settings() {
   function applyMode(newMode) {
     setMode(newMode);
     localStorage.setItem('displayMode', newMode);
-    if (newMode === 'Dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    applyDisplayMode(newMode);
   }
 
   function handleScouterName(value) {

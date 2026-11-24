@@ -5,8 +5,10 @@
   /* Text colour */
   --color-primary:     #212529;
   --color-primary-sub: #495057;
-  /* Solid buttons, start tiles, active tab underline, progress bars */
+  /* Solid buttons, active tab underline, progress bars */
   --color-accent:      #212529;
+  /* Match and Pit start tiles: the accent, but softer in dark mode where they're large */
+  --color-tile:        #212529;
   --color-btn-outline: #212529;
   --color-surface:     #ffffff;
   --color-surface-alt: #f8f9fa;
@@ -24,6 +26,7 @@
   --color-primary:     #E6E9EF;
   --color-primary-sub: #B4BDCC;
   --color-accent:      #D9B44A;
+  --color-tile:        #C4A043;
   --color-btn-outline: #3A4760;
   --color-surface:     #121A2B;
   --color-surface-alt: #1A2438;
@@ -43,7 +46,8 @@
   top:    env(safe-area-inset-top);
   left:   env(safe-area-inset-left);
   right:  env(safe-area-inset-right);
-  bottom: env(safe-area-inset-bottom);
+  /* Down to the screen edge: the nav bar and form footers leave room for the home indicator */
+  bottom: 0;
 }
 
 html, body {
@@ -193,9 +197,11 @@ html, body {
     color: var(--color-primary);
   }
 
+  /* Its background reaches the bottom of the screen; the icons sit above the home indicator */
   .nav-bar {
     background-color: var(--color-surface-alt);
-    height: 5rem;
+    height: calc(5rem + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
     display: flex;
   }
 
@@ -381,7 +387,7 @@ html, body {
     flex: 1;
     height: 8rem;
     border-radius: 1rem;
-    background-color: var(--color-accent);
+    background-color: var(--color-tile);
     color: var(--color-on-primary);
     display: flex;
     flex-direction: column;
@@ -420,7 +426,7 @@ html, body {
   .sheet {
     width: 100%;
     max-width: 32rem;
-    padding: 0 1.5rem calc(2rem + env(safe-area-inset-bottom));
+    padding: 0 1.5rem max(2rem, env(safe-area-inset-bottom));
     border-radius: 1rem 1rem 0 0;
     overflow: hidden;
     background-color: var(--color-surface);

@@ -3,12 +3,11 @@
   import { MemoryRouter } from "react-router-dom";
   import './index.css';
   import App from './App';
+  import { applyDisplayMode } from './lib/displayMode';
 // Registers the service worker that keeps the app working offline and checks for updates
 import './lib/appUpdate';
 
-  if (localStorage.getItem('displayMode') === 'Dark') {
-    document.documentElement.classList.add('dark');
-  }
+  applyDisplayMode(localStorage.getItem('displayMode') ?? 'Light');
 
   createRoot(document.getElementById('root')).render(
     <StrictMode>
